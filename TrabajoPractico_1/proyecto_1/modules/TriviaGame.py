@@ -78,7 +78,7 @@ class TriviaGame:
         return pelicula_usuario.lower() == question['pelicula_correcta'].lower()
 
 
-Mana = PeliManager()
+Mana = TriviaGame()
 primer = Mana.obtener_opciones()
 print(primer)
 print(type(primer))
