@@ -1,6 +1,6 @@
 import random
 
-class PeliManager:
+class TriviaGame:
     def __init__(self,datafile: str = "data/frases_de_peliculas.txt"):
         self.data_file = datafile
         self.frases_peliculas = []  # Lista de tuplas (frase, pelicula)
