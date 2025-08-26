@@ -22,7 +22,7 @@ def jugar():
         return redirect(url_for("home"))
 
     # Por ahora solo mostramos un placeholder; más adelante implementamos la trivia real
-    return f"TODO: iniciar trivia para {data['nombre']} con {data['n']} frases."
+    return f"TODO: iniciar trivia para {data['nombre']} con {data['n']} frases.(en construcción)"
 
 @app.route("/peliculas", methods=["GET"])
 def peliculas():
