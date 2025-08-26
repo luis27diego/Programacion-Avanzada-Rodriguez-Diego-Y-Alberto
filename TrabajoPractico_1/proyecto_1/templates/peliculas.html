@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Lista de Películas - Trivia</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>📋 Lista de Películas Disponibles</h1>
+        
+        <div class="total-peliculas">
+            Total de películas: {{ peliculas|length }}
+        </div>
+        
+        <div class="lista-peliculas">
+            {% for indice, pelicula in peliculas.items() %}
+            <div class="pelicula-item">
+                <span class="numero">{{ indice }}.</span>
+                <span class="nombre">{{ pelicula }}</span>
+            </div>
+            {% endfor %}
+        </div>
+        
+        <div class="botones">
+            <a href="/" class="btn">
+                🏠 Volver al Inicio
+            </a>
+        </div>
+    </div>
+</body>
+</html>

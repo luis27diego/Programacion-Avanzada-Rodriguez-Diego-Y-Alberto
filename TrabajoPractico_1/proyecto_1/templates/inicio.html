@@ -3,17 +3,74 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicación Flask</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Trivia de Películas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <h1>Bienvenido a mi Aplicación Flask</h1>
-    <p>Esta es la página de inicio.</p>
-    <p>¡Explora nuestras características!</p>
-    <form >
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
-        <input type="submit" value="Enviar">
-    </form>
+    <div class="container">
+        <h1>🎬 Trivia de Películas 🎬</h1>
+        
+        <div class="descripcion">
+            <h3>¿Cómo jugar?</h3>
+            <p>
+                ¡Bienvenido a la Trivia de Películas! En este juego se te mostrarán frases famosas 
+                de películas y deberás adivinar de qué película provienen. 
+            </p>
+            <p>
+                <strong>Instrucciones:</strong>
+            </p>
+            <ul>
+                <li>Ingresa tu nombre de usuario</li>
+                <li>Elige cuántas frases quieres que tenga tu trivia (mínimo 3)</li>
+                <li>Para cada frase, selecciona la película correcta entre 3 opciones</li>
+                <li>Al final verás tu puntuación total</li>
+            </ul>
+        </div>
+        
+        <form action="/jugar" method="POST" onsubmit="return validarFormulario()">
+            <div class="form-group">
+                <label for="nombre">Nombre de Usuario:</label>
+                <input type="text" id="nombre" name="nombre" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="num_frases">Número de Frases (mínimo 3):</label>
+                <input type="number" id="num_frases" name="num_frases" min="3" required>
+            </div>
+            
+            <div class="botones">
+                <button type="submit" class="btn-primary">
+                    🚀 Iniciar Trivia
+                </button>
+                
+                <a href="/peliculas" class="btn btn-secondary">
+                    📋 Ver Lista de Películas
+                </a>
+                
+                <a href="/resultados" class="btn btn-info">
+                    📊 Ver Resultados Históricos
+                </a>
+            </div>
+        </form>
+    </div>
+
+    <script>
+        function validarFormulario() {
+            const nombre = document.getElementById('nombre_usuario').value.trim();
+            const numFrases = document.getElementById('num_frases').value;
+            
+            if (!nombre) {
+                alert('Por favor, ingresa tu nombre de usuario');
+                return false;
+            }
+            
+            if (!numFrases || parseInt(numFrases) < 3) {
+                alert('El número de frases debe ser mayor o igual a 3');
+                return false;
+            }
+            
+            return true;
+        }
+    </script>
 </body>
 </html>

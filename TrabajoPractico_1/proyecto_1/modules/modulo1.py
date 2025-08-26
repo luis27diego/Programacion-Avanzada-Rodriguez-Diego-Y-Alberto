@@ -1,2 +1,8 @@
-# módulo para organizar funciones o clases utilizadas en nuestro proyecto
-# Crear tantos módulos como sea necesario para organizar el código
+# models.py
+class Usuario:
+    def __init__(self, nombre, edad):
+        self.nombre = nombre
+        self.edad = edad
+
+    def es_mayor_de_edad(self):
+        return self.edad >= 18

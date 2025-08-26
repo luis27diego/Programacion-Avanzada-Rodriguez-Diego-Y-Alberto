@@ -1,0 +1,343 @@
+/* Estilos generales */
+body {
+    font-family: Arial, sans-serif;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 20px;
+    background-color: #f5f5f5;
+    line-height: 1.6;
+}
+
+.container {
+    background-color: white;
+    padding: 30px;
+    border-radius: 10px;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+h1 {
+    color: #2c3e50;
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+h2 {
+    color: #2c3e50;
+    border-bottom: 2px solid #3498db;
+    padding-bottom: 10px;
+}
+
+/* Estilos para la descripción del juego */
+.descripcion {
+    background-color: #e8f4f8;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 30px;
+    border-left: 4px solid #3498db;
+}
+
+.descripcion h3 {
+    color: #2c3e50;
+    margin-top: 0;
+}
+
+.descripcion ul {
+    margin: 10px 0;
+    padding-left: 20px;
+}
+
+.descripcion li {
+    margin-bottom: 5px;
+}
+
+/* Estilos para formularios */
+.form-group {
+    margin-bottom: 20px;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+    color: #2c3e50;
+}
+
+input[type="text"], 
+input[type="number"], 
+input[type="radio"] {
+    padding: 10px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    font-size: 16px;
+}
+
+input[type="text"], 
+input[type="number"] {
+    width: 100%;
+    box-sizing: border-box;
+}
+
+input[type="text"]:focus, 
+input[type="number"]:focus {
+    border-color: #3498db;
+    outline: none;
+}
+
+/* Estilos para botones */
+button, .btn {
+    padding: 12px 25px;
+    border: none;
+    border-radius: 5px;
+    font-size: 16px;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-block;
+    text-align: center;
+    transition: background-color 0.3s;
+    margin: 5px;
+}
+
+.btn-primary {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #c0392b;
+}
+
+.btn-secondary {
+    background-color: #3498db;
+    color: white;
+}
+
+.btn-secondary:hover {
+    background-color: #2980b9;
+}
+
+.btn-info {
+    background-color: #95a5a6;
+    color: white;
+}
+
+.btn-info:hover {
+    background-color: #7f8c8d;
+}
+
+.btn-success {
+    background-color: #27ae60;
+    color: white;
+}
+
+.btn-success:hover {
+    background-color: #229954;
+}
+
+.btn-warning {
+    background-color: #f39c12;
+    color: white;
+}
+
+.btn-warning:hover {
+    background-color: #e67e22;
+}
+
+/* Layout de botones */
+.botones {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-top: 30px;
+    justify-content: center;
+}
+
+.botones-inline {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+}
+
+/* Estilos para lista de películas */
+.lista-peliculas {
+    max-height: 500px;
+    overflow-y: auto;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 20px;
+    margin-bottom: 20px;
+}
+
+.pelicula-item {
+    padding: 8px 0;
+    border-bottom: 1px solid #f0f0f0;
+    display: flex;
+}
+
+.pelicula-item:last-child {
+    border-bottom: none;
+}
+
+.numero {
+    color: #7f8c8d;
+    font-weight: bold;
+    margin-right: 10px;
+    min-width: 40px;
+}
+
+.nombre {
+    color: #2c3e50;
+}
+
+.total-peliculas {
+    text-align: center;
+    color: #7f8c8d;
+    margin-bottom: 20px;
+    font-style: italic;
+}
+
+/* Estilos para preguntas de trivia */
+.pregunta-container {
+    background-color: #f8f9fa;
+    padding: 25px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    border-left: 4px solid #3498db;
+}
+
+.pregunta-numero {
+    color: #7f8c8d;
+    font-size: 14px;
+    margin-bottom: 10px;
+}
+
+.frase {
+    font-size: 18px;
+    color: #2c3e50;
+    font-style: italic;
+    margin-bottom: 20px;
+    line-height: 1.5;
+}
+
+.opciones {
+    margin-top: 20px;
+}
+
+.opcion {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 2px solid #ddd;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: all 0.3s;
+}
+
+.opcion:hover {
+    border-color: #3498db;
+    background-color: #f8f9fa;
+}
+
+.opcion input[type="radio"] {
+    margin-right: 10px;
+}
+
+.opcion label {
+    cursor: pointer;
+    font-weight: normal;
+    margin: 0;
+}
+
+/* Estilos para respuestas */
+.respuesta-correcta {
+    background-color: #d5f4e6;
+    border-color: #27ae60;
+    color: #155724;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.respuesta-incorrecta {
+    background-color: #f8d7da;
+    border-color: #e74c3c;
+    color: #721c24;
+    padding: 20px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.respuesta-correcta h3,
+.respuesta-incorrecta h3 {
+    margin-top: 0;
+}
+
+/* Estilos para resultados */
+.resultado-final {
+    text-align: center;
+    padding: 30px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    margin-bottom: 30px;
+}
+
+.puntuacion {
+    font-size: 48px;
+    font-weight: bold;
+    color: #3498db;
+    margin-bottom: 20px;
+}
+
+.mensaje-resultado {
+    font-size: 18px;
+    color: #2c3e50;
+    margin-bottom: 20px;
+}
+
+/* Estilos para mensajes de error */
+.error {
+    color: #e74c3c;
+    font-size: 14px;
+    margin-top: 5px;
+}
+
+.alerta {
+    padding: 15px;
+    border-radius: 5px;
+    margin-bottom: 20px;
+}
+
+.alerta-info {
+    background-color: #d1ecf1;
+    border-color: #bee5eb;
+    color: #0c5460;
+}
+
+.alerta-warning {
+    background-color: #fff3cd;
+    border-color: #ffeaa7;
+    color: #856404;
+}
+
+/* Responsive */
+@media (max-width: 600px) {
+    body {
+        padding: 10px;
+    }
+    
+    .container {
+        padding: 20px;
+    }
+    
+    .botones {
+        flex-direction: column;
+    }
+    
+    .btn {
+        width: 100%;
+        margin: 5px 0;
+    }
+    
+    .puntuacion {
+        font-size: 36px;
+    }
+}
