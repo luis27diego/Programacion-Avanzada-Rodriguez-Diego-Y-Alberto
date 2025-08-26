@@ -58,13 +58,29 @@ class PeliManager:
         peliculas_disponibles = [p for p in self.peliculas_unicas if p != excluir_pelicula]
         return random.sample(peliculas_disponibles, cantidad)
 
+    def obtener_opciones(self):
+        
+        frase_correcta_tupla = self.obtener_frase_aleatoria()
+        frase_correcta = frase_correcta_tupla[0] # frase (str)
+        peli_correcta = frase_correcta_tupla[1]
 
-manager = PeliManager()
-# Para mostrar todas las películas
-peliculas = manager.frases_peliculas
-print(len(peliculas))
-print(manager.contador)
-print("********************************************************************************************")
-peliculas_unicas = manager.peliculas_unicas
-print(len(peliculas_unicas))
-print(manager.obtener_peliculas_indexeada())
+        opciones = self.obtener_peliculas_aleatorias(2, peli_correcta) 
+        opciones.append(peli_correcta)
+        random.shuffle(opciones)
+
+        return  {
+            'frase': frase_correcta,
+            'pelicula_correcta': peli_correcta,
+            'opciones': opciones
+        }
+    def verificar_respuesta(self,question, pelicula_usuario):
+        """Verifica si la respuesta del usuario es correcta"""
+        return pelicula_usuario.lower() == question['pelicula_correcta'].lower()
+
+
+Mana = PeliManager()
+primer = Mana.obtener_opciones()
+print(primer)
+print(type(primer))
+respuesta = Mana.verificar_respuesta(primer, "El Padrino")
+print(respuesta)

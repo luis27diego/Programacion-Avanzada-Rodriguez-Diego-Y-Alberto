@@ -2,9 +2,9 @@
 from flask import render_template, request,redirect, url_for, flash
 from modules.config import app
 from modules.validaciones import validar_parametros
-from modules.PeliManager import PeliManager
+from modules.TriviaGame import TriviaGame
 
-pelicula_manager = PeliManager()
+trivia_game = TriviaGame()
 
 # Página de inicio
 @app.route('/', methods=["GET", "POST"])
@@ -30,7 +30,7 @@ def peliculas():
     Página que muestra todas las películas ordenadas
     """
 
-    peliculas_index = pelicula_manager.obtener_peliculas_indexeada()
+    peliculas_index = trivia_game.obtener_peliculas_indexeada()
     return render_template('peliculas.html', peliculas=peliculas_index)
 
 @app.route("/resultados", methods=["GET"])
