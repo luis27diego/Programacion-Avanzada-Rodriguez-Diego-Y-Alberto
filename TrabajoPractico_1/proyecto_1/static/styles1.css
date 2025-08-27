@@ -129,3 +129,39 @@ input[type="text"] {
     font-weight: bold;
     color: #58a6ff;
 }
+
+/* static/style.css */
+
+/* ... (código anterior) ... */
+
+.history-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+.history-table th, .history-table td {
+    border: 1px solid #30363d;
+    padding: 12px;
+    text-align: center;
+}
+
+.history-table th {
+    background-color: #21262d;
+    font-weight: bold;
+}
+
+.chart-container {
+    width: 100%;
+    max-width: 600px;
+    margin: 40px auto;
+    padding: 20px;
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+}
+
+.chart-container h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}

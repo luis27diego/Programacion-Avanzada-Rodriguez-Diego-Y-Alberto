@@ -5,6 +5,8 @@ from modules.validaciones import validar_parametros
 from modules.TriviaGame import TriviaGame
 from modules.GameManager import GameManager
 from modules.GameHistoria import HistorialJuego
+from modules.GraficosProcesadorData import GraficosProcesadorData # Importa la nueva clase
+
 #from modules.RegistroSesiones import RegistroSesiones
 
 #Registros = RegistroSesiones()
@@ -16,6 +18,8 @@ trivia_game = TriviaGame()
 game_manager = GameManager()
 # Instanciamos la clase HistorialJuego para el registro de sesiones
 game_history = HistorialJuego()
+# Instanciamos la clase GraficosProcesadorData para el procesamiento de gráficos
+graficos_procesador = GraficosProcesadorData(game_history)
 
 # Página de inicio
 @app.route('/', methods=["GET", "POST"])
@@ -96,8 +100,24 @@ def peliculas():
 
 @app.route("/resultados", methods=["GET"])
 def resultados():
-    #Registros.agregar_sesion(session)
-    return render_template("resultados.html", usuario=session['usuario'], aciertos=session['aciertos'], total=session['num_frases'])
+    """Ruta que muestra los resultados históricos y los gráficos."""
+    # Aquí obtendrías los resultados históricos para la tabla
+    historicos = game_history.obtener_todos_juegos()
+
+    # Preparamos los datos para todos los gráficos
+    grafico_barras = graficos_procesador.get_performance_data()
+    grafico_dispersion = graficos_procesador.get_efficiency_data()
+    grafico_lineas = graficos_procesador.get_time_series_data()
+    grafico_circular = graficos_procesador.get_pie_chart_data()
+
+    return render_template(
+        'resultados_historicos.html',
+        historicos=historicos,
+        grafico_barras=grafico_barras,
+        grafico_dispersion=grafico_dispersion,
+        grafico_lineas=grafico_lineas,
+        grafico_circular=grafico_circular
+    )
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

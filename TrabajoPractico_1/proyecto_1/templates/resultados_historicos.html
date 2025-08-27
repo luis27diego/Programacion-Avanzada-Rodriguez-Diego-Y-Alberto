@@ -1,0 +1,162 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultados Históricos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="container">
+        <h1>Resultados Históricos</h1>
+
+        <h2>Historial de Partidas</h2>
+        <table class="history-table">
+            <thead>
+                <tr>
+                    <th>Usuario</th>
+                    <th>Aciertos</th>
+                    <th>Total</th>
+                    <th>Porcentaje</th>
+                    <th>Duración (s)</th>
+                    <th>Fecha</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for partida in historicos %}
+                <tr>
+                    <td>{{ partida.usuario }}</td>
+                    <td>{{ partida.aciertos }}</td>
+                    <td>{{ partida.num_frases }}</td>
+                    <td>{{ "%.2f"|format(partida.porcentaje) }}%</td>
+                    <td>{{ "%.2f"|format(partida.duracion)}}</td>
+                    <td>{{ partida.tiempo_inicio }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <div class="chart-container">
+            <h2>Rendimiento por Usuario</h2>
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2>Análisis de Eficiencia</h2>
+            <canvas id="scatterChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2>Evolución de Aciertos y Desaciertos</h2>
+            <canvas id="lineChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2>Proporción Global de Aciertos</h2>
+            <canvas id="pieChart"></canvas>
+        </div>
+
+        <a href="{{ url_for('home') }}" class="button">Volver a la página inicial</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Datos del Gráfico de Barras
+            const barData = JSON.parse('{{ grafico_barras | tojson }}');
+            new Chart(document.getElementById('barChart'), {
+                type: 'bar',
+                data: {
+                    labels: barData.labels,
+                    datasets: [{
+                        label: 'Porcentaje de Aciertos (%)',
+                        data: barData.data,
+                        backgroundColor: 'rgba(88, 166, 255, 0.6)',
+                        borderColor: 'rgba(88, 166, 255, 1)',
+                        borderWidth: 1
+                    }]
+                },
+                options: { scales: { y: { beginAtZero: true, max: 100 } } }
+            });
+
+            // Datos del Gráfico de Dispersión
+            const scatterData = JSON.parse('{{ grafico_dispersion | tojson }}');
+            const scatterPoints = scatterData.x.map((x, i) => ({
+                x: x, y: scatterData.y[i], label: scatterData.labels[i]
+            }));
+            new Chart(document.getElementById('scatterChart'), {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'Eficiencia de Usuarios',
+                        data: scatterPoints,
+                        backgroundColor: 'rgba(139, 148, 158, 0.8)',
+                        pointRadius: 6, pointHoverRadius: 8
+                    }]
+                },
+                options: {
+                    scales: {
+                        x: { type: 'linear', position: 'bottom', title: { display: true, text: 'Duración (segundos)' } },
+                        y: { beginAtZero: true, max: 100, title: { display: true, text: 'Porcentaje de Aciertos (%)' } }
+                    },
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const user = context.raw.label;
+                                    const x = context.raw.x;
+                                    const y = context.raw.y;
+                                    return `${user}: ${y}% en ${x}s`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+            
+            // Datos del Gráfico de Líneas
+            const lineData = JSON.parse('{{ grafico_lineas | tojson }}');
+            new Chart(document.getElementById('lineChart'), {
+                type: 'line',
+                data: lineData,
+                options: {
+                    scales: {
+                        y: { beginAtZero: true, title: { display: true, text: 'Cantidad de Respuestas' } },
+                        x: { title: { display: true, text: 'Fecha y Hora' } }
+                    }
+                }
+            });
+
+            // Datos del Gráfico Circular
+            const pieData = JSON.parse('{{ grafico_circular | tojson }}');
+            new Chart(document.getElementById('pieChart'), {
+                type: 'pie',
+                data: {
+                    labels: pieData.labels,
+                    datasets: [{
+                        data: pieData.data,
+                        backgroundColor: pieData.backgroundColor
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { position: 'top' },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    const label = context.label || '';
+                                    const value = context.raw;
+                                    const total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
+                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : 0;
+                                    return `${label}: ${value} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
