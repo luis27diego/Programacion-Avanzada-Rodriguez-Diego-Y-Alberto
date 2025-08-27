@@ -4,9 +4,9 @@ from modules.config import app
 from modules.validaciones import validar_parametros
 from modules.TriviaGame import TriviaGame
 from modules.GameManager import GameManager
-from modules.RegistroSesiones import RegistroSesiones
+#from modules.RegistroSesiones import RegistroSesiones
 
-Registros = RegistroSesiones()
+#Registros = RegistroSesiones()
 app.secret_key = 'una_clave_secreta_muy_larga_y_unica'
 trivia_game = TriviaGame()
 # Instanciamos la clase GameManager para la lógica del juego
@@ -16,19 +16,6 @@ game_manager = GameManager()
 @app.route('/', methods=["GET", "POST"])
 def home():
     return render_template("inicio.html")
-
-""" @app.route("/jugar", methods=["POST"])
-def jugar():
-    ok, data = validar_parametros(
-        request.form.get("nombre"),
-        request.form.get("num_frases")
-    )
-    if not ok:
-        flash(data)
-        return redirect(url_for("home"))
-
-    # Por ahora solo mostramos un placeholder; más adelante implementamos la trivia real
-    return f"TODO: iniciar trivia para {data['nombre']} con {data['n']} frases.(en construcción)" """
 
 @app.route("/jugar", methods=["POST"])
 def jugar():
@@ -52,21 +39,42 @@ def jugar_pregunta():
     if 'usuario' not in session:
         return redirect(url_for("home"))
 
-    # Si el juego ha terminado, redirige a la página de resultados
-    if game_manager.juego_terminado():
-        return redirect(url_for("mostrar_resultado_final"))
-    
     if request.method == "POST":
-        # Maneja la respuesta del usuario
         respuesta_usuario = request.form.get('opcion')
         mensaje, categoria = game_manager.verificar_respuesta_y_actualizar_sesion(respuesta_usuario)
         flash(mensaje, categoria)
-        return redirect(url_for("jugar_pregunta"))
 
+        # Si el juego ha terminado después de esta respuesta, redirige a la página de resultados finales.
+        if game_manager.juego_terminado():
+            return redirect(url_for("mostrar_resultado_final", mensaje=mensaje, categoria=categoria))
+        else:
+            # Si el juego no ha terminado, redirige para la próxima pregunta.
+            return redirect(url_for("jugar_pregunta"))
+    
     else:
-        # Obtiene una nueva pregunta y la muestra
+        # Lógica para mostrar la siguiente pregunta.
         pregunta = game_manager.obtener_pregunta_nueva()
         return render_template("jugar_pregunta.html", pregunta=pregunta)
+
+@app.route("/mostrar_resultado_final")
+def mostrar_resultado_final():
+    if 'usuario' not in session:
+        return redirect(url_for("home"))
+    
+    # Obtener los parámetros de la URL
+    mensaje = request.args.get("mensaje")
+    categoria = request.args.get("categoria")
+
+    usuario, aciertos, total, porcentaje = game_manager.obtener_resultados_finales()
+    return render_template(
+        "resultado_final.html",
+        usuario=usuario,
+        aciertos=aciertos,
+        total=total,
+        porcentaje=porcentaje,
+        ultimo_mensaje=mensaje,
+        ultima_categoria=categoria
+    )
     
 @app.route("/peliculas", methods=["GET"])
 def peliculas():
@@ -79,7 +87,7 @@ def peliculas():
 
 @app.route("/resultados", methods=["GET"])
 def resultados():
-    Registros.agregar_sesion(session)
+    #Registros.agregar_sesion(session)
     return render_template("resultados.html", usuario=session['usuario'], aciertos=session['aciertos'], total=session['num_frases'])
 
 if __name__ == "__main__":

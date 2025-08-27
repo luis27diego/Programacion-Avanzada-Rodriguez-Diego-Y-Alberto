@@ -65,8 +65,9 @@ class GameManager:
         usuario = session.get('usuario')
         aciertos = session.get('aciertos')
         total = session.get('num_frases')
-        
+        porcentaje = (aciertos / total * 100) if total > 0 else 0
+
         session.clear()
-        return usuario, aciertos, total
+        return usuario, aciertos, total, porcentaje
 
 
