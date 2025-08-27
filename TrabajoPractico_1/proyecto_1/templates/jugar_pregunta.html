@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jugar Trivia de Películas</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles1.css') }}">
+</head>
+<body>
+    <div class="container">
+        <h1>Trivia de Películas</h1>
+        
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="flash-{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
+
+        <div class="game-container">
+            <div class="frase-box">
+                <p>"{{ pregunta.frase }}"</p>
+            </div>
+
+            <form action="{{ url_for('jugar_pregunta') }}" method="post">
+                {% for opcion in pregunta.opciones %}
+                    <button type="submit" name="opcion" value="{{ opcion }}" class="opcion-button">
+                        {{ opcion }}
+                    </button>
+                {% endfor %}
+            </form>
+        </div>
+    </div>
+</body>
+</html>

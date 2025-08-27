@@ -1,0 +1,131 @@
+/* static/style.css */
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #0d1117; /* Fondo oscuro similar al de GitHub */
+    color: #c9d1d9; /* Texto claro */
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.container {
+    background-color: #161b22;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 40px;
+    width: 90%;
+    max-width: 600px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+}
+
+h1 {
+    color: #58a6ff;
+    margin-bottom: 20px;
+}
+
+h2 {
+    color: #8b949e;
+}
+
+.form-group {
+    margin-bottom: 20px;
+    text-align: left;
+}
+
+label {
+    display: block;
+    margin-bottom: 5px;
+    font-weight: bold;
+}
+
+input[type="text"] {
+    width: 100%;
+    padding: 10px;
+    background-color: #0d1117;
+    border: 1px solid #30363d;
+    color: #c9d1d9;
+    border-radius: 6px;
+    box-sizing: border-box;
+}
+
+.button, .opcion-button {
+    display: block;
+    width: 100%;
+    padding: 12px;
+    margin-top: 15px;
+    background-color: #21262d;
+    color: #58a6ff;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    text-decoration: none;
+    font-size: 16px;
+    cursor: pointer;
+    transition: background-color 0.3s, color 0.3s, border-color 0.3s;
+}
+
+.button:hover, .opcion-button:hover {
+    background-color: #30363d;
+    color: #79c0ff;
+}
+
+.game-container {
+    margin-top: 20px;
+}
+
+.frase-box {
+    background-color: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px;
+    margin-bottom: 20px;
+    font-size: 1.2em;
+    font-style: italic;
+}
+
+.opcion-button {
+    font-weight: bold;
+}
+
+.flashes {
+    list-style: none;
+    padding: 0;
+    margin-bottom: 20px;
+}
+
+
+.flashes li {
+    padding: 10px;
+    border-radius: 6px;
+    margin-bottom: 10px;
+    font-weight: bold;
+}
+
+.flash-success {
+    background-color: #22c55e;
+    color: #14532d;
+}
+
+.flash-error {
+    background-color: #ef4444;
+    color: #fff;
+}
+
+/* Estilo para los resultados finales */
+.results-box {
+    background-color: #21262d;
+    border: 1px solid #30363d;
+    border-radius: 6px;
+    padding: 20px;
+    margin-top: 20px;
+}
+
+.results-box p {
+    font-size: 2em;
+    font-weight: bold;
+    color: #58a6ff;
+}
