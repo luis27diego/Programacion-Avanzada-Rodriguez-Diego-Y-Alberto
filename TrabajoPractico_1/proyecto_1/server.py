@@ -4,13 +4,18 @@ from modules.config import app
 from modules.validaciones import validar_parametros
 from modules.TriviaGame import TriviaGame
 from modules.GameManager import GameManager
+from modules.GameHistoria import HistorialJuego
 #from modules.RegistroSesiones import RegistroSesiones
 
 #Registros = RegistroSesiones()
 app.secret_key = 'una_clave_secreta_muy_larga_y_unica'
+  
+#Instancia la clase TriviaGame 
 trivia_game = TriviaGame()
 # Instanciamos la clase GameManager para la lógica del juego
 game_manager = GameManager()
+# Instanciamos la clase HistorialJuego para el registro de sesiones
+game_history = HistorialJuego()
 
 # Página de inicio
 @app.route('/', methods=["GET", "POST"])
@@ -46,6 +51,8 @@ def jugar_pregunta():
 
         # Si el juego ha terminado después de esta respuesta, redirige a la página de resultados finales.
         if game_manager.juego_terminado():
+            sessionterminada = game_manager.obtener_resultados_finales()
+            game_history.agregar_juego(sessionterminada)
             return redirect(url_for("mostrar_resultado_final", mensaje=mensaje, categoria=categoria))
         else:
             # Si el juego no ha terminado, redirige para la próxima pregunta.
@@ -65,7 +72,7 @@ def mostrar_resultado_final():
     mensaje = request.args.get("mensaje")
     categoria = request.args.get("categoria")
 
-    usuario, aciertos, total, porcentaje = game_manager.obtener_resultados_finales()
+    usuario, aciertos, total, porcentaje, tiempo_inicio, duracion = game_manager.obtener_resultados_finales(1)
     return render_template(
         "resultado_final.html",
         usuario=usuario,
@@ -73,7 +80,9 @@ def mostrar_resultado_final():
         total=total,
         porcentaje=porcentaje,
         ultimo_mensaje=mensaje,
-        ultima_categoria=categoria
+        ultima_categoria=categoria,
+        tiempo_inicio=tiempo_inicio,
+        duracion=duracion
     )
     
 @app.route("/peliculas", methods=["GET"])

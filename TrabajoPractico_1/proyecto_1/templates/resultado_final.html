@@ -30,7 +30,8 @@
             {% else %}
                 <p class="message-fail">No te preocupes, ¡la próxima vez lo harás mejor! ✨</p>
             {% endif %}
-        </div>
+            <p class="time-info">Tiempo total de juego: {{ "%.2f"|format(duracion) }} segundos</p>
+        </div> 
         
         <a href="{{ url_for('home') }}" class="button">Volver a la página inicial</a>
     </div>
