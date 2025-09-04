@@ -9,28 +9,32 @@
 <body>
     <div class="container">
         <h1>¡Juego Terminado!</h1>
-        {% if ultimo_mensaje %}
-            <ul class="flashes">
-                <li class="flash-{{ ultima_categoria }}">{{ ultimo_mensaje }}</li>
-            </ul>
-        {% endif %}
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                <ul class="flashes">
+                {% for category, message in messages %}
+                    <li class="flash-{{ category }}">{{ message }}</li>
+                {% endfor %}
+                </ul>
+            {% endif %}
+        {% endwith %}
 
         <div class="results-box">
-            <h2>Hola, {{ usuario }}</h2>
+            <h2>Hola, {{ resultados.usuario }}</h2>
             <p>Tu puntuación final es:</p>
-            <p class="score">{{ aciertos }} / {{ total }}</p>
+            <p class="score">{{ resultados.aciertos }} / {{ resultados.num_frases }}</p>
 
 
-            <p class="percentage-score">({{ "%.2f"|format(porcentaje) }}%)</p>
+            <p class="percentage-score">({{ "%.2f"|format(resultados.porcentaje) }}%)</p>
 
-            {% if porcentaje >= 70 %}
+            {% if resultados.porcentaje >= 70 %}
                 <p class="message-success">¡Excelente trabajo! Eres un verdadero cinéfilo. 🎬</p>
-            {% elif porcentaje >= 40 %}
+            {% elif resultados.porcentaje >= 40 %}
                 <p class="message-neutral">¡Bien hecho! Con un poco más de práctica, serás imparable. 👍</p>
             {% else %}
                 <p class="message-fail">No te preocupes, ¡la próxima vez lo harás mejor! ✨</p>
             {% endif %}
-            <p class="time-info">Tiempo total de juego: {{ "%.2f"|format(duracion) }} segundos</p>
+            <p class="time-info">Tiempo total de juego: {{ "%.2f"|format(resultados.duracion) }} segundos</p>
         </div> 
         
         <a href="{{ url_for('home') }}" class="button">Volver a la página inicial</a>

@@ -65,7 +65,10 @@ class GraficosProcesadorData:
         Prepara los datos para el Gráfico de Líneas (aciertos y desaciertos en el tiempo).
         """
         # Ordenamos los datos por fecha para el gráfico de líneas
-        sorted_data = sorted(self.history_data, key=lambda x: datetime.datetime.strptime(x['tiempo_inicio'], '%H:%M:%S'))
+        sorted_data = sorted(
+            [x for x in self.history_data if x.get('tiempo_inicio')],
+            key=lambda x: datetime.datetime.strptime(x['tiempo_inicio'], '%Y-%m-%d %H:%M:%S')
+        )
         
         dates = []
         aciertos_data = []
