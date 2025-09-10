@@ -1,7 +1,7 @@
 # server.py - Solución con sesiones de Flask
 from flask import render_template, request, redirect, url_for, flash, session
 from modules.config import app
-from modules.validaciones import validar_parametros
+from modules.validaciones import validar_nombre_y_numero_frases
 from modules.TriviaGame import TriviaGame
 from modules.GameManager import GameManager
 from modules.GameHistoria import HistorialJuego
@@ -75,14 +75,20 @@ def home():
 
 @app.route("/jugar", methods=["POST"])
 def jugar():
+    
     """Ruta que inicia el juego de la trivia."""
-    ok, data = validar_parametros(
-        request.form.get("nombre"),
-        request.form.get("num_frases")
-    )
+
+    #validacion de tipo de dato
+    try:
+        n = int(request.form.get("num_frases"))
+    except ValueError:
+        raise ValueError("Ingresá un número válido de frases (≥ 3).")
+
+    # Validacion de contenido
+    ok, data = validar_nombre_y_numero_frases(request.form.get("nombre"), n)
     if not ok:
-        flash(data)
-        return redirect(url_for("home"))
+        # Puedes lanzar una excepción personalizada
+        raise ValueError(data)
     
     # Obtener GameManager específico para este usuario
     game_manager = obtener_manager_usuario()

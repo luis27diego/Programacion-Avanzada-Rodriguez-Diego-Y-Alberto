@@ -2,10 +2,11 @@ from fpdf import FPDF
 import tempfile
 import os
 from flask import send_file
+import kaleido
 from modules.GeneraciondDeGraficos import fig_circular, fig_lineas
 import  time
-from modules.GraficosProcesadorData import GraficosProcesadorData
-from modules.GameHistoria import HistorialJuego
+
+#kaleido.get_chrome_sync()
 
 
 
