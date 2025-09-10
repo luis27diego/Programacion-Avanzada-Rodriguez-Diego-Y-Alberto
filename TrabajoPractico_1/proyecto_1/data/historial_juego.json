@@ -1,0 +1,282 @@
+[
+  {
+    "usuario": "Alberto",
+    "aciertos": 3,
+    "tiempo_inicio": "2025-08-31 15:08:55",
+    "num_frases": 10,
+    "duracion": 150,
+    "porcentaje": 30.0
+  },
+  {
+    "usuario": "andres",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-08-30 15:09:50",
+    "num_frases": 3,
+    "duracion": 3.8711249828338623,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "Diego",
+    "aciertos": 2,
+    "tiempo_inicio": "2025-08-31 15:21:44",
+    "num_frases": 3,
+    "duracion": 298.24962282180786,
+    "porcentaje": 66.66666666666666
+  },
+  {
+    "usuario": "Juancito",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-08-31 15:26:55",
+    "num_frases": 4,
+    "duracion": 4.457279443740845,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "Perez",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-08-31 15:27:37",
+    "num_frases": 10,
+    "duracion": 52.636574029922485,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "PEDRO ALFONZO",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-08-31 17:26:11",
+    "num_frases": 4,
+    "duracion": 100,
+    "porcentaje": 25.0
+  },
+  {
+    "usuario": "Jose",
+    "aciertos": 2,
+    "tiempo_inicio": "2025-08-31 18:37:21",
+    "num_frases": 7,
+    "duracion": 7.551292657852173,
+    "porcentaje": 28.57142857142857
+  },
+  {
+    "usuario": "andresito",
+    "aciertos": 2,
+    "tiempo_inicio": "2025-08-31 08:33:42",
+    "num_frases": 5,
+    "duracion": 7.318026304244995,
+    "porcentaje": 40.0
+  },
+  {
+    "usuario": "maria",
+    "aciertos": 2,
+    "tiempo_inicio": "2025-08-31 09:52:48",
+    "num_frases": 4,
+    "duracion": 5.647397041320801,
+    "porcentaje": 50.0
+  },
+  {
+    "usuario": "luis",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-01 15:22:24",
+    "num_frases": 3,
+    "duracion": 3.186001777648926,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "Petro",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-09-01 15:29:52",
+    "num_frases": 4,
+    "duracion": 6.216492414474487,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "ascaeca",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-01 15:51:44",
+    "num_frases": 3,
+    "duracion": 3.24342679977417,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "efaeae",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-01 15:56:06",
+    "num_frases": 3,
+    "duracion": 5.176910400390625,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "awawd",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-09-01 16:02:27",
+    "num_frases": 3,
+    "duracion": 3.5351009368896484,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "scawawc",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-01 16:04:06",
+    "num_frases": 3,
+    "duracion": 16.773913860321045,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "acacas",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-09-01 16:08:39",
+    "num_frases": 3,
+    "duracion": 3.590426206588745,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "awdawd",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-01 16:09:37",
+    "num_frases": 3,
+    "duracion": 3.60962176322937,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "sadad",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-01 16:13:44",
+    "num_frases": 3,
+    "duracion": 11.038050889968872,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "ALBERTA",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-01 16:23:28",
+    "num_frases": 3,
+    "duracion": 150.108900308609,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "FRANCISCO",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-09-01 16:38:03",
+    "num_frases": 3,
+    "duracion": 8.359690189361572,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "luis",
+    "aciertos": 2,
+    "tiempo_inicio": "2025-09-01 16:38:21",
+    "num_frases": 3,
+    "duracion": 3.6724112033843994,
+    "porcentaje": 66.66666666666666
+  },
+  {
+    "usuario": "AEAEEF",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-02 16:38:33",
+    "num_frases": 3,
+    "duracion": 3.4367332458496094,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "AWDAWD",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-02 16:40:49",
+    "num_frases": 3,
+    "duracion": 3.4240880012512207,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "ACAW",
+    "aciertos": 2,
+    "tiempo_inicio": "2025-09-02 16:41:45",
+    "num_frases": 3,
+    "duracion": 2.9480888843536377,
+    "porcentaje": 66.66666666666666
+  },
+  {
+    "usuario": "dscaca",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-02 16:46:44",
+    "num_frases": 3,
+    "duracion": 3.7771310806274414,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "aacawc",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-02 16:47:16",
+    "num_frases": 3,
+    "duracion": 4.2912819385528564,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "aecaec",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-02 16:48:04",
+    "num_frases": 3,
+    "duracion": 3.7527623176574707,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "SVSSDV",
+    "aciertos": 2,
+    "tiempo_inicio": "2025-09-02 16:53:06",
+    "num_frases": 3,
+    "duracion": 2.927349328994751,
+    "porcentaje": 66.66666666666666
+  },
+  {
+    "usuario": "ACASC",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-09-02 16:53:25",
+    "num_frases": 3,
+    "duracion": 3.3396406173706055,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "ascac",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-03 17:05:22",
+    "num_frases": 3,
+    "duracion": 3.1784300804138184,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "Albertini",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-09-03 17:07:49",
+    "num_frases": 5,
+    "duracion": 4.2997822761535645,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "aefae",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-09-03 17:25:16",
+    "num_frases": 3,
+    "duracion": 3.445639133453369,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "ascasc",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-09-03 17:25:25",
+    "num_frases": 3,
+    "duracion": 3.873135805130005,
+    "porcentaje": 0.0
+  },
+  {
+    "usuario": "luisito",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-04 17:25:52",
+    "num_frases": 5,
+    "duracion": 19.14787483215332,
+    "porcentaje": 20.0
+  },
+  {
+    "usuario": "juan antonia",
+    "aciertos": 0,
+    "tiempo_inicio": "2025-09-04 18:08:48",
+    "num_frases": 3,
+    "duracion": 4.142160892486572,
+    "porcentaje": 0.0
+  }
+]
