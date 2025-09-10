@@ -6,6 +6,7 @@ import kaleido
 from modules.GeneraciondDeGraficos import fig_circular, fig_lineas
 import  time
 
+#funcion para evitar error de kaleido en windows (descarga un chorme para poder convertir a imagen)
 #kaleido.get_chrome_sync()
 
 
