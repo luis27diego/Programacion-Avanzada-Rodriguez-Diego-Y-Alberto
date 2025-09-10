@@ -164,8 +164,12 @@ def resultados():
     graficos_procesador = GraficosProcesadorData(game_history)
 
     # Preparar los datos para todos los gráficos
-    grafico_barras = graficos_procesador.get_performance_data()
-    grafico_dispersion = graficos_procesador.get_efficiency_data()
+    # Graficos Java
+    grafico_barras = graficos_procesador.obtener_datos_rendimiento()
+    grafico_dispersion = graficos_procesador.obtener_datos_eficiencia()
+    # Gráfico python
+    datos_lineas = graficos_procesador.obtener_datos_lineas()
+    datos_circular = graficos_procesador.obtener_datos_circular()
 
     
     return render_template(
@@ -173,15 +177,19 @@ def resultados():
         historicos=historicos,
         grafico_barras=grafico_barras,
         grafico_dispersion=grafico_dispersion,
-        grafico_lineas=grafico_lineas(graficos_procesador),
-        grafico_circular=grafico_circular(graficos_procesador)
+        grafico_lineas=grafico_lineas(datos_lineas),
+        grafico_circular=grafico_circular(datos_circular)
     )
 
 # Agregar la ruta para descargar el PDF
 @app.route('/descargar_pdf')
 def descargar_pdf():
+    
     graficos_procesador = GraficosProcesadorData(game_history)
-    return generar_pdf(graficos_procesador)
+    datos_lineas = graficos_procesador.obtener_datos_lineas()
+    datos_circular = graficos_procesador.obtener_datos_circular()
+
+    return generar_pdf(datos_lineas, datos_circular)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)

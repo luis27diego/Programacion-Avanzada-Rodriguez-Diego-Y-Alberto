@@ -3,12 +3,11 @@ import plotly.io as pio
 
 
 # === Generación de gráficos como objetos Figure ===
-def fig_lineas(graficos_procesador):
-    grafico_lineas = graficos_procesador.get_time_series_data()
+def fig_lineas(datos_lineas):
     fig = go.Figure()
-    for dataset in grafico_lineas['datasets']:
+    for dataset in datos_lineas['datasets']:
         fig.add_trace(go.Scatter(
-            x=grafico_lineas['labels'],
+            x=datos_lineas['labels'],
             y=dataset['data'],
             mode='lines+markers',
             name=dataset['label'],
@@ -24,20 +23,19 @@ def fig_lineas(graficos_procesador):
     return fig
 
 
-def fig_circular(graficos_procesador):
-    grafico_circular = graficos_procesador.get_pie_chart_data()
+def fig_circular(datos_circular):
     fig = go.Figure([go.Pie(
-        labels=grafico_circular['labels'],
-        values=grafico_circular['data'],
-        marker=dict(colors=grafico_circular['backgroundColor'])
+        labels=datos_circular['labels'],
+        values=datos_circular['data'],
+        marker=dict(colors=datos_circular['backgroundColor'])
     )])
     fig.update_layout(title="Proporción global de aciertos")
     return fig
 
 
 # === Para HTML (mantienes lo que ya tenías) ===
-def grafico_lineas(graficos_procesador):
-    fig = fig_lineas(graficos_procesador)  # tu función original
+def grafico_lineas(datos_lineas):
+    fig = fig_lineas(datos_lineas)  # tu función original
     # Aplicar colores solo para HTML
     fig.update_layout(
         title_font=dict(color="white"),
@@ -58,8 +56,8 @@ def grafico_lineas(graficos_procesador):
     return pio.to_html(fig, full_html=False)
 
 
-def grafico_circular(graficos_procesador):
-    fig = fig_circular(graficos_procesador)  # tu función original
+def grafico_circular(datos_circular):
+    fig = fig_circular(datos_circular)  # tu función original
     fig.update_layout(
         title_font=dict(color="white"),
         legend=dict(font=dict(color="white")),

@@ -11,16 +11,16 @@ import  time
 
 
 
-def generar_pdf(graficos_procesador):
+def generar_pdf(datos_lineas,datos_circular=None):
     temp_dir = tempfile.gettempdir()
 
     img_lineas = os.path.join(temp_dir, 'grafico_lineas.png')
     img_circular = os.path.join(temp_dir, 'grafico_circular.png')
 
     # Usamos las funciones que devuelven figuras
-    fig_lineas(graficos_procesador).write_image(img_lineas)
+    fig_lineas(datos_lineas).write_image(img_lineas)
     time.sleep(0.1)  # darle tiempo a Windows a soltar el archivo
-    fig_circular(graficos_procesador).write_image(img_circular)
+    fig_circular(datos_circular).write_image(img_circular)
     time.sleep(0.1)
 
     pdf = FPDF()

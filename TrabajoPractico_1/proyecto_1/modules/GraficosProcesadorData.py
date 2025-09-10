@@ -13,7 +13,7 @@ class GraficosProcesadorData:
         """Método auxiliar para calcular el porcentaje de aciertos."""
         return (aciertos / total) * 100 if total > 0 else 0
 
-    def get_performance_data(self):
+    def obtener_datos_rendimiento(self):
         """
         Prepara los datos para el Gráfico 1 (Comparación de Rendimiento).
         Calcula el porcentaje de aciertos promedio para cada usuario.
@@ -41,7 +41,7 @@ class GraficosProcesadorData:
             
         return {'labels': labels, 'data': data}
 
-    def get_efficiency_data(self):
+    def obtener_datos_eficiencia(self):
         """
         Prepara los datos para el Gráfico 2 (Análisis de Eficiencia).
         Crea una lista de puntos con duración y porcentaje para cada partida.
@@ -60,7 +60,7 @@ class GraficosProcesadorData:
 
         return {'x': x_data, 'y': y_data, 'labels': labels}
     
-    def get_time_series_data(self):
+    def obtener_datos_lineas(self):
         """
         Prepara los datos para el Gráfico de Líneas (aciertos y desaciertos en el tiempo).
         """
@@ -98,7 +98,7 @@ class GraficosProcesadorData:
             ]
         }
 
-    def get_pie_chart_data(self):
+    def obtener_datos_circular(self):
         """
         Prepara los datos para el Gráfico Circular (proporción total de aciertos vs. desaciertos).
         """
