@@ -37,6 +37,7 @@
             </tbody>
         </table>
         
+
         <div class="chart-container">
             <h2>Rendimiento por Usuario</h2>
             <canvas id="barChart"></canvas>
@@ -49,14 +50,17 @@
 
         <div class="chart-container">
             <h2>Evolución de Aciertos y Desaciertos</h2>
-            <canvas id="lineChart"></canvas>
+            {{ grafico_lineas|safe }}
         </div>
 
         <div class="chart-container">
             <h2>Proporción Global de Aciertos</h2>
-            <canvas id="pieChart"></canvas>
+            {{ grafico_circular|safe }}
         </div>
 
+        <a href="{{ url_for('descargar_pdf') }}" class="button" download>
+            📄 Descargar PDF de Resultados
+        </a>
         <a href="{{ url_for('home') }}" class="button">Volver a la página inicial</a>
     </div>
 
@@ -107,49 +111,6 @@
                                     const x = context.raw.x;
                                     const y = context.raw.y;
                                     return `${user}: ${y}% en ${x}s`;
-                                }
-                            }
-                        }
-                    }
-                }
-            });
-            
-            // Datos del Gráfico de Líneas
-            const lineData = JSON.parse('{{ grafico_lineas | tojson }}');
-            new Chart(document.getElementById('lineChart'), {
-                type: 'line',
-                data: lineData,
-                options: {
-                    scales: {
-                        y: { beginAtZero: true, title: { display: true, text: 'Cantidad de Respuestas' } },
-                        x: { title: { display: true, text: 'Fecha y Hora' } }
-                    }
-                }
-            });
-
-            // Datos del Gráfico Circular
-            const pieData = JSON.parse('{{ grafico_circular | tojson }}');
-            new Chart(document.getElementById('pieChart'), {
-                type: 'pie',
-                data: {
-                    labels: pieData.labels,
-                    datasets: [{
-                        data: pieData.data,
-                        backgroundColor: pieData.backgroundColor
-                    }]
-                },
-                options: {
-                    responsive: true,
-                    plugins: {
-                        legend: { position: 'top' },
-                        tooltip: {
-                            callbacks: {
-                                label: function(context) {
-                                    const label = context.label || '';
-                                    const value = context.raw;
-                                    const total = context.dataset.data.reduce((acc, curr) => acc + curr, 0);
-                                    const percentage = total > 0 ? ((value / total) * 100).toFixed(2) : 0;
-                                    return `${label}: ${value} (${percentage}%)`;
                                 }
                             }
                         }

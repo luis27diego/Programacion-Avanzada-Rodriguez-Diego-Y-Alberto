@@ -6,13 +6,14 @@ from modules.TriviaGame import TriviaGame
 from modules.GameManager import GameManager
 from modules.GameHistoria import HistorialJuego
 from modules.GraficosProcesadorData import GraficosProcesadorData
-
+from modules.GeneraciondDeGraficos import grafico_lineas, grafico_circular
+from modules.pdfgenerador import generar_pdf
+  
 app.secret_key = '1234'
 
 # Instancias globales que NO dependen del estado del juego
 trivia_game = TriviaGame()
 game_history = HistorialJuego()
-graficos_procesador = GraficosProcesadorData(game_history)
 
 def obtener_manager_usuario():
     """
@@ -154,21 +155,27 @@ def peliculas():
 def resultados():
     """Ruta que muestra los resultados históricos y los gráficos."""
     historicos = game_history.obtener_todos_juegos()
+    graficos_procesador = GraficosProcesadorData(game_history)
 
     # Preparar los datos para todos los gráficos
     grafico_barras = graficos_procesador.get_performance_data()
     grafico_dispersion = graficos_procesador.get_efficiency_data()
-    grafico_lineas = graficos_procesador.get_time_series_data()
-    grafico_circular = graficos_procesador.get_pie_chart_data()
 
+    
     return render_template(
         'resultados_historicos.html',
         historicos=historicos,
         grafico_barras=grafico_barras,
         grafico_dispersion=grafico_dispersion,
-        grafico_lineas=grafico_lineas,
-        grafico_circular=grafico_circular
+        grafico_lineas=grafico_lineas(graficos_procesador),
+        grafico_circular=grafico_circular(graficos_procesador)
     )
+
+# Agregar la ruta para descargar el PDF
+@app.route('/descargar_pdf')
+def descargar_pdf():
+    graficos_procesador = GraficosProcesadorData(game_history)
+    return generar_pdf(graficos_procesador)
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
