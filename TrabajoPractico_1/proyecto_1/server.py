@@ -6,7 +6,7 @@ from modules.TriviaGame import TriviaGame
 from modules.GameManager import GameManager
 from modules.GameHistoria import HistorialJuego
 from modules.GraficosProcesadorData import GraficosProcesadorData
-from modules.GeneraciondDeGraficos import grafico_lineas, grafico_circular
+from modules.GeneraciondDeGraficos import grafico_lineas, grafico_circular, fig_circular_matplotlib
 from modules.pdfgenerador import generar_pdf
   
 app.secret_key = '1234'
@@ -189,6 +189,9 @@ def descargar_pdf():
     graficos_procesador = GraficosProcesadorData(historicos)
     datos_lineas = graficos_procesador.obtener_datos_lineas()
     datos_circular = graficos_procesador.obtener_datos_circular()
+
+    # Generar el gráfico circular como imagen PNG
+    fig_circular_matplotlib(datos_circular, filename="static/grafico_circular.png")
 
     return generar_pdf(datos_lineas, datos_circular)
 

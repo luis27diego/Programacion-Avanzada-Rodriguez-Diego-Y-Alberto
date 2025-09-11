@@ -1,1 +1,5 @@
-flask  
+flask
+kaleido
+fpdf
+plotly
+matplotlib

@@ -1,5 +1,6 @@
 import plotly.graph_objects as go
 import plotly.io as pio
+import matplotlib.pyplot as plt
 
 
 # === Generación de gráficos como objetos Figure ===
@@ -32,6 +33,22 @@ def fig_circular(datos_circular):
     fig.update_layout(title="Proporción global de aciertos")
     return fig
 
+def fig_circular_matplotlib(datos_circular, filename="static/grafico_circular.png"):
+    """
+    Genera un gráfico de torta usando matplotlib a partir de los datos circulares y lo guarda como PNG en la carpeta static.
+    """
+    labels = datos_circular['labels']
+    values = datos_circular['data']
+    colors = ['#22c55e', '#ef4444', '#3b82f6', '#f59e42', '#a855f7', '#fbbf24']
+
+    fig, ax = plt.subplots()
+    ax.pie(values, labels=labels, colors=colors, autopct='%1.1f%%', startangle=90)
+    ax.set_title("Proporción global de aciertos")
+    ax.axis('equal')  # Para que el gráfico sea circular
+
+    fig.savefig(filename, bbox_inches='tight')
+    plt.close(fig)
+    return filename
 
 # === Para HTML (mantienes lo que ya tenías) ===
 def grafico_lineas(datos_lineas):
