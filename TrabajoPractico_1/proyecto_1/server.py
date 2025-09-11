@@ -161,7 +161,7 @@ def peliculas():
 def resultados():
     """Ruta que muestra los resultados históricos y los gráficos."""
     historicos = game_history.obtener_todos_juegos()
-    graficos_procesador = GraficosProcesadorData(game_history)
+    graficos_procesador = GraficosProcesadorData(historicos)
 
     # Preparar los datos para todos los gráficos
     # Graficos Java
@@ -184,8 +184,9 @@ def resultados():
 # Agregar la ruta para descargar el PDF
 @app.route('/descargar_pdf')
 def descargar_pdf():
-    
-    graficos_procesador = GraficosProcesadorData(game_history)
+    """Genera y envía el PDF con los gráficos."""
+    historicos = game_history.obtener_todos_juegos()
+    graficos_procesador = GraficosProcesadorData(historicos)
     datos_lineas = graficos_procesador.obtener_datos_lineas()
     datos_circular = graficos_procesador.obtener_datos_circular()
 

@@ -4,10 +4,9 @@ from modules.GameHistoria import HistorialJuego # Importa tu clase GameHistory
 import datetime
 
 class GraficosProcesadorData:
-    def __init__(self, game_historia_instancia: HistorialJuego):
-        # Usamos composición para obtener los datos históricos
-        self.game_historia = game_historia_instancia
-        self.history_data = self.game_historia.obtener_todos_juegos()
+    def __init__(self, game_historia: list):    
+        # game_historia es una lista de diccionarios con los datos de cada juego
+        self.history_data = game_historia
 
     def _calcular_porcentaje(self, aciertos, total):
         """Método auxiliar para calcular el porcentaje de aciertos."""

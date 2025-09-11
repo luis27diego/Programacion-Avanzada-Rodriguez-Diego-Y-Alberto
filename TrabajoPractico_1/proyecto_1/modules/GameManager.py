@@ -38,7 +38,7 @@ class GameManager:
         # Obtener una nueva pregunta de la clase TriviaGame
         while True:
             pregunta = self.trivia_data.obtener_opciones()
-            if pregunta['frase'] not in self.preguntas_hechas:
+            if pregunta['frase'] not in self.preguntas_hechas: #si pregunta no fue hecha => salgo
                 break
 
         # Almacenar la pregunta actual y actualizar la lista de preguntas realizadas
