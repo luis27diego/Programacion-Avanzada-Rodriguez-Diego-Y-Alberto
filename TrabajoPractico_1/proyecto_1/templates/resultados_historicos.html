@@ -37,17 +37,6 @@
             </tbody>
         </table>
         
-
-        <div class="chart-container">
-            <h2>Rendimiento por Usuario</h2>
-            <canvas id="barChart"></canvas>
-        </div>
-
-        <div class="chart-container">
-            <h2>Análisis de Eficiencia</h2>
-            <canvas id="scatterChart"></canvas>
-        </div>
-
         <div class="chart-container">
             <h2>Evolución de Aciertos y Desaciertos</h2>
             {{ grafico_lineas|safe }}
@@ -58,6 +47,15 @@
             {{ grafico_circular|safe }}
         </div>
 
+        <div class="chart-container">
+            <h2>Rendimiento por Usuario</h2>
+            <canvas id="barChart"></canvas>
+        </div>
+
+        <div class="chart-container">
+            <h2>Análisis de Eficiencia</h2>
+            <canvas id="scatterChart"></canvas>
+        </div>
         <a href="{{ url_for('descargar_pdf') }}" class="button" download>
             📄 Descargar PDF de Resultados
         </a>
