@@ -50,9 +50,9 @@ def fig_circular_matplotlib(datos_circular, filename="static/grafico_circular.pn
     plt.close(fig)
     return filename
 
-# === Para HTML (mantienes lo que ya tenías) ===
+# === Para HTML ===
 def grafico_lineas(datos_lineas):
-    fig = fig_lineas(datos_lineas)  # tu función original
+    fig = fig_lineas(datos_lineas)  # función original
     # Aplicar colores solo para HTML
     fig.update_layout(
         title_font=dict(color="white"),
@@ -72,9 +72,9 @@ def grafico_lineas(datos_lineas):
     )
     return pio.to_html(fig, full_html=False)
 
-
+# === Para HTML ===
 def grafico_circular(datos_circular):
-    fig = fig_circular(datos_circular)  # tu función original
+    fig = fig_circular(datos_circular)  # función original
     fig.update_layout(
         title_font=dict(color="white"),
         legend=dict(font=dict(color="white")),

@@ -6,7 +6,7 @@ from datetime import datetime
 
 class GameManager:
     def __init__(self):
-        # Composition: The GameManager "has-a" TriviaGame object
+        # Composición: El GameManager "tiene un" objeto TriviaGame
         self.trivia_data = TriviaGame()
         
         # Variables de instancia (antes eran de sesión)
@@ -83,18 +83,6 @@ class GameManager:
             "porcentaje": porcentaje
         }
         return resultados
-
-    def obtener_resultado_final_dict(self):
-        """Devuelve los resultados finales del juego como un diccionario."""
-        resultados = self.obtener_resultados_finales()
-        return {
-            "usuario": resultados["usuario"],
-            "aciertos": resultados["aciertos"],
-            "num_frases": resultados["num_frases"],
-            "porcentaje": resultados["porcentaje"],
-            "tiempo_inicio": resultados["tiempo_inicio"],
-            "duracion": resultados["duracion"]
-        }
 
     def clear(self):
         """Limpia todas las variables para el próximo juego."""

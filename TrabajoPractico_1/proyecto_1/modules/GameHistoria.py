@@ -29,17 +29,11 @@ class HistorialJuego:
     
     def agregar_juego(self, sesion):
         """Agrega una nueva sesión al historial"""
-        registro_juego = {
-            'usuario': sesion['usuario'],
-            'aciertos': sesion['aciertos'],
-            'tiempo_inicio': sesion['tiempo_inicio'],
-            'num_frases': sesion['num_frases'],
-            'duracion': sesion['duracion'],
-            'porcentaje': sesion['porcentaje']
-        }
-        self.historial.append(registro_juego)
+
+        self.historial.append(sesion)
         self.guardar_historial()
 
     def obtener_todos_juegos(self):
         """Retorna todo el historial de juegos"""
+        self.cargar_historial()
         return self.historial

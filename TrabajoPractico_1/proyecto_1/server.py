@@ -87,7 +87,6 @@ def jugar():
     # Validacion de contenido
     ok, data = validar_nombre_y_numero_frases(request.form.get("nombre"), n)
     if not ok:
-        # Puedes lanzar una excepción personalizada
         raise ValueError(data)
     
     # Obtener GameManager específico para este usuario

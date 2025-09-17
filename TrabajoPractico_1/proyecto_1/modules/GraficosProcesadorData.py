@@ -1,16 +1,8 @@
-# modules/ChartDataProcessor.py
-
-from modules.GameHistoria import HistorialJuego # Importa tu clase GameHistory
 import datetime
-
 class GraficosProcesadorData:
     def __init__(self, game_historia: list):    
         # game_historia es una lista de diccionarios con los datos de cada juego
         self.history_data = game_historia
-
-    def _calcular_porcentaje(self, aciertos, total):
-        """Método auxiliar para calcular el porcentaje de aciertos."""
-        return (aciertos / total) * 100 if total > 0 else 0
 
     def obtener_datos_rendimiento(self):
         """
@@ -21,9 +13,7 @@ class GraficosProcesadorData:
         
         for game in self.history_data:
             usuario = game['usuario']
-            aciertos = game['aciertos']
-            total = game['num_frases']
-            porcentaje = self._calcular_porcentaje(aciertos, total)
+            porcentaje = game['porcentaje']
 
             if usuario not in user_scores:
                 user_scores[usuario] = {'total_porcentaje': 0, 'juegos': 0}
@@ -51,7 +41,7 @@ class GraficosProcesadorData:
         
         for game in self.history_data:
             duracion = game['duracion']
-            porcentaje = self._calcular_porcentaje(game['aciertos'], game['num_frases'])
+            porcentaje = game['porcentaje']
 
             x_data.append(duracion)
             y_data.append(round(porcentaje, 2))
