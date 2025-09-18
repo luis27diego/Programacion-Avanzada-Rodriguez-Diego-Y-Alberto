@@ -41,8 +41,6 @@ Explica la funcionalidad de tu aplicación:
 
 **Ejemplo**:
 - **Ruta principal** (`/`): muestra la página de inicio.
-- **Ruta de usuario** (`/user/<id>`): muestra información del usuario.
-
 ---
 
 ## 🙎‍♀️🙎‍♂️Autores
