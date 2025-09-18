@@ -1,4 +1,4 @@
-# 🐍Nombre del proyecto (darle un nombre significativo) 
+# TRIVIA GAMES
 
 Breve descripción del proyecto:
 
@@ -41,14 +41,12 @@ Explica la funcionalidad de tu aplicación:
 
 **Ejemplo**:
 - **Ruta principal** (`/`): muestra la página de inicio.
-- **Ruta de usuario** (`/user/<id>`): muestra información del usuario.
-
 ---
 
 ## 🙎‍♀️🙎‍♂️Autores
 
-- Apellido y Nombre del primer integrante
-- Apellido y Nombre del primer integrante
+- Luis Diego Rodriguez Aguilar
+- Luis Alberto Rodriguez Aguilar
 
 ---
 
