@@ -233,244 +233,110 @@
         <div class="left-panel">
             <h1>Smart Belt</h1>
             
-            <div class="control-section">
-                <div class="input-group">
-                    <label for="numAlimentos">N°<br>Alimentos</label>
-                    <input type="number" id="numAlimentos" value="100" min="1" max="1000">
+            <form method="POST" action="/">
+                <div class="control-section">
+                    <div class="input-group">
+                        <label for="numAlimentos">N°<br>Alimentos</label>
+                        <input type="number" name="numAlimentos" id="numAlimentos" value="100" min="1" max="1000">
+                    </div>
+                    <button class="start-button" type="submit">INICIAR<br>CARGA</button>
                 </div>
-            </div>
+            </form>
 
             <div class="conveyor-belt">
                 <div class="belt-surface"></div>
                 <div class="sensor"></div>
             </div>
 
-            <button class="start-button" id="startButton">INICIAR<br>CARGA</button>
-            
-            <div class="status idle" id="status">Sistema listo para iniciar</div>
-            
-            <div class="progress-bar">
-                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
-            </div>
-            <div id="progressText">0 / 0</div>
-        </div>
+            {% if estado and estado.estado == 'running' %}
+            <form method="POST" action="/procesar">
+                <button class="start-button" type="submit">Procesar siguiente alimento</button>
+            </form>
+            {% endif %}
 
+            {% if estado and estado.estado == 'complete' %}
+            <form method="POST" action="/reset">
+                <button class="start-button" type="submit">Resetear sistema</button>
+            </form>
+            {% endif %}
+
+            <div class="status {{ estado.estado if estado else 'idle' }}" id="status">
+                {% if error %}
+                    {{ error }}
+                {% elif mensaje %}
+                    {{ mensaje }}
+                {% elif estado.estado == 'idle' %}
+                    Sistema listo para iniciar
+                {% elif estado.estado == 'running' %}
+                    Proceso en ejecución
+                {% elif estado.estado == 'complete' %}
+                    Cajón completado
+                {% endif %}
+            </div>
+
+            <div class="progress-bar">
+                {% set porcentaje = 0 %}
+                {% if estado and estado.progreso and estado.progreso.total > 0 %}
+                    {% set porcentaje = (estado.progreso.actual / estado.progreso.total * 100) | round(0) %}
+                {% endif %}
+                <div class="progress-fill" id="progressFill" style="width: {{ porcentaje }}%"></div>
+            </div>
+            <div id="progressText">{% if estado %}{{ estado.progreso.actual }} / {{ estado.progreso.total }}{% else %}0 / 0{% endif %}</div>
+        </div>
         <div class="right-panel">
             <div class="results-panel">
                 <div class="result-item">
                     <span class="result-label">Peso Total del cajón:</span>
-                    <span class="result-value value-good" id="pesoTotal">0.0 kg</span>
+                    <span class="result-value value-good" id="pesoTotal">{% if estado and estado.estadisticas %}{{ estado.estadisticas.peso_total | round(1) }} kg{% else %}0.0 kg{% endif %}</span>
                 </div>
 
                 <div class="result-item">
                     <span class="result-label">aw Frutas:</span>
-                    <span class="result-value value-good" id="awFrutas">0.00</span>
+                    <span class="result-value value-good" id="awFrutas">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_frutas | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
 
                 <div class="result-item">
                     <span class="result-label">aw kiwi:</span>
-                    <span class="result-value value-good" id="awKiwi">0.00</span>
+                    <span class="result-value value-good" id="awKiwi">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_kiwi | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
 
                 <div class="result-item">
                     <span class="result-label">aw manzana:</span>
-                    <span class="result-value value-good" id="awManzana">0.00</span>
+                    <span class="result-value value-good" id="awManzana">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_manzana | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
 
                 <div class="result-item">
                     <span class="result-label">aw Verduras:</span>
-                    <span class="result-value value-good" id="awVerduras">0.00</span>
+                    <span class="result-value value-good" id="awVerduras">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_verduras | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
 
                 <div class="result-item">
                     <span class="result-label">aw papas:</span>
-                    <span class="result-value value-good" id="awPapas">0.00</span>
+                    <span class="result-value value-good" id="awPapas">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_papa | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
 
                 <div class="result-item">
                     <span class="result-label">aw zanahorias:</span>
-                    <span class="result-value value-good" id="awZanahorias">0.00</span>
+                    <span class="result-value value-good" id="awZanahorias">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_zanahoria | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
 
                 <div class="result-item">
                     <span class="result-label">aw Total:</span>
-                    <span class="result-value value-good" id="awTotal">0.00</span>
+                    <span class="result-value value-good" id="awTotal">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_total | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
 
-                <div id="alertBox" style="display: none;"></div>
+                {% if estado and estado.advertencias and estado.advertencias|length > 0 %}
+                <div class="warning-box">
+                    <strong>Se recomienda inspección del cajón</strong><br>
+                    {% for adv in estado.advertencias %}{{ adv }}<br>{% endfor %}
+                </div>
+                {% elif estado and estado.estado == 'complete' %}
+                <div class="success-box">
+                    <strong>✅ Cajón en óptimas condiciones</strong>
+                </div>
+                {% endif %}
             </div>
         </div>
     </div>
-
-    <script>
-        let procesando = false;
-        let intervalId = null;
-
-        const startButton = document.getElementById('startButton');
-        const statusElement = document.getElementById('status');
-        const numAlimentosInput = document.getElementById('numAlimentos');
-        const progressFill = document.getElementById('progressFill');
-        const progressText = document.getElementById('progressText');
-
-        startButton.addEventListener('click', iniciarCarga);
-
-        async function iniciarCarga() {
-            const capacidad = parseInt(numAlimentosInput.value);
-            
-            try {
-                const response = await fetch('/api/iniciar', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ capacidad: capacidad })
-                });
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    alert(data.error);
-                    return;
-                }
-
-                procesando = true;
-                startButton.disabled = true;
-                startButton.innerHTML = 'PROCESANDO...';
-                actualizarStatus('running', 'Iniciando proceso...');
-                
-                // Comenzar el procesamiento automático
-                intervalId = setInterval(procesarSiguienteAlimento, 500);
-                
-            } catch (error) {
-                alert('Error al iniciar: ' + error.message);
-            }
-        }
-
-        async function procesarSiguienteAlimento() {
-            if (!procesando) return;
-
-            try {
-                const response = await fetch('/api/procesar', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    }
-                });
-
-                const data = await response.json();
-                
-                if (data.error) {
-                    finalizarProceso();
-                    return;
-                }
-
-                // Actualizar interfaz con el estado actual
-                actualizarInterfaz(data.estado);
-                
-                // Mostrar información del procesamiento
-                const resultado = data.resultado_procesamiento;
-                if (resultado.tipo === 'desviado') {
-                    console.log('Alimento desviado:', resultado.mensaje);
-                } else if (resultado.tipo === 'agregado') {
-                    console.log(`Agregado: ${resultado.alimento} (${resultado.peso}g)`);
-                }
-
-                // Verificar si terminó
-                if (data.estado.estado === 'complete') {
-                    finalizarProceso();
-                }
-
-            } catch (error) {
-                console.error('Error al procesar:', error);
-                finalizarProceso();
-            }
-        }
-
-        function finalizarProceso() {
-            procesando = false;
-            if (intervalId) {
-                clearInterval(intervalId);
-                intervalId = null;
-            }
-            
-            startButton.disabled = false;
-            startButton.innerHTML = 'INICIAR<br>CARGA';
-            actualizarStatus('complete', 'Cajón completado');
-        }
-
-        function actualizarInterfaz(estado) {
-            const stats = estado.estadisticas;
-            const progreso = estado.progreso;
-
-            // Actualizar progreso
-            const porcentaje = (progreso.actual / progreso.total) * 100;
-            progressFill.style.width = `${porcentaje}%`;
-            progressText.textContent = `${progreso.actual} / ${progreso.total}`;
-
-            // Actualizar valores
-            actualizarValor('pesoTotal', stats.peso_total.toFixed(1) + ' kg');
-            actualizarValor('awFrutas', stats.aw_frutas.toFixed(2), stats.aw_frutas);
-            actualizarValor('awKiwi', stats.aw_kiwi.toFixed(2), stats.aw_kiwi);
-            actualizarValor('awManzana', stats.aw_manzana.toFixed(2), stats.aw_manzana);
-            actualizarValor('awVerduras', stats.aw_verduras.toFixed(2), stats.aw_verduras);
-            actualizarValor('awPapas', stats.aw_papa.toFixed(2), stats.aw_papa);
-            actualizarValor('awZanahorias', stats.aw_zanahoria.toFixed(2), stats.aw_zanahoria);
-            actualizarValor('awTotal', stats.aw_total.toFixed(2), stats.aw_total);
-
-            // Mostrar advertencias
-            mostrarAdvertencias(estado.advertencias);
-        }
-
-        function actualizarValor(elementId, texto, valor = 0) {
-            const element = document.getElementById(elementId);
-            element.textContent = texto;
-            
-            if (elementId !== 'pesoTotal') {
-                element.className = 'result-value ';
-                if (valor > 0.90) {
-                    element.className += 'value-danger';
-                } else if (valor > 0.85) {
-                    element.className += 'value-warning';
-                } else {
-                    element.className += 'value-good';
-                }
-            }
-        }
-
-        function actualizarStatus(tipo, mensaje) {
-            statusElement.className = `status ${tipo}`;
-            statusElement.textContent = mensaje;
-        }
-
-        function mostrarAdvertencias(advertencias) {
-            const alertBox = document.getElementById('alertBox');
-            
-            if (advertencias.length > 0) {
-                alertBox.className = 'warning-box';
-                alertBox.innerHTML = '<strong>Se recomienda inspección del cajón</strong><br>' + 
-                                   advertencias.join('<br>');
-                alertBox.style.display = 'block';
-            } else if (document.getElementById('progressFill').style.width === '100%') {
-                alertBox.className = 'success-box';
-                alertBox.innerHTML = '<strong>✅ Cajón en óptimas condiciones</strong>';
-                alertBox.style.display = 'block';
-            }
-        }
-
-        // Actualizar estado cada 2 segundos cuando no está procesando
-        setInterval(async () => {
-            if (!procesando) {
-                try {
-                    const response = await fetch('/api/estado');
-                    const estado = await response.json();
-                    if (estado.estadisticas) {
-                        actualizarInterfaz(estado);
-                    }
-                } catch (error) {
-                    // Silently ignore errors when polling
-                }
-            }
-        }, 2000);
-    </script>
 </body>
 </html>

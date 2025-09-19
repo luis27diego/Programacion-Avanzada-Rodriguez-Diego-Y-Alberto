@@ -1,5 +1,5 @@
 # app.py
-from flask import Flask, render_template, request, jsonify, session
+from flask import Flask, render_template, request, redirect, url_for
 import random
 from modules.Frutas import Kiwi, Manzana
 from modules.Verduras import Papa, Zanahoria
@@ -138,61 +138,48 @@ class ControladorSistema:
 # Instancia global del controlador
 controlador = ControladorSistema()
 
-@app.route('/')
+
+# Nueva lógica: todo el flujo se maneja por rutas y recarga de página
+@app.route('/', methods=['GET', 'POST'])
 def index():
-    """Página principal"""
-    return render_template('inicio.html')
+    mensaje = None
+    error = None
+    estado = controlador.obtener_estado_actual()
+    if request.method == 'POST':
+        # Iniciar proceso
+        try:
+            capacidad = int(request.form.get('numAlimentos', 100))
+            if capacidad < 1 or capacidad > 1000:
+                error = "Capacidad debe estar entre 1 y 1000"
+            else:
+                controlador.iniciar_proceso(capacidad)
+                estado = controlador.obtener_estado_actual()
+                mensaje = "Proceso iniciado correctamente"
+        except Exception as e:
+            error = str(e)
+    return render_template('inicio.html', estado=estado, mensaje=mensaje, error=error)
 
-@app.route('/api/iniciar', methods=['POST'])
-def iniciar_carga():
-    """API para iniciar el proceso de carga"""
-    try:
-        data = request.get_json()
-        capacidad = int(data.get('capacidad', 100))
-        
-        if capacidad < 1 or capacidad > 1000:
-            return jsonify({"error": "Capacidad debe estar entre 1 y 1000"}), 400
-        
-        controlador.iniciar_proceso(capacidad)
-        return jsonify({"success": True, "mensaje": "Proceso iniciado correctamente"})
-        
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
 
-@app.route('/api/procesar', methods=['POST'])
-def procesar_alimento():
-    """API para procesar el siguiente alimento"""
-    try:
+# Ruta para procesar siguiente alimento
+@app.route('/procesar', methods=['POST'])
+def procesar():
+    resultado = None
+    error = None
+    if controlador.estado != "running":
+        error = "No se puede procesar más alimentos"
+    else:
         resultado = controlador.procesar_siguiente_alimento()
-        if resultado is False:
-            return jsonify({"error": "No se puede procesar más alimentos"}), 400
-        
-        # Obtener estado actualizado
-        estado = controlador.obtener_estado_actual()
-        
-        return jsonify({
-            "resultado_procesamiento": resultado,
-            "estado": estado
-        })
-        
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
+    estado = controlador.obtener_estado_actual()
+    return render_template('inicio.html', estado=estado, resultado=resultado, error=error)
 
-@app.route('/api/estado')
-def obtener_estado():
-    """API para obtener el estado actual del sistema"""
-    try:
-        estado = controlador.obtener_estado_actual()
-        return jsonify(estado)
-    except Exception as e:
-        return jsonify({"error": str(e)}), 500
-
-@app.route('/api/reset', methods=['POST'])
-def reset_sistema():
-    """API para resetear el sistema"""
+# Ruta para resetear el sistema
+@app.route('/reset', methods=['POST'])
+def reset():
     global controlador
     controlador = ControladorSistema()
-    return jsonify({"success": True, "mensaje": "Sistema reseteado"})
+    estado = controlador.obtener_estado_actual()
+    return render_template('inicio.html', estado=estado, mensaje="Sistema reseteado")
+
 
 if __name__ == '__main__':
     app.run(debug=True, port=5000)
