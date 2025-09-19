@@ -1,12 +1,11 @@
-from modules import Profesor
+#from .Profesor import Profesor
 
 class Departamento:
     def __init__(self, nombre, director):
         self.nombre = nombre
         self.director = director
-        self.profesores = []
+        self._profesores = []
 
-    
     @property
     def nombre(self):
         return self._nombre
@@ -22,34 +21,31 @@ class Departamento:
     def director(self):   
         return self._director
     @director.setter
-    def director(self, valor):  
-        if not isinstance(valor, Profesor):
+    def director(self, profesor):  
+        from .Profesor import Profesor
+        if profesor is not None and not isinstance(profesor, Profesor):
             raise TypeError("El director del departamento debe ser una instancia de la clase Profesor.")
-        self._director = valor
-        self.__actualizo_estado_director(valor)
+        self._director = profesor
+        self.__actualizo_estado_director(profesor)
 
     def agregar_profesor(self, profesor):
         if not isinstance(profesor, Profesor):
             raise TypeError("El profesor debe ser una instancia de la clase Profesor.")
-        self.profesores.append(profesor)
+        if profesor not in self._profesores:
+            self._profesores.append(profesor)
 
     def __actualizo_estado_director(self, director):
+        from .Profesor import Profesor
         if not isinstance(director, Profesor):
             raise TypeError("El director debe ser una instancia de la clase Profesor.")
         director.Es_director = self
 
-
 if __name__ == "__main__":
-
-    profesor1 = Profesor("Juan Perez", 45, "12345678", "Matemáticas")
-    departamento = Departamento("Ciencias Exactas", profesor1)
-
-    print(f"Departamento: {departamento.nombre}")
-    print(f"Director: {departamento.director.nombre}")
-
-    profesor2 = Profesor("Ana Gomez", 38, "87654321", "Física")
-    departamento.agregar_profesor(profesor2)
-
-    print("Profesores en el departamento:")
-    for prof in departamento.profesores:
-        print(f"- {prof.nombre}")
+    # Ejemplo de uso
+    try:
+        from .Profesor import Profesor
+        prof = Profesor("Ana Gomez", 50, "12345678", "Matemáticas")
+        dept = Departamento("Ciencias", prof)
+        print(f"Departamento: {dept.nombre}, Director: {dept.director}")
+    except Exception as e:
+        print(f"Error: {e}")
