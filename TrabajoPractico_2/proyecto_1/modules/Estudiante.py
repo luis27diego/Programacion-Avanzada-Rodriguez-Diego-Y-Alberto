@@ -30,4 +30,7 @@ class Estudiante(Persona):
             if not isinstance(valor, Facultad):
                 raise TypeError("La facultad debe ser una instancia de la clase Facultad.")
         self._facultad = valor
+
+    def cursos_anotados(self):
+        return [curso.nombre for curso in self._cursos]
     

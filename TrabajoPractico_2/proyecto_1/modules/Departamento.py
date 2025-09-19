@@ -5,6 +5,7 @@ class Departamento:
         self.nombre = nombre
         self.director = director
         self._profesores = []
+        self._cursos = []
 
     @property
     def nombre(self):
@@ -39,6 +40,22 @@ class Departamento:
         if not isinstance(director, Profesor):
             raise TypeError("El director debe ser una instancia de la clase Profesor.")
         director.Es_director = self
+
+    @property
+    def profesores(self):
+        return self._profesores
+
+    @property
+    def cursos(self):
+        return self._cursos
+    
+    def agregar_curso(self, curso):
+        from .Curso import Curso
+        if not isinstance(curso, Curso):
+            raise TypeError("El curso debe ser una instancia de la clase Curso.")
+        if curso not in self._cursos:
+            self._cursos.append(curso)
+
 
 if __name__ == "__main__":
     # Ejemplo de uso

@@ -1,0 +1,8 @@
+estudiante,Juan Perez,20,12345678
+estudiante,Maria Lopez,21,87654321
+estudiante,Carlos Gomez,19,11223344
+estudiante,Ana Ruiz,22,44332211
+profesor,Dr. Elena Martinez,45,55667788,Matematicas
+profesor,Prof. Roberto Sanchez,50,88776655,Fisica
+profesor,Dra. Sofia Fernandez,48,33445566,Quimica
+profesor,Prof. Miguel Torres,52,66554433,Historia

@@ -5,7 +5,8 @@ from modules.Departamento import Departamento
 from modules.Curso import Curso
 from modules.Facultad import Facultad
 
-def cargar_personas(archivo):
+# ...existing code...
+def cargar_personas(facultad, archivo):
     estudiantes = []
     profesores = []
     try:
@@ -17,13 +18,18 @@ def cargar_personas(archivo):
                 tipo = datos[0].lower()
                 if tipo == "estudiante":
                     nombre, edad, dni = datos[1], int(datos[2]), datos[3]
-                    estudiantes.append(Estudiante(nombre, edad, dni))
+                    est = Estudiante(nombre, edad, dni)
+                    estudiantes.append(est)
+                    facultad.agregar_estudiante(est)
                 elif tipo == "profesor":
                     nombre, edad, dni, esp = datos[1], int(datos[2]), datos[3], datos[4]
-                    profesores.append(Profesor(nombre, edad, dni, esp))
+                    prof = Profesor(nombre, edad, dni, esp)
+                    profesores.append(prof)
+                    facultad.agregar_profesor(prof)
     except FileNotFoundError:
         print("⚠ No se encontró el archivo, se continuará sin carga automática.")
     return estudiantes, profesores
+# ...existing code...
 
 def menu():
     print("\n##########################################")
@@ -39,8 +45,8 @@ def menu():
 
 if __name__ == "__main__":
     # Inicialización
-    facultad = Facultad("FIUNER", "Paraná, Entre Ríos")
-    estudiantes, profesores = cargar_personas("personas.txt")
+    facultad = Facultad("FIUNER")
+    estudiantes, profesores = cargar_personas(facultad,"data/personas.txt")
     departamentos = []
     cursos = []
 
@@ -64,82 +70,95 @@ if __name__ == "__main__":
             esp = input("Especialidad: ")
             prof = Profesor(nombre, edad, dni, esp)
             profesores.append(prof)
+            facultad.agregar_profesor(prof)
             print(f"✅ Profesor {nombre} contratado.")
 
         elif opcion == "3":
             nombre = input("Nombre del departamento: ")
             print("Seleccione director:")
-            for i, p in enumerate(profesores, 1):
+            for i, p in enumerate(facultad.profesores, 1):
                 print(f"{i} - {p.nombre} ({p.especialidad})")
             idx = int(input("Opción: ")) - 1
-            if 0 <= idx < len(profesores):
-                director = profesores[idx]
+            if 0 <= idx < len(facultad.profesores):
+                director = facultad.profesores[idx]
+                if director.Es_director is not None:
+                    print("⚠ El profesor ya es director de otro departamento.")
+                    continue
                 dept = Departamento(nombre, director)
                 departamentos.append(dept)
                 facultad.agregar_departamento(dept)
                 print(f"✅ Departamento {nombre} creado con director {director.nombre}.")
                 print("📋 Departamentos:")
-                for d in departamentos:
+                for d in facultad.departamentos: # o podríamos usar
                     print(f"- {d.nombre}, Director: {d.director.nombre}") #usar facultad.departamentos
             else:
                 print("❌ Opción inválida.")
 
         elif opcion == "4":
-            if not departamentos:
+            if not facultad.departamentos:
                 print("⚠ Primero debe crear un departamento.")
                 continue
             print("Seleccione departamento:")
-            for i, d in enumerate(departamentos, 1):
+            for i, d in enumerate(facultad.departamentos, 1):
                 print(f"{i} - {d.nombre}")
             idx_depto = int(input("Opción: ")) - 1
-            if 0 <= idx_depto < len(departamentos):
-                dept = departamentos[idx_depto]
+            if 0 <= idx_depto < len(facultad.departamentos):
+                dept = facultad.departamentos[idx_depto]
                 nombre = input("Nombre del curso: ")
                 codigo = input("Código: ")
                 print("Seleccione titular:")
-                for i, p in enumerate(profesores, 1): # Podriamos guardar en facultad y recorrer esa lista o los profesores del departamento seleccionado
+                for i, p in enumerate(facultad.profesores, 1): # Podriamos guardar en facultad y recorrer esa lista o los profesores del departamento seleccionado
                     print(f"{i} - {p.nombre} ({p.especialidad})")
                 idx_prof = int(input("Opción: ")) - 1
-                if 0 <= idx_prof < len(profesores):
-                    titular = profesores[idx_prof]
+                if 0 <= idx_prof < len(facultad.profesores):
+                    titular = facultad.profesores[idx_prof]
                     curso = Curso(nombre, codigo, dept)
                     curso.agregar_profesor(titular)
                     cursos.append(curso)
+                    facultad.agregar_curso(curso)
+                    dept.agregar_curso(curso)
                     print(f"✅ Curso {nombre} creado en {dept.nombre}.")
                     print("📚 Cursos en el departamento:")
-                    for c in cursos:
-                        if c.departamento == dept:
-                            print(f"- {c.nombre} ({c.codigo}) Titular: {c.profesor[0].nombre}")
+                    for c in dept.cursos:
+                        print(f"- {c.nombre} ({c.codigo}) Titular: {c.profesor[0].nombre}")
                 else:
                     print("❌ Profesor inválido.")
 
         elif opcion == "5":
-            if not estudiantes or not cursos:
-                print("⚠ No hay estudiantes o cursos disponibles.")
+            if not facultad.estudiantes:
+                print("⚠ No hay estudiantes inscritos.")
+                continue
+            if not facultad.cursos:
+                print("⚠ No hay cursos disponibles.")
                 continue
             print("Seleccione estudiante:")
-            for i, e in enumerate(estudiantes, 1):
+            for i, e in enumerate(facultad.estudiantes, 1):
                 print(f"{i} - {e.nombre}")
             idx_est = int(input("Opción: ")) - 1
             print("Seleccione curso:")
-            for i, c in enumerate(cursos, 1):
+            for i, c in enumerate(facultad.cursos, 1):
                 print(f"{i} - {c.nombre}")
             idx_curso = int(input("Opción: ")) - 1
-            if 0 <= idx_est < len(estudiantes) and 0 <= idx_curso < len(cursos):
-                est = estudiantes[idx_est]
-                curso = cursos[idx_curso]
+            if 0 <= idx_est < len(facultad.estudiantes) and 0 <= idx_curso < len(facultad.cursos):
+                est = facultad.estudiantes[idx_est]
+                curso = facultad.cursos[idx_curso]
                 if curso in est.cursos:
                     print("⚠ El estudiante ya está inscrito en este curso.")
                     continue
                 curso.agregar_estudiante(est)
                 est.agregar_curso(curso)
-                print(f"✅ {est.nombre} inscrito en {curso.nombre}. {est.cursos}")
+                print(f"✅ {est.nombre} inscrito en {curso.nombre}. {est.cursos_anotados()}")
             else:
                 print("❌ Opción inválida.")
 
         elif opcion == "6":
             print("👋 Saliendo del sistema...")
             break
+
+        elif opcion == "7":  
+            print("📋 Listado de estudiantes:")
+            for e in facultad.estudiantes:
+                print(f"- {e.nombre}, Edad: {e.edad}, DNI: {e.dni}, Cursos: {[c.nombre for c in e.cursos]}")
 
         else:
             print("❌ Opción inválida.")

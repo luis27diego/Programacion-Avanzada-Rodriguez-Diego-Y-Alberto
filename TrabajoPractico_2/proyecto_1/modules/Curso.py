@@ -66,6 +66,8 @@ class Curso:
             raise TypeError("El departamento debe ser una instancia de la clase Departamento.")
         self._departamento = valor
 
+    def __str__(self):
+        return f"Curso: {self.nombre}, Código: {self.codigo}, Departamento: {self.departamento.nombre}"
 if __name__ == "__main__":
     # Ejemplo de uso
     from modules.Departamento import Departamento
