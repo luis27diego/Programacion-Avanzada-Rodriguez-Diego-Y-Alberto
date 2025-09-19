@@ -1,19 +1,476 @@
+<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Aplicación Flask</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Smart Belt - Sistema de Cinta Transportadora</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+            height: 80vh;
+        }
+
+        .left-panel, .right-panel {
+            background: white;
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .left-panel {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        h1 {
+            font-size: 2.5em;
+            font-weight: bold;
+            color: #333;
+            margin-bottom: 30px;
+        }
+
+        .control-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 40px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group label {
+            font-size: 1.1em;
+            font-weight: bold;
+            color: #555;
+        }
+
+        .input-group input {
+            padding: 10px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 1.2em;
+            text-align: center;
+            width: 100px;
+        }
+
+        .conveyor-belt {
+            width: 200px;
+            height: 120px;
+            background: #f0f0f0;
+            border-radius: 10px;
+            margin: 20px 0;
+            position: relative;
+            border: 3px solid #ccc;
+        }
+
+        .belt-surface {
+            width: 100%;
+            height: 40px;
+            background: #4a90e2;
+            position: absolute;
+            bottom: 20px;
+            border-radius: 5px;
+        }
+
+        .sensor {
+            width: 30px;
+            height: 60px;
+            background: #666;
+            position: absolute;
+            right: -15px;
+            top: 20px;
+            border-radius: 5px;
+        }
+
+        .start-button {
+            background: #4a90e2;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.2em;
+            font-weight: bold;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .start-button:hover {
+            background: #357abd;
+            transform: translateY(-2px);
+        }
+
+        .start-button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .status {
+            text-align: center;
+            padding: 10px;
+            margin: 20px 0;
+            border-radius: 8px;
+            font-weight: bold;
+            width: 100%;
+        }
+
+        .status.idle {
+            background: #f8f9fa;
+            color: #6c757d;
+        }
+
+        .status.running {
+            background: #d1ecf1;
+            color: #0c5460;
+        }
+
+        .status.complete {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .results-panel h2 {
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .result-label {
+            font-weight: bold;
+            color: #555;
+        }
+
+        .result-value {
+            padding: 4px 12px;
+            border-radius: 15px;
+            font-weight: bold;
+            color: white;
+            min-width: 50px;
+            text-align: center;
+        }
+
+        .value-good {
+            background: #4a90e2;
+        }
+
+        .value-warning {
+            background: #ffa726;
+        }
+
+        .value-danger {
+            background: #ef5350;
+        }
+
+        .warning-box {
+            background: #fff3cd;
+            border: 1px solid #ffeaa7;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #856404;
+        }
+
+        .success-box {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            color: #155724;
+        }
+
+        .progress-bar {
+            width: 100%;
+            height: 20px;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: #4a90e2;
+            transition: width 0.3s ease;
+        }
+    </style>
 </head>
 <body>
-    <h1>Bienvenido a mi Aplicación Flask</h1>
-    <p>Esta es la página de inicio.</p>
-    <p>¡Explora nuestras características!</p>
-    <form >
-        <label for="nombre">Nombre:</label>
-        <input type="text" id="nombre" name="nombre" required>
-        <input type="submit" value="Enviar">
-    </form>
+    <div class="container">
+        <div class="left-panel">
+            <h1>Smart Belt</h1>
+            
+            <div class="control-section">
+                <div class="input-group">
+                    <label for="numAlimentos">N°<br>Alimentos</label>
+                    <input type="number" id="numAlimentos" value="100" min="1" max="1000">
+                </div>
+            </div>
+
+            <div class="conveyor-belt">
+                <div class="belt-surface"></div>
+                <div class="sensor"></div>
+            </div>
+
+            <button class="start-button" id="startButton">INICIAR<br>CARGA</button>
+            
+            <div class="status idle" id="status">Sistema listo para iniciar</div>
+            
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill" style="width: 0%"></div>
+            </div>
+            <div id="progressText">0 / 0</div>
+        </div>
+
+        <div class="right-panel">
+            <div class="results-panel">
+                <div class="result-item">
+                    <span class="result-label">Peso Total del cajón:</span>
+                    <span class="result-value value-good" id="pesoTotal">0.0 kg</span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">aw Frutas:</span>
+                    <span class="result-value value-good" id="awFrutas">0.00</span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">aw kiwi:</span>
+                    <span class="result-value value-good" id="awKiwi">0.00</span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">aw manzana:</span>
+                    <span class="result-value value-good" id="awManzana">0.00</span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">aw Verduras:</span>
+                    <span class="result-value value-good" id="awVerduras">0.00</span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">aw papas:</span>
+                    <span class="result-value value-good" id="awPapas">0.00</span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">aw zanahorias:</span>
+                    <span class="result-value value-good" id="awZanahorias">0.00</span>
+                </div>
+
+                <div class="result-item">
+                    <span class="result-label">aw Total:</span>
+                    <span class="result-value value-good" id="awTotal">0.00</span>
+                </div>
+
+                <div id="alertBox" style="display: none;"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let procesando = false;
+        let intervalId = null;
+
+        const startButton = document.getElementById('startButton');
+        const statusElement = document.getElementById('status');
+        const numAlimentosInput = document.getElementById('numAlimentos');
+        const progressFill = document.getElementById('progressFill');
+        const progressText = document.getElementById('progressText');
+
+        startButton.addEventListener('click', iniciarCarga);
+
+        async function iniciarCarga() {
+            const capacidad = parseInt(numAlimentosInput.value);
+            
+            try {
+                const response = await fetch('/api/iniciar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ capacidad: capacidad })
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    alert(data.error);
+                    return;
+                }
+
+                procesando = true;
+                startButton.disabled = true;
+                startButton.innerHTML = 'PROCESANDO...';
+                actualizarStatus('running', 'Iniciando proceso...');
+                
+                // Comenzar el procesamiento automático
+                intervalId = setInterval(procesarSiguienteAlimento, 500);
+                
+            } catch (error) {
+                alert('Error al iniciar: ' + error.message);
+            }
+        }
+
+        async function procesarSiguienteAlimento() {
+            if (!procesando) return;
+
+            try {
+                const response = await fetch('/api/procesar', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    }
+                });
+
+                const data = await response.json();
+                
+                if (data.error) {
+                    finalizarProceso();
+                    return;
+                }
+
+                // Actualizar interfaz con el estado actual
+                actualizarInterfaz(data.estado);
+                
+                // Mostrar información del procesamiento
+                const resultado = data.resultado_procesamiento;
+                if (resultado.tipo === 'desviado') {
+                    console.log('Alimento desviado:', resultado.mensaje);
+                } else if (resultado.tipo === 'agregado') {
+                    console.log(`Agregado: ${resultado.alimento} (${resultado.peso}g)`);
+                }
+
+                // Verificar si terminó
+                if (data.estado.estado === 'complete') {
+                    finalizarProceso();
+                }
+
+            } catch (error) {
+                console.error('Error al procesar:', error);
+                finalizarProceso();
+            }
+        }
+
+        function finalizarProceso() {
+            procesando = false;
+            if (intervalId) {
+                clearInterval(intervalId);
+                intervalId = null;
+            }
+            
+            startButton.disabled = false;
+            startButton.innerHTML = 'INICIAR<br>CARGA';
+            actualizarStatus('complete', 'Cajón completado');
+        }
+
+        function actualizarInterfaz(estado) {
+            const stats = estado.estadisticas;
+            const progreso = estado.progreso;
+
+            // Actualizar progreso
+            const porcentaje = (progreso.actual / progreso.total) * 100;
+            progressFill.style.width = `${porcentaje}%`;
+            progressText.textContent = `${progreso.actual} / ${progreso.total}`;
+
+            // Actualizar valores
+            actualizarValor('pesoTotal', stats.peso_total.toFixed(1) + ' kg');
+            actualizarValor('awFrutas', stats.aw_frutas.toFixed(2), stats.aw_frutas);
+            actualizarValor('awKiwi', stats.aw_kiwi.toFixed(2), stats.aw_kiwi);
+            actualizarValor('awManzana', stats.aw_manzana.toFixed(2), stats.aw_manzana);
+            actualizarValor('awVerduras', stats.aw_verduras.toFixed(2), stats.aw_verduras);
+            actualizarValor('awPapas', stats.aw_papa.toFixed(2), stats.aw_papa);
+            actualizarValor('awZanahorias', stats.aw_zanahoria.toFixed(2), stats.aw_zanahoria);
+            actualizarValor('awTotal', stats.aw_total.toFixed(2), stats.aw_total);
+
+            // Mostrar advertencias
+            mostrarAdvertencias(estado.advertencias);
+        }
+
+        function actualizarValor(elementId, texto, valor = 0) {
+            const element = document.getElementById(elementId);
+            element.textContent = texto;
+            
+            if (elementId !== 'pesoTotal') {
+                element.className = 'result-value ';
+                if (valor > 0.90) {
+                    element.className += 'value-danger';
+                } else if (valor > 0.85) {
+                    element.className += 'value-warning';
+                } else {
+                    element.className += 'value-good';
+                }
+            }
+        }
+
+        function actualizarStatus(tipo, mensaje) {
+            statusElement.className = `status ${tipo}`;
+            statusElement.textContent = mensaje;
+        }
+
+        function mostrarAdvertencias(advertencias) {
+            const alertBox = document.getElementById('alertBox');
+            
+            if (advertencias.length > 0) {
+                alertBox.className = 'warning-box';
+                alertBox.innerHTML = '<strong>Se recomienda inspección del cajón</strong><br>' + 
+                                   advertencias.join('<br>');
+                alertBox.style.display = 'block';
+            } else if (document.getElementById('progressFill').style.width === '100%') {
+                alertBox.className = 'success-box';
+                alertBox.innerHTML = '<strong>✅ Cajón en óptimas condiciones</strong>';
+                alertBox.style.display = 'block';
+            }
+        }
+
+        // Actualizar estado cada 2 segundos cuando no está procesando
+        setInterval(async () => {
+            if (!procesando) {
+                try {
+                    const response = await fetch('/api/estado');
+                    const estado = await response.json();
+                    if (estado.estadisticas) {
+                        actualizarInterfaz(estado);
+                    }
+                } catch (error) {
+                    // Silently ignore errors when polling
+                }
+            }
+        }, 2000);
+    </script>
 </body>
 </html>
