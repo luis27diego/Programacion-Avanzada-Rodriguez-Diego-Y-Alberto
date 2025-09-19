@@ -5,6 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Smart Belt - Sistema de Cinta Transportadora</title>
+    {% if estado and estado['estado'] == 'running' %}
+    <meta http-equiv="refresh" content="0.3">
+    {% endif %}
     <style>
         * {
             margin: 0;
