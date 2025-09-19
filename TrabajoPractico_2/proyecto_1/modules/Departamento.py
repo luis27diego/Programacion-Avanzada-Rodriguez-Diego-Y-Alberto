@@ -39,3 +39,17 @@ class Departamento:
         director.Es_director = self
 
 
+if __name__ == "__main__":
+
+    profesor1 = Profesor("Juan Perez", 45, "12345678", "Matemáticas")
+    departamento = Departamento("Ciencias Exactas", profesor1)
+
+    print(f"Departamento: {departamento.nombre}")
+    print(f"Director: {departamento.director.nombre}")
+
+    profesor2 = Profesor("Ana Gomez", 38, "87654321", "Física")
+    departamento.agregar_profesor(profesor2)
+
+    print("Profesores en el departamento:")
+    for prof in departamento.profesores:
+        print(f"- {prof.nombre}")
