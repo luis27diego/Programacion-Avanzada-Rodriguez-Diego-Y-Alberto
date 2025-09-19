@@ -1,4 +1,4 @@
-from Alimentos import Fruta
+from .Alimentos import Fruta
 import math
 
 class Kiwi(Fruta):

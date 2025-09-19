@@ -62,7 +62,7 @@ class Cajon:
         if not self._alimentos:
             return {"aw_prom_frutas": 0.0, "aw_prom_verduras": 0.0}
         
-        from Alimentos import Fruta, Verdura  # Import local para evitar circular
+        from .Alimentos import Fruta, Verdura  # Import local para evitar circular
         
         frutas = [alimento for alimento in self._alimentos if isinstance(alimento, Fruta)]
         verduras = [alimento for alimento in self._alimentos if isinstance(alimento, Verdura)]

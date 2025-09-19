@@ -1,5 +1,5 @@
-from Alimentos import Verdura
-from Frutas import Kiwi, Manzana
+from .Alimentos import Verdura
+#from Frutas import Kiwi, Manzana
 import math
 
 class Papa(Verdura):

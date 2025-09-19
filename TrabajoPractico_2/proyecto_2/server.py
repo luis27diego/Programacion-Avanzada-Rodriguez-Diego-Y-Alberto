@@ -1,23 +1,25 @@
 # app.py
 from flask import Flask, render_template, request, jsonify, session
 import random
-import time
 from modules.Frutas import Kiwi, Manzana
 from modules.Verduras import Papa, Zanahoria
 from modules.Cajon import Cajon
 
 app = Flask(__name__)
 app.secret_key = 'smart_belt_secret_key_2024'
-def crear_alimento(cls, tipo, peso):
-    """Crea un alimento del tipo especificado"""
-    tipo_lower = tipo.lower()
-    if tipo_lower not in cls._tipos_alimentos:
+def crear_alimento(tipo, peso):
+    """Crea una instancia del alimento correspondiente según el tipo."""
+    tipo = tipo.lower()
+    if tipo == "kiwi":
+        return Kiwi(peso)
+    elif tipo == "manzana":
+        return Manzana(peso)
+    elif tipo == "papa":
+        return Papa(peso)
+    elif tipo == "zanahoria":
+        return Zanahoria(peso)
+    else:
         raise ValueError(f"Tipo de alimento no reconocido: {tipo}")
-    
-    try:
-        return cls._tipos_alimentos[tipo_lower](peso)
-    except ValueError as e:
-        raise ValueError(f"Error al crear {tipo}: {e}")
 
 class CintaTransportadora:
     """Simula la cinta transportadora con detección de alimentos"""
@@ -139,7 +141,7 @@ controlador = ControladorSistema()
 @app.route('/')
 def index():
     """Página principal"""
-    return render_template('index.html')
+    return render_template('inicio.html')
 
 @app.route('/api/iniciar', methods=['POST'])
 def iniciar_carga():
