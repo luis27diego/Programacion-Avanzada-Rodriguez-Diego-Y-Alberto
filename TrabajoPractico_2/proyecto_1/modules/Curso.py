@@ -1,13 +1,13 @@
-from modules import Estudiante
-from modules import Profesor
-from modules import Departamento
+#from modules import Estudiante
+#from modules import Profesor
+#from modules import Departamento
 
 class Curso:
     def __init__(self, nombre, codigo, departamento):
         self.nombre = nombre
         self.codigo = codigo
         self._estudiantes = []  # Inicializa como lista vacía
-        self._profesor = []
+        self._profesores = []
         self.departamento = departamento  # Departamento es un atributo protegido
 
     @property
@@ -38,21 +38,22 @@ class Curso:
     def estudiantes(self):
         return self._estudiantes
     
-    @estudiantes.setter
     def agregar_estudiante(self, estudiante):
+        from .Estudiante import Estudiante
         if not isinstance(estudiante, Estudiante):
             raise TypeError("El estudiante debe ser una instancia de la clase Estudiante.")
         self._estudiantes.append(estudiante)
 
     @property
     def profesor(self):
-        return self._profesor
+        return self._profesores
     
-    @profesor.setter
-    def profesor(self, valor):
-        if not isinstance(valor, Profesor):
+    def agregar_profesor(self, profesor):
+        from .Profesor import Profesor
+        if not isinstance(profesor, Profesor):
             raise TypeError("El profesor debe ser una instancia de la clase Profesor.")
-        self._profesor = valor
+        if profesor not in self._profesores:
+            self._profesores.append(profesor)
 
     @property
     def departamento(self):
@@ -60,6 +61,18 @@ class Curso:
 
     @departamento.setter
     def departamento(self, valor):
+        from .Departamento import Departamento
         if not isinstance(valor, Departamento):
             raise TypeError("El departamento debe ser una instancia de la clase Departamento.")
         self._departamento = valor
+
+if __name__ == "__main__":
+    # Ejemplo de uso
+    from modules.Departamento import Departamento
+    from modules.Profesor import Profesor
+
+    depto = Departamento("Ciencias", Profesor("Ana Gomez", 40, "12345678", "Matemáticas"))
+    curso = Curso("Álgebra", "MATH101", depto)
+    print(f"Curso: {curso.nombre}, Código: {curso.codigo}, Departamento: {curso.departamento.nombre}")
+
+# python -m modules.Curso # Ejecuta el módulo Curso.py directamente para pruebas rápidas

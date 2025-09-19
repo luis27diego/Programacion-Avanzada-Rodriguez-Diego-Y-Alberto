@@ -1,7 +1,7 @@
 from abc import ABC, abstractmethod
 
-class Persona (ABC):
-    def __init__(self, nombre, edad, dni: None):
+class Persona(ABC):
+    def __init__(self, nombre, edad, dni=None):
         self.nombre = nombre
         self.edad = edad
         self.dni = dni  # DNI es un atributo protegido
@@ -35,5 +35,3 @@ class Persona (ABC):
                 raise ValueError("El DNI debe ser una cadena de texto no vacía.")
 
         self._dni = valor.strip() if valor is not None else None
-
-    
