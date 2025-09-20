@@ -34,7 +34,7 @@ class Alimento(ABC):
 
     def gramos_a_kilos(self, gramos):
         """Convierte gramos a kilogramos"""
-        return gramos / 1000.0
+        return gramos 
 
     def __str__(self):
         return f"{self._nombre} ({self._peso}g) - aw: {self.calcular_aw():.3f}"
