@@ -4,12 +4,12 @@ class Persona(ABC):
     def __init__(self, nombre, edad, dni=None):
         self.nombre = nombre
         self.edad = edad
-        self.dni = dni  # DNI es un atributo protegido
+        self.dni = dni  # DNI es un atributo privado
 
     
     @property
     def nombre(self):
-        return self._nombre
+        return self.__nombre
     
     @nombre.setter
     def nombre(self, valor):
@@ -19,11 +19,11 @@ class Persona(ABC):
         if not valor.strip():
             raise ValueError("El nombre debe ser una cadena de texto no vacía.")
 
-        self._nombre = valor.strip()
+        self.__nombre = valor.strip()
 
     @property
     def dni(self):
-        return self._dni
+        return self.__dni
     
     @dni.setter
     def dni(self, valor):
@@ -34,4 +34,4 @@ class Persona(ABC):
             if not valor.strip():
                 raise ValueError("El DNI debe ser una cadena de texto no vacía.")
 
-        self._dni = valor.strip() if valor is not None else None
+        self.__dni = valor.strip() if valor is not None else None

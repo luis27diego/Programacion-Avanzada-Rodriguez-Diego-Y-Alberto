@@ -114,11 +114,12 @@ if __name__ == "__main__":
                 idx_prof = int(input("Opción: ")) - 1
                 if 0 <= idx_prof < len(facultad.profesores):
                     titular = facultad.profesores[idx_prof]
-                    curso = Curso(nombre, codigo, dept)
-                    curso.agregar_profesor(titular)
-                    cursos.append(curso)
-                    facultad.agregar_curso(curso)
-                    dept.agregar_curso(curso)
+                    #curso = Curso(nombre, codigo, dept)
+                    #curso.agregar_profesor(titular)
+                    #cursos.append(curso)
+                    #facultad.agregar_curso(curso)
+                    #dept.agregar_curso(curso)
+                    facultad.crear_curso(nombre, codigo, dept, titular)
                     print(f"✅ Curso {nombre} creado en {dept.nombre}.")
                     print("📚 Cursos en el departamento:")
                     for c in dept.cursos:

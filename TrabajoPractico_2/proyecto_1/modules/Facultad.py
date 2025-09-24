@@ -59,10 +59,17 @@ class Facultad:
     def cursos(self):   
         return self._cursos 
     
-    def agregar_curso(self, curso):
+    def crear_curso(self, nombre,codigo,departamento,titular):
         from .Curso import Curso
-        if not isinstance(curso, Curso):
-            raise TypeError("El curso debe ser una instancia de la clase Curso.")
+        from .Departamento import Departamento
+        from .Profesor import Profesor
+        if not isinstance(departamento, Departamento):
+            raise TypeError("El departamento debe ser una instancia de la clase Departamento.")
+        if not isinstance(titular, Profesor):
+            raise TypeError("El titular debe ser una instancia de la clase Profesor.")
+        curso = Curso(nombre, codigo, departamento)
+        curso.agregar_profesor(titular)
+        departamento.agregar_curso(curso)
         if curso not in self._cursos:
             self._cursos.append(curso)
 
