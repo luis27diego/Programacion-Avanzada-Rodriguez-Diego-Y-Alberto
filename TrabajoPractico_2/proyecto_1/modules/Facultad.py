@@ -24,12 +24,13 @@ class Facultad:
     def departamentos(self):
         return self._departamentos
 
-    def agregar_departamento(self, departamento):
+    def crear_departamento(self, nombre,director):
         from .Departamento import Departamento
-        if not isinstance(departamento, Departamento):
-            raise TypeError("El departamento debe ser una instancia de la clase Departamento.")
+        departamento = Departamento(nombre, director)
         if departamento not in self._departamentos:
             self._departamentos.append(departamento)
+        else:
+            raise ValueError("El departamento ya existe en la facultad.")
 
     @property
     def estudiantes(self):

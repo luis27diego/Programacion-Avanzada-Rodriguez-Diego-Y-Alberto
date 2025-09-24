@@ -42,6 +42,8 @@ def menu():
     print("4 - Crear curso nuevo")
     print("5 - Inscribir estudiante a un curso")
     print("6 - Salir")
+    print("7 - Listar estudiantes")
+    print("8 - Listar profesores")
 
 if __name__ == "__main__":
     # Inicialización
@@ -84,9 +86,9 @@ if __name__ == "__main__":
                 if director.Es_director is not None:
                     print("⚠ El profesor ya es director de otro departamento.")
                     continue
-                dept = Departamento(nombre, director)
-                departamentos.append(dept)
-                facultad.agregar_departamento(dept)
+                #dept = Departamento(nombre, director)
+                #departamentos.append(dept)
+                facultad.crear_departamento(nombre, director)
                 print(f"✅ Departamento {nombre} creado con director {director.nombre}.")
                 print("📋 Departamentos:")
                 for d in facultad.departamentos: # o podríamos usar
@@ -160,5 +162,11 @@ if __name__ == "__main__":
             for e in facultad.estudiantes:
                 print(f"- {e.nombre}, Edad: {e.edad}, DNI: {e.dni}, Cursos: {[c.nombre for c in e.cursos]}")
 
+        elif opcion == "8":
+            print("📋 Listado de profesores:")
+            for p in facultad.profesores:
+                depts = [d.nombre for d in p.departamentos]
+                dir_dept = p.Es_director.nombre if p.Es_director else "Ninguno"
+                print(f"- {p.nombre}, Edad: {p.edad}, DNI: {p.dni}, Especialidad: {p.especialidad}, Departamentos: {depts}, Director de: {dir_dept}")
         else:
             print("❌ Opción inválida.")
