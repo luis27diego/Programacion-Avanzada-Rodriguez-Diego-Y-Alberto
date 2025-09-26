@@ -4,7 +4,6 @@ class Facultad:
         self.nombre = nombre
         self._departamentos = []
         self._estudiantes = []
-        self._cursos = []
         self._profesores = []
 
     @property
@@ -19,13 +18,16 @@ class Facultad:
             raise ValueError("El nombre de la facultad debe ser una cadena de texto no vacía.")
         self._nombre = valor.strip()
 
-
     @property
     def departamentos(self):
         return self._departamentos
+    
+    def departamentos_dict(self):
+        return [dept.to_dict() for dept in self._departamentos]
 
-    def crear_departamento(self, nombre,director):
+    def crear_departamento(self, nombre,director_idx):
         from .Departamento import Departamento
+        director = self._profesores[director_idx]
         departamento = Departamento(nombre, director)
         if departamento not in self._departamentos:
             self._departamentos.append(departamento)
@@ -35,6 +37,9 @@ class Facultad:
     @property
     def estudiantes(self):
         return self._estudiantes
+    
+    def estudiantes_dict(self):
+        return [estudiante.to_dict() for estudiante in self._estudiantes]
 
     def agregar_estudiante(self, estudiante):
         from .Estudiante import Estudiante
@@ -42,40 +47,13 @@ class Facultad:
             raise TypeError("El estudiante debe ser una instancia de la clase Estudiante.")
         if estudiante not in self._estudiantes:
             self._estudiantes.append(estudiante)
-    
-    def asignar_director_a_departamento(self, departamento, profesor):
-        from .Departamento import Departamento
-        from .Profesor import Profesor
-
-        if not isinstance(departamento, Departamento):
-            raise TypeError("El departamento debe ser una instancia de la clase Departamento.")
-        if not isinstance(profesor, Profesor):
-            raise TypeError("El profesor debe ser una instancia de la clase Profesor.")
-        if profesor.Es_director is not None:
-            raise ValueError("El profesor ya es director de otro departamento.")
-        departamento.Es_director = profesor
-
-    @property
-    def cursos(self):   
-        return self._cursos 
-    
-    def crear_curso(self, nombre,codigo,departamento,titular):
-        from .Curso import Curso
-        from .Departamento import Departamento
-        from .Profesor import Profesor
-        if not isinstance(departamento, Departamento):
-            raise TypeError("El departamento debe ser una instancia de la clase Departamento.")
-        if not isinstance(titular, Profesor):
-            raise TypeError("El titular debe ser una instancia de la clase Profesor.")
-        curso = Curso(nombre, codigo, departamento)
-        curso.agregar_profesor(titular)
-        departamento.agregar_curso(curso)
-        if curso not in self._cursos:
-            self._cursos.append(curso)
 
     @property
     def profesores(self):
         return self._profesores
+    
+    def profesores_dict(self):
+        return [profesor.to_dict() for profesor in self._profesores]
     
     def agregar_profesor(self, profesor):
         from .Profesor import Profesor
@@ -83,6 +61,39 @@ class Facultad:
             raise TypeError("El profesor debe ser una instancia de la clase Profesor.")
         if profesor not in self._profesores:
             self._profesores.append(profesor)
-            
+    
+
+
+
+    def crear_curso(self, nombre,codigo,departamento_idx,titular_idx):
+        if not isinstance(departamento_idx, int) or not (0 <= departamento_idx < len(self._departamentos)):
+            raise IndexError("Índice de departamento fuera de rango.")
+        if not isinstance(titular_idx, int) or not (0 <= titular_idx < len(self._profesores)):
+            raise IndexError("Índice de titular fuera de rango.")
+        departamento = self._departamentos[departamento_idx]
+        titular = self._profesores[titular_idx]
+        if titular.ensena_en is not None:
+            raise ValueError("El profesor ya es titular de otro curso.")
+        departamento.crear_curso(nombre, codigo, titular)
+
+    def inscribir_estudiante_curso(self, estudiante_idx, departamento_idx, curso_str):
+        if not isinstance(estudiante_idx, int) or not (0 <= estudiante_idx < len(self._estudiantes)):
+            raise IndexError("Índice de estudiante fuera de rango.")
+        estudiante = self._estudiantes[estudiante_idx]
+        if not isinstance(departamento_idx, int) or not (0 <= departamento_idx < len(self._departamentos)):
+            raise IndexError("Índice de departamento fuera de rango.")
+        departamento = self._departamentos[departamento_idx]
+        departamento.inscribir_estudiante_curso(estudiante, curso_str)
+
+    def cursos_departamento_idx(self): #Devuelve los cursos con el idx del departamento al que pertenecen (Matematica,0),(Fisica,0),(Historia,1)...
+        lista = []
+        if not self._departamentos:
+            raise ValueError("No hay departamentos en la facultad. Por lo tanto, no hay cursos.")
+        for idx, departamento in enumerate(self._departamentos):
+            departamento_cursos = departamento.obtener_cursos()
+            for curso in departamento_cursos:
+                lista.append((curso, idx))
+        return lista
+
     def __str__(self):
         return f"Facultad: {self.nombre}"

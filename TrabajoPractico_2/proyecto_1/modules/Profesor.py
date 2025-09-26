@@ -5,7 +5,8 @@ class Profesor(Persona):
         super().__init__(nombre, edad, dni)
         self.especialidad = especialidad
         self._departamentos = []  
-        self.Es_director = None  
+        self.departamento_dirigido = None  
+        self.ensena_en = None
 
     @property
     def especialidad(self):
@@ -29,17 +30,38 @@ class Profesor(Persona):
             self._departamentos.append(departamento)
 
     @property
-    def Es_director(self):
-        return self._Es_director
+    def departamento_dirigido(self):
+        return self._departamento_dirigido
     
-    @Es_director.setter
-    def Es_director(self, valor):
+    @departamento_dirigido.setter
+    def departamento_dirigido(self, valor):
         # Permitir None o instancia de Departamento
         if valor is not None:
             from .Departamento import Departamento
             if not isinstance(valor, Departamento):
-                raise TypeError("Es_director debe ser una instancia de Departamento o None.")
-        self._Es_director = valor
+                raise TypeError("departamento_dirigido debe ser una instancia de Departamento o None.")
+        self._departamento_dirigido = valor
+
+    @property
+    def ensena_en(self):
+        return self._ensena_en
+    @ensena_en.setter
+    def ensena_en(self, valor):
+        from .Curso import Curso
+        if valor is not None and not isinstance(valor, Curso):
+            raise TypeError("ensena_en debe ser una instancia de Curso o None.")
+        self._ensena_en = valor
+
+    def to_dict(self):
+        return {
+            "nombre": self.nombre,
+            "edad": self.edad,
+            "dni": self.dni,
+            "especialidad": self.especialidad,
+            "departamentos": [dept.nombre for dept in self._departamentos],
+            "departamento_dirigido": self.departamento_dirigido.nombre if self.departamento_dirigido else None,
+            "ensena_en": self.ensena_en.nombre if self.ensena_en else None
+        }
 
 if __name__ == "__main__":
     # Ejemplo de uso

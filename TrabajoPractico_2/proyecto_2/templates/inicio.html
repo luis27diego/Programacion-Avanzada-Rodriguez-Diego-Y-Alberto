@@ -234,22 +234,17 @@
 <body>
     <div class="container">
         <div class="left-panel">
-            <h1>Smart Belt</h1>
+            <h1>Cinta Inteligente</h1>
             
             <form method="POST" action="/">
                 <div class="control-section">
                     <div class="input-group">
-                        <label for="numAlimentos">N°<br>Alimentos</label>
+                        <label for="numAlimentos"><br>N° Alimentos</label>
                         <input type="number" name="numAlimentos" id="numAlimentos" value="100" min="1" max="1000">
                     </div>
                     <button class="start-button" type="submit">INICIAR<br>CARGA</button>
                 </div>
             </form>
-
-            <div class="conveyor-belt">
-                <div class="belt-surface"></div>
-                <div class="sensor"></div>
-            </div>
 
             {% if estado and estado.estado == 'running' %}
             <form method="POST" action="/procesar">

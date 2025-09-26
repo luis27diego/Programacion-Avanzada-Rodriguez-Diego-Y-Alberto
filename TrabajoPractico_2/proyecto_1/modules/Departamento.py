@@ -30,6 +30,7 @@ class Departamento:
         self.__actualizo_estado_director(profesor)
 
     def agregar_profesor(self, profesor):
+        from .Profesor import Profesor
         if not isinstance(profesor, Profesor):
             raise TypeError("El profesor debe ser una instancia de la clase Profesor.")
         if profesor not in self._profesores:
@@ -39,7 +40,7 @@ class Departamento:
         from .Profesor import Profesor
         if not isinstance(director, Profesor):
             raise TypeError("El director debe ser una instancia de la clase Profesor.")
-        director.Es_director = self
+        director.departamento_dirigido = self
 
     @property
     def profesores(self):
@@ -49,12 +50,43 @@ class Departamento:
     def cursos(self):
         return self._cursos
     
-    def agregar_curso(self, curso):
+    def crear_curso(self, nombre, codigo, titular):
+        from .Profesor import Profesor
+        if not isinstance(titular, Profesor):
+            raise TypeError("El titular debe ser una instancia de la clase Profesor.")
         from .Curso import Curso
-        if not isinstance(curso, Curso):
-            raise TypeError("El curso debe ser una instancia de la clase Curso.")
+        curso = Curso(nombre, codigo, self, titular)
         if curso not in self._cursos:
             self._cursos.append(curso)
+        else:
+            raise ValueError("El curso ya existe en el departamento.")
+
+    def inscribir_estudiante_curso(self, estudiante, curso_str):
+        from .Estudiante import Estudiante
+        if not isinstance(estudiante, Estudiante):
+            raise TypeError("El estudiante debe ser una instancia de la clase Estudiante.")
+        if not isinstance(curso_str, str):
+            raise TypeError("El nombre del curso debe ser una cadena de texto.")
+        curso_encontrado = None
+        for curso in self._cursos:
+            if curso.nombre == curso_str:
+                curso_encontrado = curso
+                break
+        
+        if curso_encontrado is None:
+            raise ValueError(f"El curso '{curso_str}' no existe en el departamento '{self.nombre}'.")
+        
+        curso_encontrado.agregar_estudiante(estudiante)
+    
+    def obtener_cursos(self):
+        return [curso.nombre for curso in self._cursos]
+
+    def to_dict(self):
+        return {
+            "nombre": self.nombre,
+            "director": self.director.nombre if self.director else None,
+            "cursos": [curso.to_dict().get("nombre") for curso in self._cursos]
+        }
 
 
 if __name__ == "__main__":

@@ -3,12 +3,13 @@
 #from modules import Departamento
 
 class Curso:
-    def __init__(self, nombre, codigo, departamento):
+    def __init__(self, nombre, codigo, departamento,titular):
         self.nombre = nombre
         self.codigo = codigo
         self._estudiantes = []  # Inicializa como lista vacía
         self._profesores = []
         self.departamento = departamento  # Departamento es un atributo protegido
+        self.titular = titular  # Titular es un atributo protegido
 
     @property
     def nombre(self):
@@ -36,17 +37,21 @@ class Curso:
 
     @property
     def estudiantes(self):
-        return self._estudiantes
+        return [estudiante.to_dict() for estudiante in self._estudiantes]
     
-    def agregar_estudiante(self, estudiante):
+    def agregar_estudiante(self, estudiante): 
         from .Estudiante import Estudiante
         if not isinstance(estudiante, Estudiante):
             raise TypeError("El estudiante debe ser una instancia de la clase Estudiante.")
-        self._estudiantes.append(estudiante)
+        if estudiante not in self._estudiantes:
+            estudiante.agregar_curso(self)
+            self._estudiantes.append(estudiante)
+        else:
+            raise ValueError("El estudiante ya está inscrito en el curso.")
 
     @property
-    def profesor(self):
-        return self._profesores
+    def profesores(self):
+        return [profesor.to_dict() for profesor in self._profesores]
     
     def agregar_profesor(self, profesor):
         from .Profesor import Profesor
@@ -65,6 +70,26 @@ class Curso:
         if not isinstance(valor, Departamento):
             raise TypeError("El departamento debe ser una instancia de la clase Departamento.")
         self._departamento = valor
+    
+    @property
+    def titular(self):
+        return self._titular
+    @titular.setter
+    def titular(self, valor):
+        from .Profesor import Profesor
+        if not isinstance(valor, Profesor):
+            raise TypeError("El titular debe ser una instancia de la clase Profesor.")
+        self._titular = valor
+        valor.ensena_en = self
+
+    def to_dict(self):
+        return {
+            "nombre": self.nombre,
+            "codigo": self.codigo,
+            "profesores": [profesor.to_dict() for profesor in self._profesores],
+            "departamento": self.departamento.nombre if self.departamento else None,
+            "titular": self.titular.nombre if self.titular else None
+        }
 
     def __str__(self):
         return f"Curso: {self.nombre}, Código: {self.codigo}, Departamento: {self.departamento.nombre}"
