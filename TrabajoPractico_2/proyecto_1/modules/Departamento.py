@@ -26,8 +26,10 @@ class Departamento:
         from .Profesor import Profesor
         if profesor is not None and not isinstance(profesor, Profesor):
             raise TypeError("El director del departamento debe ser una instancia de la clase Profesor.")
+        if profesor.departamento_dirigido is not None:
+            raise ValueError("El profesor ya es director de otro departamento.")
         self._director = profesor
-        self.__actualizo_estado_director(profesor)
+        profesor.departamento_dirigido = self
 
     def agregar_profesor(self, profesor):
         from .Profesor import Profesor
@@ -35,12 +37,6 @@ class Departamento:
             raise TypeError("El profesor debe ser una instancia de la clase Profesor.")
         if profesor not in self._profesores:
             self._profesores.append(profesor)
-
-    def __actualizo_estado_director(self, director):
-        from .Profesor import Profesor
-        if not isinstance(director, Profesor):
-            raise TypeError("El director debe ser una instancia de la clase Profesor.")
-        director.departamento_dirigido = self
 
     @property
     def profesores(self):

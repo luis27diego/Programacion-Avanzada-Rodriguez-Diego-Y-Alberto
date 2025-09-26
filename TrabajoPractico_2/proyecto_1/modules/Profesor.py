@@ -45,6 +45,7 @@ class Profesor(Persona):
     @property
     def ensena_en(self):
         return self._ensena_en
+    
     @ensena_en.setter
     def ensena_en(self, valor):
         from .Curso import Curso

@@ -1,6 +1,4 @@
 from modules import Persona
-#from modules import Curso
-#from modules import Facultad
 
 class Estudiante(Persona):
     def __init__(self, nombre, edad, dni):
