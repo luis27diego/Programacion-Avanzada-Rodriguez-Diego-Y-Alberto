@@ -23,6 +23,9 @@ class Cajon:
         if not hasattr(alimento, 'calcular_aw'):
             raise TypeError("El objeto debe ser un alimento válido")
         
+        from .Alimentos import Alimento  # Import local para evitar circular
+        if not isinstance(alimento, Alimento):
+            raise TypeError("El objeto debe ser una instancia de Alimento")
         self._alimentos.append(alimento)
     
     def esta_lleno(self):
@@ -107,6 +110,10 @@ class Cajon:
         
         return advertencias
     
+    def es_susceptible(self):
+        """Determina si el cajón es susceptible a contaminación microbiana"""
+        return self.aw_promedio_total() > 0.90
+    
     # Implementación del protocolo de iteración
     def __iter__(self):
         """Hace el cajón iterable"""
@@ -121,7 +128,7 @@ class Cajon:
         alimento = self._alimentos[self._indice_iteracion]
         self._indice_iteracion += 1
         return alimento
-
+""" 
 if __name__ == "__main__":
     from Frutas import Kiwi, Manzana
     from Verduras import Papa, Zanahoria
@@ -145,4 +152,4 @@ if __name__ == "__main__":
         print(f"\n{cajon.obtener_advertencias()}")
         
     except Exception as e:
-        print(f"Error: {e}")
+        print(f"Error: {e}") """

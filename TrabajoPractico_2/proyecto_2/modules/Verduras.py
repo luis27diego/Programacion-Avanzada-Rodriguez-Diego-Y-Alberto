@@ -1,4 +1,4 @@
-from .Alimentos import Verdura
+from modules.Alimentos import Verdura
 #from Frutas import Kiwi, Manzana
 import math
 
@@ -20,22 +20,20 @@ class Zanahoria(Verdura):
         resultado = 0.96 * (1 - math.exp(-C * self.gramos_a_kilos(self._peso)))
         return max(0, min(1, resultado))  # Limita entre 0 y 1
 
-
+""" 
 # Ejemplo de uso
 if __name__ == "__main__":
-    # Crear algunos alimentos
+
     try:
-        kiwi = Kiwi(150)
-        manzana = Manzana(200)
-        papa = Papa(300)
-        zanahoria = Zanahoria(100)
+        papa = Papa(120)
+        zanahoria = Zanahoria(200)
         
         print("=== Ejemplos de Alimentos ===")
-        alimentos = [kiwi, manzana, papa, zanahoria]
+        alimentos = [papa, zanahoria]
         
         for alimento in alimentos:
             print(f"{alimento}")
             print(f"  Susceptible? {'Si' if alimento.es_susceptible() else 'No'}")
             print()
     except ValueError as e:
-        print(f"Error: {e}")    
+        print(f"Error: {e}")     """
