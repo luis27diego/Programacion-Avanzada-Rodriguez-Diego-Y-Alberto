@@ -1,11 +1,8 @@
 # main.py
-from modules.Estudiante import Estudiante
-from modules.Profesor import Profesor
-from modules.Departamento import Departamento
-from modules.Curso import Curso
+from modules.estudiante import Estudiante
+from modules.profesor import Profesor
 from modules.Facultad import Facultad
 
-# ...existing code...
 def cargar_personas(facultad, archivo):
     estudiantes = []
     profesores = []
@@ -29,7 +26,6 @@ def cargar_personas(facultad, archivo):
     except FileNotFoundError:
         print("⚠ No se encontró el archivo, se continuará sin carga automática.")
     return estudiantes, profesores
-# ...existing code...
 
 def menu():
     print("\n##########################################")
@@ -60,7 +56,7 @@ if __name__ == "__main__":
             dni = input("DNI: ")
             est = Estudiante(nombre, edad, dni)
             facultad.agregar_estudiante(est)
-            est.facultad = facultad
+            estudiantes.append(est)
             print(f"✅ Estudiante {nombre} inscrito.")
 
         elif opcion == "2":
@@ -73,6 +69,7 @@ if __name__ == "__main__":
             prof.facultad = facultad
             print(f"✅ Profesor {nombre} contratado.")
 
+        # Crear departamento nuevo
         elif opcion == "3":
             nombre = input("Nombre del departamento: ")
             print("Seleccione director:")

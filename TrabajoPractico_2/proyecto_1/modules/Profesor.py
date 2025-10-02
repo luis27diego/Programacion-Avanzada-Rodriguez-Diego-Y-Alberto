@@ -1,4 +1,5 @@
-from .Persona  import Persona
+from modules.persona  import Persona
+from modules.departamento import Departamento
 
 class Profesor(Persona):
     def __init__(self, nombre, edad, dni, especialidad):
@@ -23,7 +24,6 @@ class Profesor(Persona):
         return self._departamentos
 
     def agregar_departamento(self, departamento):
-        from .Departamento import Departamento
         if not isinstance(departamento, Departamento):
             raise TypeError("Los departamentos deben ser instancias de la clase Departamento.")
         if departamento not in self._departamentos:
@@ -35,10 +35,12 @@ class Profesor(Persona):
     
     @departamento_dirigido.setter
     def departamento_dirigido(self, valor):
-        # Permitir None o instancia de Departamento
         if valor is not None:
-            from .Departamento import Departamento
+            #print(id(type(valor)), '*'*50)
+            #print(id(Departamento))
             if not isinstance(valor, Departamento):
+            #    print(id(type(valor)), '*'*50)
+            #    print(id(Departamento))
                 raise TypeError("departamento_dirigido debe ser una instancia de Departamento o None.")
         self._departamento_dirigido = valor
 
@@ -48,11 +50,10 @@ class Profesor(Persona):
     
     @ensena_en.setter
     def ensena_en(self, valor):
-        from .Curso import Curso
+        from modules.Curso import Curso
         if valor is not None and not isinstance(valor, Curso):
             raise TypeError("ensena_en debe ser una instancia de Curso o None.")
-        self._ensena_en = valor
-
+        self._ensena_en = valor 
     def to_dict(self):
         return {
             "nombre": self.nombre,
@@ -67,7 +68,11 @@ class Profesor(Persona):
 if __name__ == "__main__":
     # Ejemplo de uso
     try:
+        from modules.departamento import Departamento
+        from modules.profesor import Profesor
         prof = Profesor("Carlos Ruiz", 45, "87654321", "Historia")
         print(f"Nombre: {prof.nombre}, Edad: {prof.edad}, DNI: {prof.dni}, Especialidad: {prof.especialidad}")
+        dept = Departamento("Humanidades", prof)
+
     except Exception as e:
         print(f"Error: {e}")

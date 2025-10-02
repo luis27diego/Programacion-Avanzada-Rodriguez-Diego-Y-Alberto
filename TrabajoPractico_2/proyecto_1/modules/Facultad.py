@@ -1,3 +1,5 @@
+from modules.departamento import Departamento
+from modules.estudiante import Estudiante
 # modules/Facultad.py
 class Facultad:
     def __init__(self, nombre):
@@ -26,7 +28,6 @@ class Facultad:
         return [dept.to_dict() for dept in self._departamentos]
 
     def crear_departamento(self, nombre,director_idx):
-        from .Departamento import Departamento
         director = self._profesores[director_idx]
         departamento = Departamento(nombre, director)
         if departamento not in self._departamentos:
@@ -42,7 +43,6 @@ class Facultad:
         return [estudiante.to_dict() for estudiante in self._estudiantes]
 
     def agregar_estudiante(self, estudiante):
-        from .Estudiante import Estudiante
         if not isinstance(estudiante, Estudiante):
             raise TypeError("El estudiante debe ser una instancia de la clase Estudiante.")
         if estudiante not in self._estudiantes:
@@ -56,7 +56,7 @@ class Facultad:
         return [profesor.to_dict() for profesor in self._profesores]
     
     def agregar_profesor(self, profesor):
-        from .Profesor import Profesor
+        from .profesor import Profesor
         if not isinstance(profesor, Profesor):
             raise TypeError("El profesor debe ser una instancia de la clase Profesor.")
         if profesor not in self._profesores:
