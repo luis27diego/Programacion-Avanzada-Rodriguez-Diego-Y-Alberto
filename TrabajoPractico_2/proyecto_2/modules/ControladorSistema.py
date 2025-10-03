@@ -17,46 +17,31 @@ class ControladorSistema:
         """Inicia el proceso de carga de un nuevo cajón"""
         self.cajon_actual = Cajon(capacidad_cajon)
         self.estado = "running"
-        self.alimentos_procesados = 0
-        self.alimentos_desviados = 0
-        return True
     
-    def procesar_siguiente_alimento(self):
-        """Procesa el siguiente alimento de la cinta"""
+    def procesar_hasta_llenar(self):
+        """Procesa alimentos continuamente hasta que el cajón esté lleno"""
         if self.estado != "running" or not self.cajon_actual:
-            return False
+            return
         
-        # Verificar si el cajón está lleno
-        if self.cajon_actual.esta_lleno():
-            self.estado = "complete"
-            return False
-        
-        # Detectar alimento
-        deteccion = self.cinta.detectar_alimento()
-        
-        if deteccion == "undefined":
-            # Alimento desviado por falla en detección
-            self.alimentos_desviados += 1
-            return {"tipo": "desviado", "mensaje": "Alimento desviado por falla en detección"}
-        
-        try:
-            # Crear y agregar alimento al cajón
-            print(deteccion["peso"])
-            alimento = crear_alimento(deteccion["alimento"], deteccion["peso"])
-            self.cajon_actual.agregar_alimento(alimento)
-            self.alimentos_procesados += 1
+        while not self.cajon_actual.esta_lleno():
+            # Detectar alimento
+            deteccion = self.cinta.detectar_alimento()
             
-            return {
-                "tipo": "agregado",
-                "alimento": deteccion["alimento"],
-                "peso": deteccion["peso"],
-                "aw": alimento.calcular_aw()
-            }
+            if deteccion == "undefined":
+                # Alimento desviado por falla en detección
+                self.alimentos_desviados += 1
+                continue
             
-        except Exception as e:
-            # Error al crear o agregar alimento
-            self.alimentos_desviados += 1
-            return {"tipo": "error", "mensaje": str(e)}
+            try:
+                # Crear y agregar alimento al cajón
+                alimento = crear_alimento(deteccion["alimento"], deteccion["peso"])
+                self.cajon_actual.agregar_alimento(alimento)
+                self.alimentos_procesados += 1
+            except Exception:
+                # Error al crear o agregar alimento
+                self.alimentos_desviados += 1
+        
+        self.estado = "complete"
     
     def obtener_estado_actual(self):
         """Retorna el estado actual completo del sistema"""

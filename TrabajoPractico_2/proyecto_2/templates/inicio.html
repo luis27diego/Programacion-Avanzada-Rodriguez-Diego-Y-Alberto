@@ -1,13 +1,9 @@
-<!-- templates/index.html -->
 <!DOCTYPE html>
 <html lang="es">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Smart Belt - Sistema de Cinta Transportadora</title>
-    {% if estado and estado['estado'] == 'running' %}
-    <meta http-equiv="refresh" content="0.3">
-    {% endif %}
+    <title>Sistema de Cinta Transportadora</title>
     <style>
         * {
             margin: 0;
@@ -79,16 +75,6 @@
             font-size: 1.2em;
             text-align: center;
             width: 100px;
-        }
-
-        .conveyor-belt {
-            width: 200px;
-            height: 120px;
-            background: #f0f0f0;
-            border-radius: 10px;
-            margin: 20px 0;
-            position: relative;
-            border: 3px solid #ccc;
         }
 
         .belt-surface {
@@ -188,6 +174,9 @@
         .value-good {
             background: #4a90e2;
         }
+        .value-good.iniciar {
+            background: none;
+        }
 
         .value-warning {
             background: #ffa726;
@@ -235,20 +224,15 @@
     <div class="container">
         <div class="left-panel">
             <h1>Cinta Inteligente</h1>
-            
+            {% if estado and estado.estado == 'idle' %}
             <form method="POST" action="/">
                 <div class="control-section">
                     <div class="input-group">
-                        <label for="numAlimentos"><br>N° Alimentos</label>
+                        <label for="numAlimentos">N° Alimentos</label>
                         <input type="number" name="numAlimentos" id="numAlimentos" value="100" min="1" max="1000">
                     </div>
-                    <button class="start-button" type="submit">INICIAR<br>CARGA</button>
+                    <button class="start-button" type="submit">INICIAR CARGA</button>
                 </div>
-            </form>
-
-            {% if estado and estado.estado == 'running' %}
-            <form method="POST" action="/procesar">
-                <button class="start-button" type="submit">Procesar siguiente alimento</button>
             </form>
             {% endif %}
 
@@ -260,64 +244,58 @@
 
             <div class="status {{ estado.estado if estado else 'idle' }}" id="status">
                 {% if error %}
-                    {{ error }}
+                    <span class="value-danger">{{ error }}</span>
                 {% elif mensaje %}
-                    {{ mensaje }}
+                    <span class="value-good iniciar">{{ mensaje }}</span>
                 {% elif estado.estado == 'idle' %}
                     Sistema listo para iniciar
                 {% elif estado.estado == 'running' %}
-                    Proceso en ejecución
+                    Procesando alimentos...
                 {% elif estado.estado == 'complete' %}
                     Cajón completado
                 {% endif %}
-            </div>
-
-            <div class="progress-bar">
-                {% set porcentaje = 0 %}
-                {% if estado and estado.progreso and estado.progreso.total > 0 %}
-                    {% set porcentaje = (estado.progreso.actual / estado.progreso.total * 100) | round(0) %}
-                {% endif %}
-                <div class="progress-fill" id="progressFill" style="width: {{ porcentaje }}%"></div>
             </div>
             <div id="progressText">{% if estado %}{{ estado.progreso.actual }} / {{ estado.progreso.total }}{% else %}0 / 0{% endif %}</div>
         </div>
         <div class="right-panel">
             <div class="results-panel">
+                <h2>Estadísticas del Cajón</h2>
                 <div class="result-item">
                     <span class="result-label">Peso Total del cajón:</span>
                     <span class="result-value value-good" id="pesoTotal">{% if estado and estado.estadisticas %}{{ estado.estadisticas.peso_total | round(1) }} kg{% else %}0.0 kg{% endif %}</span>
                 </div>
-
+                <div class="result-item">
+                    <span class="result-label">Alimentos Procesados:</span>
+                    <span class="result-value value-good" id="alimentosProcesados">{% if estado and estado.estadisticas %}{{ estado.estadisticas.alimentos_procesados }}{% else %}0{% endif %}</span>
+                </div>
+                <div class="result-item">
+                    <span class="result-label">Alimentos Desviados:</span>
+                    <span class="result-value {% if estado and estado.estadisticas and estado.estadisticas.alimentos_desviados > 0 %}value-warning{% else %}value-good{% endif %}" id="alimentosDesviados">{% if estado and estado.estadisticas %}{{ estado.estadisticas.alimentos_desviados }}{% else %}0{% endif %}</span>
+                </div>
                 <div class="result-item">
                     <span class="result-label">aw Frutas:</span>
                     <span class="result-value value-good" id="awFrutas">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_frutas | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
-
                 <div class="result-item">
-                    <span class="result-label">aw kiwi:</span>
+                    <span class="result-label">aw Kiwi:</span>
                     <span class="result-value value-good" id="awKiwi">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_kiwi | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
-
                 <div class="result-item">
-                    <span class="result-label">aw manzana:</span>
+                    <span class="result-label">aw Manzana:</span>
                     <span class="result-value value-good" id="awManzana">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_manzana | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
-
                 <div class="result-item">
                     <span class="result-label">aw Verduras:</span>
                     <span class="result-value value-good" id="awVerduras">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_verduras | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
-
                 <div class="result-item">
-                    <span class="result-label">aw papas:</span>
+                    <span class="result-label">aw Papas:</span>
                     <span class="result-value value-good" id="awPapas">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_papa | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
-
                 <div class="result-item">
-                    <span class="result-label">aw zanahorias:</span>
+                    <span class="result-label">aw Zanahorias:</span>
                     <span class="result-value value-good" id="awZanahorias">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_zanahoria | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
-
                 <div class="result-item">
                     <span class="result-label">aw Total:</span>
                     <span class="result-value value-good" id="awTotal">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_total | round(2) }}{% else %}0.00{% endif %}</span>

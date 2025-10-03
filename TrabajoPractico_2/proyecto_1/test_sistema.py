@@ -1,9 +1,6 @@
-# test_sistema.py
-# Ejecutar desde la carpeta proyecto_1 con: python test_sistema.py
-
-from modules.Profesor import Profesor
-from modules.Departamento import Departamento
-from modules.Estudiante import Estudiante
+from modules.profesor import Profesor
+from modules.departamento import Departamento
+from modules.estudiante import Estudiante
 from modules.Facultad import Facultad
 from modules.Curso import Curso
 

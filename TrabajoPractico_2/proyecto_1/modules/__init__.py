@@ -1,8 +1,8 @@
-# Importamos todas las clases principales para que estén disponibles
+""" # Importamos todas las clases principales para que estén disponibles
 from .Persona import Persona
-from .Profesor import Profesor
-from .Estudiante import Estudiante
-from .Departamento import Departamento
+from .profesor import Profesor
+from .estudiante import Estudiante
+from .departamento import Departamento
 from .Facultad import Facultad
 from .Curso import Curso
 
@@ -14,4 +14,4 @@ __all__ = [
     'Departamento',
     'Facultad',
     'Curso'
-]
+]  """

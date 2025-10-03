@@ -26,6 +26,7 @@ class Cajon:
         from .Alimentos import Alimento  # Import local para evitar circular
         if not isinstance(alimento, Alimento):
             raise TypeError("El objeto debe ser una instancia de Alimento")
+        
         self._alimentos.append(alimento)
     
     def esta_lleno(self):
@@ -35,6 +36,7 @@ class Cajon:
     def peso_total(self):
         """Calcula el peso total del cajón"""
         return sum(alimento.peso for alimento in self._alimentos)
+    
     def aw_promedio_total(self):
         """Calcula la actividad acuosa promedio total del cajón"""
         if not self._alimentos:
@@ -65,7 +67,7 @@ class Cajon:
         if not self._alimentos:
             return {"aw_prom_frutas": 0.0, "aw_prom_verduras": 0.0}
         
-        from .Alimentos import Fruta, Verdura  # Import local para evitar circular
+        from .Alimentos import Fruta, Verdura 
         
         frutas = [alimento for alimento in self._alimentos if isinstance(alimento, Fruta)]
         verduras = [alimento for alimento in self._alimentos if isinstance(alimento, Verdura)]
@@ -117,17 +119,9 @@ class Cajon:
     # Implementación del protocolo de iteración
     def __iter__(self):
         """Hace el cajón iterable"""
-        self._indice_iteracion = 0
-        return self
+        for alimento in self._alimentos:
+            yield alimento
 
-    def __next__(self):
-        """Retorna el siguiente alimento en la iteración"""
-        if self._indice_iteracion >= len(self._alimentos):
-            raise StopIteration
-        
-        alimento = self._alimentos[self._indice_iteracion]
-        self._indice_iteracion += 1
-        return alimento
 """ 
 if __name__ == "__main__":
     from Frutas import Kiwi, Manzana
