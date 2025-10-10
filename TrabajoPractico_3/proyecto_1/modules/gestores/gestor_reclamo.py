@@ -75,6 +75,19 @@ class GestorDeReclamo:
         """
         reclamos = self.reclamo_repositorio.obtener_reclamos_sin_usuario_en_departamento(usuario_id, departamento_id)
         return reclamos
+    
+    def modificar_estado_reclamo(self, reclamo_id: int, nuevo_estado: Estado) -> Optional[ReclamoDominio]:
+        """
+        Modifica el estado de un reclamo existente.
+        :param reclamo_id: ID del reclamo a modificar.
+        :param nuevo_estado: Nuevo estado a asignar.
+        :return: Instancia de ReclamoDominio modificada o None si no se encuentra.
+        """
+        reclamo = self.reclamo_repositorio.obtener_registro_por_filtro('id', reclamo_id)
+        if reclamo:
+            reclamo.estado = nuevo_estado
+            return self.reclamo_repositorio.modificar_registro(reclamo)
+        return None
 
 if __name__ == "__main__":
     from modules.factoria import crear_repositorio
