@@ -8,6 +8,8 @@ from modules.gestores.gestor_login import GestorDeLogin
 import pickle
 from modules.comparador_de_reclamos import ComparadorDeReclamos
 from modules.factoria import crear_repositorio
+from modules.dominio.reclamo import Estado
+from flask import flash
 
 usuario_repo, reclamo_repo, departamento_repo = crear_repositorio()
 
@@ -129,6 +131,43 @@ def todos_los_reclamos():
 def logout():    
     gestor_login.logout_usuario()      
     return redirect(url_for('login'))
+
+@app.route('/manejar_reclamos', methods=['GET', 'POST'])
+#@gestor_login.admin_only
+def manejar_reclamos():
+   
+    #id_departamento = session['id_departamento']
+    id_departamento = 1  # Placeholder, reemplazar con autenticación y lógica adecuada
+    # Lógica para manejar la creación/modificación de reclamos
+    if request.method == 'POST':
+        # 1. Tomar los datos del reclamo modificado
+        id_reclamo = request.form.get('id_reclamo')
+        nuevo_estado = request.form.get('estado')
+        
+        if nuevo_estado == "INVALIDO":
+            nuevo_estado = Estado.INVALIDO
+        elif nuevo_estado == "PENDIENTE":
+            nuevo_estado = Estado.PENDIENTE
+        elif nuevo_estado == "EN_PROCESO":
+            nuevo_estado = Estado.EN_PROCESO
+        elif nuevo_estado == "RESUELTO":
+            nuevo_estado = Estado.RESUELTO
+        else:
+            flash("Estado inválido.", "error")
+            return redirect(url_for('manejar_reclamos'))
+            
+        # 2. Actualizar el reclamo en la base de datos
+        gestor_reclamo.modificar_estado_reclamo(id_reclamo, nuevo_estado)
+        flash("Reclamo actualizado correctamente.", "success")
+        return redirect(url_for('manejar_reclamos'))
+   
+    datos_reclamos = gestor_reclamo.obtener_reclamos_departamento(id_departamento)
+    return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos)
+
+@app.route('/ayuda')
+#@gestor_login.admin_only
+def ayuda():
+    return render_template('ayuda.html')
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
