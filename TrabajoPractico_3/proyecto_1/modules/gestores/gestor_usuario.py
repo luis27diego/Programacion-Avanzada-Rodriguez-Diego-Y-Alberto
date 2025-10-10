@@ -204,7 +204,7 @@ class GestorDeUsuarios:
         usuario_dominio = self.obtener_usuario_por_email(email)
         if usuario_dominio and usuario_dominio.password == password:  # En producción, usa hashing
             return usuario_dominio
-        raise ValueError("Credenciales inválidas.")
+        raise ValueError("Credenciales inválidas. Usuario y/o contraseña incorrectos.")
 
     def obtener_reclamos_creados_por_usuario(self, id_usuario: int) -> List[ReclamoDominio]:
         """

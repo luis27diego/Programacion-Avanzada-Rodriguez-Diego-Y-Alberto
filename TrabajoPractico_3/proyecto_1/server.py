@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import redirect, render_template, request, url_for, session
+from flask import redirect, render_template, request, url_for, session,flash
 from modules.config import app, login_manager
 from modules.dominio.usuario import Rol, Claustro
 from modules.gestores.gestor_usuario import GestorDeUsuarios
@@ -55,7 +55,12 @@ def login():
     if request.method == "POST":
         email = request.form["input_email"]
         password = request.form["input_password"]
-        usuario_dominio = gestor_usuarios.autenticar_usuario(email, password)
+        try :
+            usuario_dominio = gestor_usuarios.autenticar_usuario(email, password)
+        except Exception as e:
+            flash(str(e))  # Cambiar esta línea
+            return render_template('login.html')  # Y agregar esta línea
+
         if usuario_dominio:
             gestor_login.login_usuario(usuario_dominio)
             session['id_usuario'] = usuario_dominio.id  # Guardar el ID del usuario en la sesión
