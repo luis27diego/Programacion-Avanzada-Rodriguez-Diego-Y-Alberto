@@ -91,7 +91,7 @@ def crear_reclamo():
 
         return redirect(url_for('ver_reclamos_similares'))
     
-    return render_template('crear_reclamo.html')
+    return render_template('crear_reclamo.html',active_page='crear_reclamo')
 
 @app.route('/ver_reclamos_similares', methods=['GET', 'POST'])
 @gestor_login.se_requiere_login
@@ -129,13 +129,13 @@ def mis_reclamos():
     usuario = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
     reclamos = usuario.obtener_reclamos_creados()
     reclamos_adheridos = usuario.obtener_reclamos_adheridos()
-    return render_template('mis_reclamos.html', reclamos=[r.to_dict() for r in reclamos], reclamos_adheridos=[r.to_dict() for r in reclamos_adheridos])
+    return render_template('mis_reclamos.html', reclamos=[r.to_dict() for r in reclamos], reclamos_adheridos=[r.to_dict() for r in reclamos_adheridos], active_page='mis_reclamos')
 
 @app.route('/todos_los_reclamos')
 @gestor_login.se_requiere_login
 def todos_los_reclamos():
     reclamos = gestor_reclamo.obtener_todos_los_reclamos()
-    return render_template('todos_los_reclamos.html', reclamos=[r.to_dict() for r in reclamos])
+    return render_template('todos_los_reclamos.html', reclamos=[r.to_dict() for r in reclamos], active_page='todos_los_reclamos')
 
 
 @app.route("/logout")

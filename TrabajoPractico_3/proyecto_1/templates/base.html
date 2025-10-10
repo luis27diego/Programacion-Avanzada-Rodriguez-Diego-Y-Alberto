@@ -12,9 +12,18 @@
         <div class="container mx-auto flex items-center">
             <div class="text-white text-lg font-bold mr-8">Sistema de Reclamos</div>
             <div class="flex-1 flex justify-center space-x-4">
-                <a href="{{ url_for('mis_reclamos') }}" class="text-white hover:underline">Mis Reclamos</a>
-                <a href="{{ url_for('crear_reclamo') }}" class="text-white hover:underline">Crear Reclamo</a>
-                <a href="{{ url_for('todos_los_reclamos') }}" class="text-white hover:underline">Ver Todos los Reclamos</a>
+                <a href="{{ url_for('mis_reclamos') }}"
+                class="px-3 py-1 rounded transition-colors duration-200 {% if active_page == 'mis_reclamos' %}bg-white text-blue-600 font-bold{% else %}text-white hover:bg-white/20{% endif %}">
+                Mis Reclamos
+                </a>
+                <a href="{{ url_for('crear_reclamo') }}"
+                class="px-3 py-1 rounded transition-colors duration-200 {% if active_page == 'crear_reclamo' %}bg-white text-blue-600 font-bold{% else %}text-white hover:bg-white/20{% endif %}">
+                Crear Reclamo
+                </a>
+                <a href="{{ url_for('todos_los_reclamos') }}"
+                class="px-3 py-1 rounded transition-colors duration-200 {% if active_page == 'todos_los_reclamos' %}bg-white text-blue-600 font-bold{% else %}text-white hover:bg-white/20{% endif %}">
+                Ver Todos los Reclamos
+                </a>
             </div>
             <div class="flex justify-end">
                 <a href="{{ url_for('logout') }}" class="text-white hover:underline ml-8">Cerrar sesión</a>

@@ -47,3 +47,17 @@ class GestorDeLogin:
 
     def se_requiere_login(self, func):
         return login_required(func)
+    
+    def admin_only(self, f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+            if current_user.is_authenticated and current_user.id not in self.__admin_list:
+                return abort(403)
+            return f(*args, **kwargs)
+        return decorated_function
+    
+    def es_admin(self):
+        if current_user.is_authenticated and current_user.id in self.__admin_list:
+            return True
+        else:
+            return False
