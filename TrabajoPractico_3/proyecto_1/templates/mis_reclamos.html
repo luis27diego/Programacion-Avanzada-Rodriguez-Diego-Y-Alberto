@@ -3,6 +3,9 @@
 {% block content %}
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-2xl mx-auto">
         <h1 class="text-2xl font-bold mb-4">Mis Reclamos</h1>
+
+        <!-- Sección de Reclamos Creados -->
+        <h2 class="text-xl font-semibold mt-6 mb-2">Reclamos Creados</h2>
         {% if reclamos %}
             <ul class="space-y-4">
                 {% for reclamo in reclamos %}
@@ -15,7 +18,24 @@
                 {% endfor %}
             </ul>
         {% else %}
-            <p>No tienes reclamos registrados.</p>
+            <p>No tienes reclamos creados.</p>
+        {% endif %}
+
+        <!-- Sección de Reclamos Adheridos -->
+        <h2 class="text-xl font-semibold mt-6 mb-2">Reclamos Adheridos</h2>
+        {% if reclamos_adheridos %}
+            <ul class="space-y-4">
+                {% for reclamo in reclamos_adheridos %}
+                    <li class="border p-4 rounded">
+                        <p><strong>Reclamo:</strong> {{ reclamo.contenido }}</p>
+                        <p><strong>Fecha:</strong> {{ reclamo.timestamp }}</p>
+                        <p><strong>Estado:</strong> {{ reclamo.estado }}</p>
+                        <p><strong>Departamento:</strong> {{ reclamo.departamento_id }}</p>
+                    </li>
+                {% endfor %}
+            </ul>
+        {% else %}
+            <p>No tienes reclamos adheridos.</p>
         {% endif %}
     </div>
 {% endblock %}
