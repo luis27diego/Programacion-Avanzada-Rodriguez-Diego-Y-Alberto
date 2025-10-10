@@ -278,5 +278,85 @@
     "num_frases": 3,
     "duracion": 4.142160892486572,
     "porcentaje": 0.0
+  },
+  {
+    "usuario": "Simon Bolivar",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-10 15:43:32",
+    "num_frases": 3,
+    "duracion": 3.676243543624878,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "ODILETH",
+    "aciertos": 3,
+    "tiempo_inicio": "2025-09-10 15:55:19",
+    "num_frases": 5,
+    "duracion": 34.613773822784424,
+    "porcentaje": 60.0
+  },
+  {
+    "usuario": "Miranda",
+    "aciertos": 2,
+    "tiempo_inicio": "2025-09-10 16:41:21",
+    "num_frases": 3,
+    "duracion": 13.72064995765686,
+    "porcentaje": 66.66666666666666
+  },
+  {
+    "usuario": "SEVSE",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-10 16:44:05",
+    "num_frases": 3,
+    "duracion": 12.498565196990967,
+    "porcentaje": 33.33333333333333
+  },
+  {
+    "usuario": "eervsec",
+    "aciertos": 2,
+    "tiempo_inicio": "2025-09-10 16:50:34",
+    "num_frases": 3,
+    "duracion": 6.695948123931885,
+    "porcentaje": 66.66666666666666
+  },
+  {
+    "usuario": "Carmen",
+    "aciertos": 1,
+    "tiempo_inicio": "2025-09-10 17:39:55",
+    "num_frases": 5,
+    "duracion": 6.585803508758545,
+    "porcentaje": 20.0
+  },
+  {
+    "usuario": "Juan carlos Andre",
+    "aciertos": 4,
+    "tiempo_inicio": "2025-09-10 17:46:50",
+    "num_frases": 7,
+    "duracion": 9.795072078704834,
+    "porcentaje": 57.14285714285714
+  },
+  {
+    "usuario": "Jose Miguel",
+    "aciertos": 3,
+    "tiempo_inicio": "2025-09-10 19:00:52",
+    "num_frases": 5,
+    "duracion": 4.972128391265869,
+    "porcentaje": 60.0
+  },
+  {
+    "usuario": "Luis Diego",
+    "duracion": 2.8910953998565674,
+    "tiempo_inicio": "2025-09-17 18:59:19",
+    "aciertos": 3,
+    "num_frases": 3,
+    "porcentaje": 100.0
+  },
+  {
+    "usuario": "andres",
+    "duracion": 533.9327602386475,
+    "tiempo_inicio": "2025-09-18 12:31:44",
+    "aciertos": 1,
+    "num_frases": 4,
+    "porcentaje": 25.0
   }
 ]

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Barra de navegación -->
+    <nav class="bg-blue-600 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-white text-lg font-bold">Sistema de Reclamos</div>
+                <div class="space-x-4">
+                    <a href="{{ url_for('mis_reclamos') }}" class="text-white hover:underline">Mis Reclamos</a>
+                    <a href="{{ url_for('crear_reclamo') }}" class="text-white hover:underline">Crear Reclamo</a>
+                    <a href="{{ url_for('todos_los_reclamos') }}" class="text-white hover:underline">Ver Todos los Reclamos</a>
+        </div>
+    </nav>
+
+    <!-- Contenido principal -->
+    <div class="container mx-auto mt-8 p-4">
+        {% block content %}
+        {% endblock %}
+    </div>
+</body>
+</html>

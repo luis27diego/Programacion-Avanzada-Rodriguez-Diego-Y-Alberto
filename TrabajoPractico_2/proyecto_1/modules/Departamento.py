@@ -2,9 +2,10 @@ from modules.estudiante import Estudiante
 class Departamento:
     def __init__(self, nombre, director):
         self.nombre = nombre
-        self.director = director
         self._profesores = []
         self._cursos = []
+        self.director = director
+     
 
     @property
     def nombre(self):
@@ -28,12 +29,14 @@ class Departamento:
         if profesor.departamento_dirigido is not None:
             raise ValueError("El profesor ya es director de otro departamento.")
         self._director = profesor
+        self._profesores.append(profesor)
         profesor.departamento_dirigido = self
 
     def agregar_profesor(self, profesor):
         from modules.profesor import Profesor
         if not isinstance(profesor, Profesor):
             raise TypeError("El profesor debe ser una instancia de la clase Profesor.")
+        print("*"*20, self._profesores)
         if profesor not in self._profesores:
             self._profesores.append(profesor)
 
@@ -81,6 +84,9 @@ class Departamento:
             "director": self.director.nombre if self.director else None,
             "cursos": [curso.to_dict().get("nombre") for curso in self._cursos]
         }     
+    
+    def mostrar_profesores(self):
+        return [profesor.nombre for profesor in self._profesores]
     def __eq__(self, other):
         if not isinstance(other, Departamento):
             return False
@@ -106,4 +112,7 @@ if __name__ == "__main__":
     dept1 = Departamento("Ciencias", prof1)
     dept2 = Departamento("Ciencias", prof2)
     print(f"Los departamentos son iguales: {dept1 == dept2}") 
+
+    print(f"dept1 es instancia de Departamento: {isinstance(dept1, Departamento)}")
+    print(f"dept2 no es instancia de Departamento: {isinstance(dept2, Profesor)}")
   

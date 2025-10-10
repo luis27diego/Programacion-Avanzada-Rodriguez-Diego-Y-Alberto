@@ -61,6 +61,13 @@ class Facultad:
             raise TypeError("El profesor debe ser una instancia de la clase Profesor.")
         if profesor not in self._profesores:
             self._profesores.append(profesor)
+        return len(self._profesores) - 1
+    
+    def obtener_idx_profesor(self, profesor):
+        if profesor in self._profesores:
+            return self._profesores.index(profesor)
+        else:
+            raise ValueError("El profesor no pertenece a la facultad.")
     
 
 
@@ -94,6 +101,17 @@ class Facultad:
             for curso in departamento_cursos:
                 lista.append((curso, idx))
         return lista
+    
+
+    def asociar_profe_depto(self, profesor_idx, departamento_idx):
+        if not isinstance(profesor_idx, int) or not (0 <= profesor_idx < len(self._profesores)):
+            raise IndexError("Índice de profesor fuera de rango.")
+        profesor = self._profesores[profesor_idx]
+        if not isinstance(departamento_idx, int) or not (0 <= departamento_idx < len(self._departamentos)):
+            raise IndexError("Índice de departamento fuera de rango.")
+        departamento = self._departamentos[departamento_idx]
+        departamento.agregar_profesor(profesor)
+        profesor.agregar_departamento(departamento)
 
     def __str__(self):
         return f"Facultad: {self.nombre}"

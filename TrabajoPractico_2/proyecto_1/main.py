@@ -65,8 +65,22 @@ if __name__ == "__main__":
             dni = input("DNI: ")
             esp = input("Especialidad: ")
             prof = Profesor(nombre, edad, dni, esp)
-            facultad.agregar_profesor(prof)
+            idx_profe =facultad.agregar_profesor(prof)
+
             prof.facultad = facultad
+
+            # listar departamentos disponibles
+            departamentos = facultad.departamentos_dict() 
+            for i, d in enumerate(departamentos, 1):
+                print(f"{i} - {d['nombre']}")
+
+            # solicitar que selccione
+            idx_depto = int(input("Seleccione departamento (o presione Enter para omitir): ")) - 1
+            
+
+            # agregar el profesor el departamento
+            # profesor tiene que conocer el departamento asignado 
+            facultad.asociar_profe_depto(idx_profe, idx_depto)
             print(f"✅ Profesor {nombre} contratado.")
 
         # Crear departamento nuevo
@@ -78,6 +92,7 @@ if __name__ == "__main__":
             idx = int(input("Opción: ")) - 1
             if 0 <= idx < len(facultad.profesores_dict()):
                 director = facultad.profesores_dict()[idx]
+                print(director)
                 if director['departamento_dirigido'] is not None:
                     print("⚠ El profesor ya es director de otro departamento.")
                     continue
@@ -161,9 +176,10 @@ if __name__ == "__main__":
         elif opcion == "8":
             print("📋 Listado de profesores:")
             for p in facultad.profesores_dict():
-                depts = [d['nombre'] for d in p['departamentos']]
-                dir_dept = p['departamento_dirigido'] if p['departamento_dirigido'] else "Ninguno"
-                print(f"- {p['nombre']}, Edad: {p['edad']}, DNI: {p['dni']}, Especialidad: {p['especialidad']}, Departamentos: {depts}, Director de: {dir_dept}, Enseña en: {p['ensena_en'] if p['ensena_en'] else 'Ninguno'}  ")
+                print(p)
+                #depts = [d['nombre'] for d in p['departamentos']]
+                #dir_dept = p['departamento_dirigido'] if p['departamento_dirigido'] else "Ninguno"
+                #print(f"- {p['nombre']}, Edad: {p['edad']}, DNI: {p['dni']}, Especialidad: {p['especialidad']}, Departamentos: {depts}, Director de: {dir_dept}, Enseña en: {p['ensena_en'] if p['ensena_en'] else 'Ninguno'}  ")
 
         else:
             print("❌ Opción inválida.")

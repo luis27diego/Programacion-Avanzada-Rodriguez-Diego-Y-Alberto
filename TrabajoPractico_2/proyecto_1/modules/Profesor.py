@@ -34,15 +34,19 @@ class Profesor(Persona):
         return self._departamento_dirigido
     
     @departamento_dirigido.setter
-    def departamento_dirigido(self, valor):
-        if valor is not None:
+    def departamento_dirigido(self, depto):
+        if depto is not None:
+            
             #print(id(type(valor)), '*'*50)
             #print(id(Departamento))
-            if not isinstance(valor, Departamento):
+            if not isinstance(depto, Departamento):
             #    print(id(type(valor)), '*'*50)
             #    print(id(Departamento))
                 raise TypeError("departamento_dirigido debe ser una instancia de Departamento o None.")
-        self._departamento_dirigido = valor
+        self._departamento_dirigido = depto
+        if depto is not None:
+            self._departamentos.append(depto) 
+            #print("*"*20, depto.mostrar_profesores())
 
     @property
     def ensena_en(self):
@@ -61,7 +65,7 @@ class Profesor(Persona):
             "dni": self.dni,
             "especialidad": self.especialidad,
             "departamentos": [dept.nombre for dept in self._departamentos],
-            "departamento_dirigido": self.departamento_dirigido.nombre if self.departamento_dirigido else None,
+            "departamento_dirigido": self._departamento_dirigido.nombre if self._departamento_dirigido else None,
             "ensena_en": self.ensena_en.nombre if self.ensena_en else None
         }
 

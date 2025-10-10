@@ -1,7 +1,9 @@
 import unittest
 from unittest.mock import MagicMock, patch
 from modules.ControladorSistema import ControladorSistema
-
+from modules.Cajon import Cajon
+from modules.Frutas import Manzana, Kiwi
+from modules.Verduras import Papa, Zanahoria
 
 class TestControladorSistema(unittest.TestCase):
     
@@ -33,9 +35,9 @@ class TestControladorSistema(unittest.TestCase):
         
         # Simular detecciones: 2 exitosas, 1 fallida
         self.controlador.cinta.detectar_alimento.side_effect = [
-            {"alimento": "manzana", "peso": 150},
+            {"alimento": "manzana", "peso": 0.5},
             "undefined",
-            {"alimento": "kiwi", "peso": 80}
+            {"alimento": "kiwi", "peso": 0.08}
         ]
         
         # Mock del alimento creado
@@ -51,40 +53,40 @@ class TestControladorSistema(unittest.TestCase):
         self.assertEqual(self.controlador.cajon_actual.agregar_alimento.call_count, 2)
         
     def test_obtener_estado_actual(self):
-        """Prueba obtener el estado actual del sistema"""
-        # Configurar estado y cajón mockeado
-        self.controlador.estado = "running"
+        """Debe retornar estadísticas y advertencias correctas con cajón lleno"""
+        # Crear y asignar un cajón con capacidad 3
+        cajon = Cajon(3)
+        cajon.agregar_alimento(Manzana(0.2))
+        cajon.agregar_alimento(Kiwi(0.5))
+        cajon.agregar_alimento(Papa(0.3))
+
+        # Asignarlo al controlador
+        self.controlador.cajon_actual = cajon
+        self.controlador.estado = "complete"
         self.controlador.alimentos_procesados = 3
         self.controlador.alimentos_desviados = 1
         
-        # Mockear el cajón completo
-        mock_cajon = MagicMock()
-        mock_cajon.cantidad_actual = 2
-        mock_cajon.capacidad_maxima = 5
-        mock_cajon.peso_total.return_value = 1.0
-        mock_cajon.aw_promedio_total.return_value = 0.85
-        mock_cajon.aw_promedio_por_tipo.return_value = {
-            "aw_prom_frutas": 0.8,
-            "aw_prom_verduras": 0.9
-        }
-        mock_cajon.aw_promedio_por_alimento.return_value = {
-            "aw_prom_manzana": 0.8,
-            "aw_prom_papa": 0.9
-        }
-        mock_cajon.obtener_advertencias.return_value = []
-        
-        self.controlador.cajon_actual = mock_cajon
-        
-        # Ejecutar
-        result = self.controlador.obtener_estado_actual()
-        
-        # Verificar
-        self.assertEqual(result["estado"], "running")
-        self.assertEqual(result["progreso"]["actual"], 2)
-        self.assertEqual(result["progreso"]["total"], 5)
-        self.assertEqual(result["estadisticas"]["peso_total"], 1.0)
-        self.assertEqual(result["estadisticas"]["alimentos_procesados"], 3)
-        self.assertEqual(result["estadisticas"]["alimentos_desviados"], 1)
+        resultado = self.controlador.obtener_estado_actual()
+
+        # Verificar estructura general
+        self.assertEqual(resultado["estado"], "complete")
+        self.assertIn("estadisticas", resultado)
+        self.assertIn("advertencias", resultado)
+
+        # Verificar progreso
+        progreso = resultado["progreso"]
+        self.assertEqual(progreso["actual"], 3)
+        self.assertEqual(progreso["total"], 3)
+
+        # Verificar estadísticas esperadas
+        estadisticas = resultado["estadisticas"]
+        self.assertIn("peso_total", estadisticas)
+        self.assertIn("aw_total", estadisticas)
+        self.assertEqual(estadisticas["alimentos_procesados"], 3)
+        self.assertEqual(estadisticas["alimentos_desviados"], 1)
+
+        # Las advertencias podrían estar vacías o no, dependiendo del aw
+        self.assertIsInstance(resultado["advertencias"], list)
 
 if __name__ == '__main__':
     unittest.main()

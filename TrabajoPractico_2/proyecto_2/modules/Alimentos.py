@@ -19,7 +19,7 @@ class Alimento(ABC):
     def peso(self, valor):
         if valor <= 0:
             raise ValueError(f"El peso debe ser mayor a 0, recibido: {valor}")
-        if valor >= 600:
+        if valor >= 0.6:
             raise ValueError(f"El peso debe ser menor a 600g para cálculos válidos, recibido: {valor}")
         self._peso = valor
     
@@ -38,6 +38,7 @@ class Alimento(ABC):
 
     def __str__(self):
         return f"{self._nombre} ({self._peso}g) - aw: {self.calcular_aw():.3f}"
+    
 
 class Fruta(Alimento):
     """Clase abstracta para frutas"""

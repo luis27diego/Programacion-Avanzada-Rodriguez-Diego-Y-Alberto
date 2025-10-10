@@ -8,7 +8,7 @@ class Papa(Verdura):
     
     def calcular_aw(self):
         C = 18  # kg^-1
-        resultado = 0.66 * math.atan(C * self.gramos_a_kilos(self._peso))
+        resultado = 0.66 * math.atan(C * self._peso)
         return max(0, min(1, resultado))  # Limita entre 0 y 1
 
 class Zanahoria(Verdura):
@@ -17,7 +17,7 @@ class Zanahoria(Verdura):
     
     def calcular_aw(self):
         C = 10  # kg^-1
-        resultado = 0.96 * (1 - math.exp(-C * self.gramos_a_kilos(self._peso)))
+        resultado = 0.96 * (1 - math.exp(-C * self._peso))
         return max(0, min(1, resultado))  # Limita entre 0 y 1
 
 """ 

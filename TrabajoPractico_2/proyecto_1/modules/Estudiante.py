@@ -10,7 +10,7 @@ class Estudiante(Persona):
         return self._cursos
 
     def agregar_curso(self, curso):
-        from .Curso import Curso
+        from modules.Curso import Curso
         if not isinstance(curso, Curso):
             raise TypeError("Los cursos deben ser instancias de la clase Curso.")
         if curso not in self._cursos:

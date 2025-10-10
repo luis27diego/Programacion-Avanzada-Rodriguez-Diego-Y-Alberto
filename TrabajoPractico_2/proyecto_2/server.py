@@ -18,12 +18,14 @@ def index():
         # Iniciar proceso y procesar hasta llenar
         try:
             capacidad = int(request.form.get('numAlimentos', 100))
-            if capacidad < 1 or capacidad > 1000:
+            if capacidad < 1 or capacidad > 100000:
                 error = "Capacidad debe estar entre 1 y 1000"
             else:
                 controlador.iniciar_proceso(capacidad)
                 controlador.procesar_hasta_llenar()  # Procesar todos los alimentos de una vez
-                estado = controlador.obtener_estado_actual()  # Actualizar estado después de procesar
+                estado = controlador.obtener_estado_actual()
+                print(estado)  
+                # Actualizar estado después de procesar
                 mensaje = "Proceso completado correctamente"
         except Exception as e:
             error = str(e)

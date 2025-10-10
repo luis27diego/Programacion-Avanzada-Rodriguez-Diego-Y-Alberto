@@ -1,4 +1,6 @@
 from collections import defaultdict
+from modules.Alimentos import Alimento, Fruta, Verdura
+import copy
 class Cajon:
     """Contenedor iterable para alimentos"""
     
@@ -23,7 +25,6 @@ class Cajon:
         if not hasattr(alimento, 'calcular_aw'):
             raise TypeError("El objeto debe ser un alimento válido")
         
-        from .Alimentos import Alimento  # Import local para evitar circular
         if not isinstance(alimento, Alimento):
             raise TypeError("El objeto debe ser una instancia de Alimento")
         
@@ -33,94 +34,93 @@ class Cajon:
         """Verifica si el cajón está lleno"""
         return len(self._alimentos) >= self._capacidad_maxima
     
-    def peso_total(self):
-        """Calcula el peso total del cajón"""
-        return sum(alimento.peso for alimento in self._alimentos)
+    # def peso_total(self):
+    #     """Calcula el peso total del cajón"""
+    #     return sum(alimento.peso for alimento in self._alimentos)
     
-    def aw_promedio_total(self):
-        """Calcula la actividad acuosa promedio total del cajón"""
-        if not self._alimentos:
-            return 0.0
+    # def aw_promedio_total(self):
+    #     """Calcula la actividad acuosa promedio total del cajón"""
+    #     if not self._alimentos:
+    #         return 0.0
         
-        total_aw = sum(alimento.calcular_aw() for alimento in self._alimentos)
-        return total_aw / len(self._alimentos)
+    #     total_aw = sum(alimento.calcular_aw() for alimento in self._alimentos)
+    #     return total_aw / len(self._alimentos)
     
-    def aw_promedio_por_alimento(self):
-        """Calcula el promedio de aw por cada tipo de alimento"""
-        if not self._alimentos:
-            return {}
+    # def aw_promedio_por_alimento(self):
+    #     """Calcula el promedio de aw por cada tipo de alimento"""
+    #     if not self._alimentos:
+    #         return {}
         
-        # Agrupa alimentos por nombre
-        grupos = defaultdict(list)
-        for alimento in self._alimentos:
-            grupos[alimento.nombre].append(alimento.calcular_aw())
+    #     # Agrupa alimentos por nombre
+    #     grupos = defaultdict(list)
+    #     for alimento in self._alimentos:
+    #         grupos[alimento.nombre].append(alimento.calcular_aw())
         
-        # Calcula promedio para cada grupo
-        promedios = {}
-        for nombre, aw_values in grupos.items():
-            promedios[f"aw_prom_{nombre.lower()}"] = sum(aw_values) / len(aw_values)
+    #     # Calcula promedio para cada grupo
+    #     promedios = {}
+    #     for nombre, aw_values in grupos.items():
+    #         promedios[f"aw_prom_{nombre.lower()}"] = sum(aw_values) / len(aw_values)
         
-        return promedios
+    #     return promedios
     
-    def aw_promedio_por_tipo(self):
-        """Calcula el promedio de aw por tipo (frutas/verduras)"""
-        if not self._alimentos:
-            return {"aw_prom_frutas": 0.0, "aw_prom_verduras": 0.0}
+    # def aw_promedio_por_tipo(self):
+    #     """Calcula el promedio de aw por tipo (frutas/verduras)"""
+    #     if not self._alimentos:
+    #         return {"aw_prom_frutas": 0.0, "aw_prom_verduras": 0.0}
+                
+    #     frutas = [alimento for alimento in self._alimentos if isinstance(alimento, Fruta)]
+    #     verduras = [alimento for alimento in self._alimentos if isinstance(alimento, Verdura)]
         
-        from .Alimentos import Fruta, Verdura 
+    #     resultado = {}
         
-        frutas = [alimento for alimento in self._alimentos if isinstance(alimento, Fruta)]
-        verduras = [alimento for alimento in self._alimentos if isinstance(alimento, Verdura)]
+    #     if frutas:
+    #         total_aw_frutas = sum(alimento.calcular_aw() for alimento in frutas)
+    #         resultado["aw_prom_frutas"] = total_aw_frutas / len(frutas)
+    #     else:
+    #         resultado["aw_prom_frutas"] = 0.0
         
-        resultado = {}
+    #     if verduras:
+    #         total_aw_verduras = sum(alimento.calcular_aw() for alimento in verduras)
+    #         resultado["aw_prom_verduras"] = total_aw_verduras / len(verduras)
+    #     else:
+    #         resultado["aw_prom_verduras"] = 0.0
         
-        if frutas:
-            total_aw_frutas = sum(alimento.calcular_aw() for alimento in frutas)
-            resultado["aw_prom_frutas"] = total_aw_frutas / len(frutas)
-        else:
-            resultado["aw_prom_frutas"] = 0.0
-        
-        if verduras:
-            total_aw_verduras = sum(alimento.calcular_aw() for alimento in verduras)
-            resultado["aw_prom_verduras"] = total_aw_verduras / len(verduras)
-        else:
-            resultado["aw_prom_verduras"] = 0.0
-        
-        return resultado
+    #     return resultado
     
-    def obtener_advertencias(self):
-        """Obtiene lista de advertencias para valores de aw > 0.90"""
-        advertencias = []
+    # def obtener_advertencias(self):
+    #     """Obtiene lista de advertencias para valores de aw > 0.90"""
+    #     advertencias = []
         
-        # Verificar promedio total
-        aw_total = self.aw_promedio_total()
-        if aw_total > 0.90:
-            advertencias.append(f"⚠️ Actividad acuosa total elevada: {aw_total:.3f}")
+    #     # Verificar promedio total
+    #     aw_total = self.aw_promedio_total()
+    #     if aw_total > 0.90:
+    #         advertencias.append(f"⚠️ Actividad acuosa total elevada: {aw_total:.3f}")
         
-        # Verificar promedios por alimento
-        promedios_alimento = self.aw_promedio_por_alimento()
-        for nombre, valor in promedios_alimento.items():
-            if valor > 0.90:
-                advertencias.append(f"⚠️ {nombre}: {valor:.3f}")
+    #     # Verificar promedios por alimento
+    #     promedios_alimento = self.aw_promedio_por_alimento()
+    #     for nombre, valor in promedios_alimento.items():
+    #         if valor > 0.90:
+    #             advertencias.append(f"⚠️ {nombre}: {valor:.3f}")
         
-        # Verificar promedios por tipo
-        promedios_tipo = self.aw_promedio_por_tipo()
-        if promedios_tipo["aw_prom_frutas"] > 0.90:
-            advertencias.append(f"⚠️ Promedio frutas elevado: {promedios_tipo['aw_prom_frutas']:.3f}")
-        if promedios_tipo["aw_prom_verduras"] > 0.90:
-            advertencias.append(f"⚠️ Promedio verduras elevado: {promedios_tipo['aw_prom_verduras']:.3f}")
+    #     # Verificar promedios por tipo
+    #     promedios_tipo = self.aw_promedio_por_tipo()
+    #     if promedios_tipo["aw_prom_frutas"] > 0.90:
+    #         advertencias.append(f"⚠️ Promedio frutas elevado: {promedios_tipo['aw_prom_frutas']:.3f}")
+    #     if promedios_tipo["aw_prom_verduras"] > 0.90:
+    #         advertencias.append(f"⚠️ Promedio verduras elevado: {promedios_tipo['aw_prom_verduras']:.3f}")
         
-        return advertencias
+    #     return advertencias
     
-    def es_susceptible(self):
-        """Determina si el cajón es susceptible a contaminación microbiana"""
-        return self.aw_promedio_total() > 0.90
+    # def es_susceptible(self):
+    #     """Determina si el cajón es susceptible a contaminación microbiana"""
+    #     return self.aw_promedio_total() > 0.90
+    
     
     # Implementación del protocolo de iteración
     def __iter__(self):
         """Hace el cajón iterable"""
         for alimento in self._alimentos:
-            yield alimento
+            yield copy.deepcopy(alimento)  # Devuelve una copia para evitar modificaciones externas
 
 """ 
 if __name__ == "__main__":

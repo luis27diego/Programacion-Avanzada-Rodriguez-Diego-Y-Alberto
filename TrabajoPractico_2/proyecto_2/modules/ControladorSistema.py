@@ -1,7 +1,8 @@
 
-from modules.CintaTransportadora import DetectorAlimento
+from modules.detectorAlimento import DetectorAlimento
 from modules.Cajon import Cajon
 from modules.Crear_alimento import crear_alimento
+from modules.analizadorcajon import AnalizadorCajon
 
 class ControladorSistema:
     """Controlador principal del sistema Smart Belt"""
@@ -43,8 +44,47 @@ class ControladorSistema:
         
         self.estado = "complete"
     
+    # def obtener_estado_actual(self):
+    #     """Retorna el estado actual completo del sistema"""
+    #     if not self.cajon_actual:
+    #         return {
+    #             "estado": self.estado,
+    #             "progreso": {"actual": 0, "total": 0},
+    #             "estadisticas": {},
+    #             "advertencias": []
+    #         }
+        
+    #     # Calcular estadísticas
+    #     estadisticas = {
+    #         "peso_total": self.cajon_actual.peso_total(),  # Convertir a kg
+    #         "aw_total": self.cajon_actual.aw_promedio_total(),
+    #         "alimentos_procesados": self.alimentos_procesados,
+    #         "alimentos_desviados": self.alimentos_desviados
+    #     }
+        
+    #     # Promedios por tipo
+    #     promedios_tipo = self.cajon_actual.aw_promedio_por_tipo()
+    #     estadisticas["aw_frutas"] = promedios_tipo["aw_prom_frutas"]
+    #     estadisticas["aw_verduras"] = promedios_tipo["aw_prom_verduras"]
+        
+    #     # Promedios por alimento
+    #     promedios_alimento = self.cajon_actual.aw_promedio_por_alimento()
+    #     estadisticas["aw_kiwi"] = promedios_alimento.get("aw_prom_kiwi", 0)
+    #     estadisticas["aw_manzana"] = promedios_alimento.get("aw_prom_manzana", 0)
+    #     estadisticas["aw_papa"] = promedios_alimento.get("aw_prom_papa", 0)
+    #     estadisticas["aw_zanahoria"] = promedios_alimento.get("aw_prom_zanahoria", 0)
+        
+    #     return {
+    #         "estado": self.estado,
+    #         "progreso": {
+    #             "actual": self.cajon_actual.cantidad_actual,
+    #             "total": self.cajon_actual.capacidad_maxima
+    #         },
+    #         "estadisticas": estadisticas,
+    #         "advertencias": self.cajon_actual.obtener_advertencias()
+    #     }
+
     def obtener_estado_actual(self):
-        """Retorna el estado actual completo del sistema"""
         if not self.cajon_actual:
             return {
                 "estado": self.estado,
@@ -52,33 +92,18 @@ class ControladorSistema:
                 "estadisticas": {},
                 "advertencias": []
             }
-        
-        # Calcular estadísticas
-        estadisticas = {
-            "peso_total": self.cajon_actual.peso_total(),  # Convertir a kg
-            "aw_total": self.cajon_actual.aw_promedio_total(),
-            "alimentos_procesados": self.alimentos_procesados,
-            "alimentos_desviados": self.alimentos_desviados
-        }
-        
-        # Promedios por tipo
-        promedios_tipo = self.cajon_actual.aw_promedio_por_tipo()
-        estadisticas["aw_frutas"] = promedios_tipo["aw_prom_frutas"]
-        estadisticas["aw_verduras"] = promedios_tipo["aw_prom_verduras"]
-        
-        # Promedios por alimento
-        promedios_alimento = self.cajon_actual.aw_promedio_por_alimento()
-        estadisticas["aw_kiwi"] = promedios_alimento.get("aw_prom_kiwi", 0)
-        estadisticas["aw_manzana"] = promedios_alimento.get("aw_prom_manzana", 0)
-        estadisticas["aw_papa"] = promedios_alimento.get("aw_prom_papa", 0)
-        estadisticas["aw_zanahoria"] = promedios_alimento.get("aw_prom_zanahoria", 0)
-        
+
+        analizador = AnalizadorCajon(self.cajon_actual)
+        informe = analizador.generar_informe()
+
         return {
             "estado": self.estado,
             "progreso": {
                 "actual": self.cajon_actual.cantidad_actual,
                 "total": self.cajon_actual.capacidad_maxima
             },
-            "estadisticas": estadisticas,
-            "advertencias": self.cajon_actual.obtener_advertencias()
+            "estadisticas": {**informe["estadisticas"],
+                             "alimentos_desviados": self.alimentos_desviados,
+                             "alimentos_procesados": self.alimentos_procesados},
+            "advertencias": informe["advertencias"]
         }
