@@ -20,9 +20,11 @@ class GestorDeReclamo:
         }
         self.clasificador = clasificador
 
-    def crear_reclamo(self, usuario_id: int, contenido: str, timestamp: datetime, estado, departamento_id: int) -> ReclamoDominio:
-        if not all ([usuario_id, contenido, timestamp, estado, departamento_id]):
+    def crear_reclamo(self, usuario_id: int, contenido: str, timestamp: datetime, estado: Estado) -> ReclamoDominio:
+        if not all ([usuario_id, contenido, timestamp, estado]):
             raise ValueError("Todos los campos son obligatorios para crear un reclamo.")
+        
+        departamento_id = self.clasificar_reclamo(contenido)
         reclamo = ReclamoDominio(
             id=None,
             usuario_id=usuario_id,
@@ -35,8 +37,7 @@ class GestorDeReclamo:
         try:
             return self.reclamo_repositorio.guardar_registro(reclamo)
         except IntegrityError:
-            # Manejar el error de integridad (por ejemplo, duplicados)
-            return None
+            raise ValueError("Error al guardar el reclamo. Problema de integridad de datos.")
 
     def clasificar_reclamo(self, reclamo: str) -> ReclamoDominio:
         """
@@ -75,16 +76,16 @@ class GestorDeReclamo:
         return reclamos
 
 if __name__ == "__main__":
-    from modules.repositorioConcreto.reclamo_concreto import ReclamoRepositorio
-    from sqlalchemy import create_engine
-    from sqlalchemy.orm import sessionmaker
-
-    engine = create_engine('sqlite:///database.db', echo=True)  # Archivo persistente
-    Session = sessionmaker(bind=engine)
-    session = Session()
-    # Ejemplo de uso
-    with open('./data/claims_clf.pkl', 'rb') as archivo:
+    from modules.factoria import crear_repositorio
+    usuario_repo, reclamo_repo, departamento_repo = crear_repositorio()
+    with open('../../data/claims_clf.pkl', 'rb') as archivo: # para debugear usar esta ruta './data/claims_clf.pkl'
         clf = pickle.load(archivo)
-    repo = ReclamoRepositorio(session)  # Reemplazar con una instancia real de ReclamoRepositorio
-    gestor = GestorDeReclamo(repo, clf)
-    gestor.reclamo_repositorio.eliminar_registro(4)
+
+    # Ejemplo de uso
+    gestor = GestorDeReclamo(reclamo_repo, clf)
+    gestor.crear_reclamo(
+        usuario_id=6,
+        contenido="Es insoportable trabajar con este sistema, necesito ayuda urgente.",
+        timestamp=datetime.now(),
+        estado=Estado.PENDIENTE
+    )

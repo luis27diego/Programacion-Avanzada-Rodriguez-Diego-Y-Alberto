@@ -34,9 +34,9 @@ class GestorDeUsuarios:
             raise ValueError("Faltan datos obligatorios para crear el usuario.")
         
         # Verificar unicidad de email y usuario
-        if self.obtener_usuario_por_filtro('email', email):
+        if self.obtener_usuario_por_email(email):
             raise ValueError("El email ya está registrado.")
-        if self.obtener_usuario_por_filtro('usuario', usuario):
+        if self.obtener_usuario_por_usuario(usuario):
             raise ValueError("El nombre de usuario ya está registrado.")
         
         try:
@@ -51,7 +51,7 @@ class GestorDeUsuarios:
                 rol=rol
             )
             self.usuario_repositorio.guardar_registro(usuario)
-            return self.obtener_usuario_por_filtro('email', email)  # Retorna el usuario con ID
+            return self.obtener_usuario_por_email(email)  # Retorna el usuario con ID
         except IntegrityError as e:
             raise ValueError(f"Error al crear el usuario: {str(e)}")
 
@@ -65,7 +65,7 @@ class GestorDeUsuarios:
         :return: El reclamo creado.
         :raises ValueError: Si el usuario no existe, no tiene permiso, o datos inválidos.
         """
-        usuario = self.obtener_usuario_por_filtro('id', id_usuario)
+        usuario = self.obtener_usuario_por_id(id_usuario)
         if not usuario:
             raise ValueError("El usuario no existe.")
         
@@ -115,16 +115,16 @@ class GestorDeUsuarios:
             raise ValueError("El usuario debe tener un ID para modificarlo.")
         
         # Verificar que el usuario existe
-        usuario_actual = self.obtener_usuario_por_filtro('id', id)
+        usuario_actual = self.obtener_usuario_por_id(id)
         if not usuario_actual:
             raise ValueError("El usuario no existe.")
         
         # Validar unicidad de email y usuario (si cambiaron)
         if email != usuario_actual.email:
-            if self.obtener_usuario_por_filtro('email', email):
+            if self.obtener_usuario_por_email(email):
                 raise ValueError("El email ya está registrado.")
         if usuario != usuario_actual.usuario:
-            if self.obtener_usuario_por_filtro('usuario', usuario):
+            if self.obtener_usuario_por_usuario(usuario):
                 raise ValueError("El nombre de usuario ya está registrado.")
         
         try:
@@ -139,21 +139,27 @@ class GestorDeUsuarios:
                 rol=rol
             )
             self.usuario_repositorio.modificar_registro(usuario_modificado)
-            return self.obtener_usuario_por_filtro('id', usuario_modificado.id)
+            return self.obtener_usuario_por_id(usuario_modificado.id)
         except IntegrityError as e:
             raise ValueError(f"Error al modificar el usuario: {str(e)}")
 
-    def obtener_usuario_por_filtro(self, filtro: str, valor: any) -> Optional[UsuarioDominio]:
-        """
-        Obtiene un usuario basado en un filtro (ej: 'id', 'email', 'usuario').
-        :param filtro: Nombre del campo para filtrar.
-        :param valor: Valor del filtro.
-        :return: Objeto UsuarioDominio o None si no existe.
-        """
-        valid_filters = ['id', 'email', 'usuario']
-        if filtro not in valid_filters:
-            raise ValueError(f"Filtro inválido. Use: {valid_filters}")
-        return self.usuario_repositorio.obtener_registro_por_filtro(filtro, valor)
+    def obtener_usuario_por_email(self, email: str) -> UsuarioDominio:
+        if not email:
+            raise ValueError("El email no puede estar vacío.")
+        
+        return self.usuario_repositorio.obtener_registro_por_filtro('email', email)
+
+    def obtener_usuario_por_id(self, id: int) -> UsuarioDominio:
+        if id is None:
+            raise ValueError("El ID no puede ser None.")
+        
+        return self.usuario_repositorio.obtener_registro_por_filtro('id', id)
+    
+    def obtener_usuario_por_usuario(self, usuario: str) -> UsuarioDominio:
+        if not usuario:
+            raise ValueError("El nombre de usuario no puede estar vacío.")
+        
+        return self.usuario_repositorio.obtener_registro_por_filtro('usuario', usuario)
 
     def eliminar_usuario(self, id: int) -> bool:
         """
@@ -162,7 +168,7 @@ class GestorDeUsuarios:
         :return: True si se eliminó exitosamente.
         :raises ValueError: Si el usuario no existe.
         """
-        if not self.obtener_usuario_por_filtro('id', id):
+        if not self.obtener_usuario_por_id(id):
             raise ValueError("El usuario no existe.")
         try:
             self.usuario_repositorio.eliminar_registro(id)
@@ -177,7 +183,7 @@ class GestorDeUsuarios:
         :param id_reclamo: ID del reclamo.
         :raises ValueError: Si el usuario o reclamo no existen, o si ya está adherido.
         """
-        usuario = self.obtener_usuario_por_filtro('id', id_usuario)
+        usuario = self.obtener_usuario_por_id(id_usuario)
         if not usuario:
             raise ValueError("El usuario no existe.")
         
@@ -188,14 +194,14 @@ class GestorDeUsuarios:
         except IntegrityError as e:
             raise ValueError(f"Error al adherir al reclamo: {str(e)}")
 
-    def autenticar_usuario(self, usuario: str, password: str) -> Optional[UsuarioDominio]:
+    def autenticar_usuario(self, email: str, password: str) -> Optional[UsuarioDominio]:
         """
-        Autentica un usuario por nombre de usuario y contraseña.
-        :param usuario: Nombre de usuario.
+        Autentica un usuario por email y contraseña.
+        :param email: Email del usuario.
         :param password: Contraseña (sin hashear por simplicidad; usa bcrypt en producción).
         :return: Objeto UsuarioDominio o None si las credenciales son inválidas.
         """
-        usuario_dominio = self.obtener_usuario_por_filtro('usuario', usuario)
+        usuario_dominio = self.obtener_usuario_por_email(email)
         if usuario_dominio and usuario_dominio.password == password:  # En producción, usa hashing
             return usuario_dominio
         raise ValueError("Credenciales inválidas.")
@@ -206,7 +212,7 @@ class GestorDeUsuarios:
         :param id_usuario: ID del usuario.
         :return: Lista de ReclamoDominio.
         """
-        usuario = self.obtener_usuario_por_filtro('id', id_usuario)
+        usuario = self.obtener_usuario_por_id(id_usuario)
         if not usuario:
             raise ValueError("El usuario no existe.")
         return usuario.obtener_reclamos_creados()  
@@ -217,7 +223,7 @@ class GestorDeUsuarios:
         :param id_usuario: ID del usuario.
         :return: Lista de ReclamoDominio.
         """
-        usuario = self.obtener_usuario_por_filtro('id', id_usuario)
+        usuario = self.obtener_usuario_por_id(id_usuario)
         if not usuario:
             raise ValueError("El usuario no existe.")
         return usuario.obtener_reclamos_adheridos() 
@@ -225,21 +231,18 @@ class GestorDeUsuarios:
 if __name__ == "__main__":
     from modules.factoria import crear_repositorio
     usuario_repo, reclamo_repo, departamento_repo = crear_repositorio()
-    with open('../../data/claims_clf.pkl', 'rb') as archivo:
+    with open('../../data/claims_clf.pkl', 'rb') as archivo: # para debugear usar esta ruta './data/claims_clf.pkl'
         clf = pickle.load(archivo)
 
-    
     gestor = GestorDeUsuarios(usuario_repo, reclamo_repo, clf)
 
-
-
     usuario_creado = gestor.crear_usuario(
-        nombre="Andres",
-        apellido="Rodriguez",
-        email="Andres@example.com",
-        usuario="AndresRodriguez",
+        nombre="Alberto",
+        apellido="Aguilar",
+        email="Alberto@example.com",
+        usuario="AlbertoAguilar",
         claustro=Claustro.ESTUDIANTE,
-        password="password345",
+        password="password123545",
         rol=Rol.USUARIO_FINAL)
     print(f"Usuario creado con ID: {usuario_creado.id}")
 
@@ -252,4 +255,4 @@ if __name__ == "__main__":
         claustro=Claustro.DOCENTE,
         password="password345",
         rol=Rol.USUARIO_FINAL
-    )
+    ) 

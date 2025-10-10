@@ -27,5 +27,5 @@ app.config["PERMANENT_SESSION_LIFETIME"] = timedelta(minutes=5)
 Session(app)
 
 # Flask Login
-#login_manager = LoginManager()
-#login_manager.init_app(app)
+login_manager = LoginManager()
+login_manager.init_app(app)

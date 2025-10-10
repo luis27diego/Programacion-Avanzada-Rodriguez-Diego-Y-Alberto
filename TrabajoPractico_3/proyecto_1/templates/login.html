@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Iniciar Sesión</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <!-- Barra de navegación -->
+    <nav class="bg-blue-600 p-4">
+        <div class="container mx-auto flex justify-between items-center">
+            <div class="text-white text-lg font-bold">Sistema de Reclamos</div>
+            <div class="space-x-4">
+                <a href="{{ url_for('mis_reclamos') }}" class="text-white hover:underline">Mis Reclamos</a>
+                <a href="{{ url_for('crear_reclamo') }}" class="text-white hover:underline">Crear Reclamo</a>
+                <a href="{{ url_for('todos_los_reclamos') }}" class="text-white hover:underline">Ver Todos los Reclamos</a>
+            </div>
+        </nav>
+
+    <!-- Contenido principal -->
+    <div class="container mx-auto mt-8 p-4">
+        <h2 class="text-2xl font-bold mb-4">Iniciar Sesión</h2>
+        <form method="POST" action="{{ url_for('login') }}" class="max-w-md">
+            <div class="mb-4">
+                <label for="input_email" class="block text-sm font-medium text-gray-700">Email</label>
+                <input type="email" id="input_email" name="input_email" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <div class="mb-4">
+                <label for="input_password" class="block text-sm font-medium text-gray-700">Contraseña</label>
+                <input type="password" id="input_password" name="input_password" required class="mt-1 block w-full p-2 border border-gray-300 rounded-md shadow-sm focus:ring-blue-500 focus:border-blue-500">
+            </div>
+            <button type="submit" class="bg-blue-600 text-white px-4 py-2 rounded-md hover:bg-blue-700">Iniciar Sesión</button>
+        </form>
+        <div class="mt-4">
+            <span class="text-gray-700">¿No tienes cuenta?</span>
+            <a href="{{ url_for('register') }}" class="text-blue-600 hover:underline">Regístrate aquí</a>
+        </div>
+    </div>
+</body>
+</html>

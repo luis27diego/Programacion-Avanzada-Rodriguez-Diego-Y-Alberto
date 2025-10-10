@@ -1,35 +1,67 @@
 from datetime import datetime
 from flask import redirect, render_template, request, url_for, session
-from modules.config import app
+from modules.config import app, login_manager
+from modules.dominio.usuario import Rol, Claustro
 from modules.gestores.gestor_usuario import GestorDeUsuarios
 from modules.gestores.gestor_reclamo import GestorDeReclamo
-from sqlalchemy import create_engine
-from sqlalchemy.orm import sessionmaker
-from modules.repositorioConcreto.usuario_concreto import UsuarioRepositorio
-from modules.repositorioConcreto.reclamo_concreto import ReclamoRepositorio
+from modules.gestores.gestor_login import GestorDeLogin
 import pickle
 from modules.comparador_de_reclamos import ComparadorDeReclamos
+from modules.factoria import crear_repositorio
 
-# Configurar clave secreta para sesiones
-app.secret_key = 'tu_clave_secreta_aqui'  # Cambia esto por una clave segura en producción
+usuario_repo, reclamo_repo, departamento_repo = crear_repositorio()
 
-engine = create_engine('sqlite:///database.db', echo=True)
-Session = sessionmaker(bind=engine)
-db_session = Session()  # Renombrado a db_session para evitar conflicto
-
-usuario_repo = UsuarioRepositorio(db_session)
-reclamo_repo = ReclamoRepositorio(db_session)
 with open('./data/claims_clf.pkl', 'rb') as archivo:
     clf = pickle.load(archivo)
 
 gestor_usuarios = GestorDeUsuarios(usuario_repo, reclamo_repo, clf)
 gestor_reclamo = GestorDeReclamo(reclamo_repo, clf)
+gestor_login = GestorDeLogin(gestor_usuarios, login_manager, admin_list=['admin'])
 comparador_reclamos = ComparadorDeReclamos()
 
 # Página de inicio
 @app.route('/')
 def index():
-    return render_template('inicio.html')
+    if gestor_login.usuario_autenticado:
+        return redirect(url_for('crear_reclamo'))
+    return redirect(url_for('login'))
+
+@app.route("/register", methods= ["GET", "POST"])
+def register():
+    if request.method == "POST":
+        nombre = request.form["input_nombre"]
+        apellido = request.form["input_apellido"]
+        usuario = request.form["input_usuario"]
+        email = request.form["input_email"]
+        password = request.form["input_password"]
+        claustro = request.form["input_claustro"]
+        if claustro == "DOCENTE":
+            claustro = Claustro.DOCENTE
+        elif claustro == "PAYS":
+            claustro = Claustro.PAYS
+        else:
+            claustro = Claustro.ESTUDIANTE
+        rol = Rol.USUARIO_FINAL
+        
+        try:
+            gestor_usuarios.crear_usuario(nombre,apellido, email,usuario, password, claustro, rol)
+            return redirect(url_for('login'))
+        except Exception as e:
+            return render_template('error.html', error=str(e))
+    return render_template('register.html')
+
+@app.route("/login", methods= ["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["input_email"]
+        password = request.form["input_password"]
+        usuario_dominio = gestor_usuarios.autenticar_usuario(email, password)
+        if usuario_dominio:
+            gestor_login.login_usuario(usuario_dominio)
+            return redirect(url_for('crear_reclamo'))
+        else:
+            return render_template('error.html', error="Usuario o contraseña incorrectos")
+    return render_template('login.html')
 
 @app.route('/crear_reclamo', methods=['GET', 'POST'])
 def crear_reclamo():
@@ -91,5 +123,12 @@ def mis_reclamos():
 def todos_los_reclamos():
     reclamos = gestor_reclamo.obtener_todos_los_reclamos()
     return render_template('todos_los_reclamos.html', reclamos=[r.to_dict() for r in reclamos])
+
+
+@app.route("/logout")
+def logout():    
+    gestor_login.logout_usuario()      
+    return redirect(url_for('login'))
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
