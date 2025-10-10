@@ -60,13 +60,10 @@ def login():
         except Exception as e:
             flash(str(e))  # Cambiar esta línea
             return render_template('login.html')  # Y agregar esta línea
-
         if usuario_dominio:
             gestor_login.login_usuario(usuario_dominio)
             session['id_usuario'] = usuario_dominio.id  # Guardar el ID del usuario en la sesión
             return redirect(url_for('crear_reclamo'))
-        else:
-            return render_template('error.html', error="Usuario o contraseña incorrectos")
     return render_template('login.html')
 
 @app.route('/crear_reclamo', methods=['GET', 'POST'])
