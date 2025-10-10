@@ -1,5 +1,4 @@
-from collections import defaultdict
-from modules.Alimentos import Alimento, Fruta, Verdura
+from modules.Alimentos import Alimento
 import copy
 class Cajon:
     """Contenedor iterable para alimentos"""
@@ -122,28 +121,28 @@ class Cajon:
         for alimento in self._alimentos:
             yield copy.deepcopy(alimento)  # Devuelve una copia para evitar modificaciones externas
 
-""" 
+
 if __name__ == "__main__":
-    from Frutas import Kiwi, Manzana
-    from Verduras import Papa, Zanahoria
+    from modules.Frutas import Kiwi, Manzana
+    from modules.Verduras import Papa, Zanahoria
     
     # Crear un cajón
     cajon = Cajon(5)
     
     # Agregar alimentos
     try:
-        cajon.agregar_alimento(Kiwi(150))
-        cajon.agregar_alimento(Manzana(200))
-        cajon.agregar_alimento(Papa(300))
-        cajon.agregar_alimento(Zanahoria(100))
-        cajon.agregar_alimento(Manzana(180))
-        
+        cajon.agregar_alimento(Kiwi(0.5))
+        cajon.agregar_alimento(Manzana(0.2))
+        cajon.agregar_alimento(Papa(0.3))
+        cajon.agregar_alimento(Zanahoria(0.1))
+        cajon.agregar_alimento(Manzana(0.18))
+
         print("=== ITERACIÓN DEL CAJÓN ===")
         for alimento in cajon:
             print(f"  {alimento}")
         
         print(f"\n{cajon}")
-        print(f"\n{cajon.obtener_advertencias()}")
+
         
     except Exception as e:
-        print(f"Error: {e}") """
+        print(f"Error: {e}") 
