@@ -1,5 +1,5 @@
 from datetime import datetime
-from flask import redirect, render_template, request, url_for, session
+from flask import redirect, render_template, request, url_for, session,flash
 from modules.config import app, login_manager
 from modules.dominio.usuario import Rol, Claustro
 from modules.gestores.gestor_usuario import GestorDeUsuarios
@@ -57,20 +57,27 @@ def login():
     if request.method == "POST":
         email = request.form["input_email"]
         password = request.form["input_password"]
-        usuario_dominio = gestor_usuarios.autenticar_usuario(email, password)
+        try :
+            usuario_dominio = gestor_usuarios.autenticar_usuario(email, password)
+        except Exception as e:
+            flash(str(e))  # Cambiar esta línea
+            return render_template('login.html')  # Y agregar esta línea
+
         if usuario_dominio:
             gestor_login.login_usuario(usuario_dominio)
+            session['id_usuario'] = usuario_dominio.id  # Guardar el ID del usuario en la sesión
             return redirect(url_for('crear_reclamo'))
         else:
             return render_template('error.html', error="Usuario o contraseña incorrectos")
     return render_template('login.html')
 
 @app.route('/crear_reclamo', methods=['GET', 'POST'])
+@gestor_login.se_requiere_login
 def crear_reclamo():
     if request.method == 'POST':
-        usuario_id = 4  # Placeholder, reemplazar con autenticación
+        usuario_id = session['id_usuario']  
 
-        contenido = request.form["input_nombre"]
+        contenido = request.form["input_contenido"]
         timestamp = datetime.now()
         estado = 'PENDIENTE'
         id_departamento = gestor_reclamo.clasificar_reclamo(contenido)
@@ -90,25 +97,26 @@ def crear_reclamo():
     return render_template('crear_reclamo.html')
 
 @app.route('/ver_reclamos_similares', methods=['GET', 'POST'])
+@gestor_login.se_requiere_login
 def ver_reclamos_similares():
     if request.method == 'POST':
         id_reclamo = request.form.get('adherir')
         if id_reclamo:
             try:
-                usuario_id = 4   # Placeholder, reemplazar con autenticación
+                usuario_id = session['id_usuario']  
                 gestor_usuarios.adherir_usuario_a_reclamo(usuario_id, id_reclamo)
-                session.clear()  # Limpiar la sesión
+                #session.clear()  # Limpiar la sesión
                 return render_template('confirmacion.html', mensaje="Te has adherido exitosamente al reclamo.")
             except Exception as e:
                 return render_template('error.html', error=str(e))
         else:
-            usuario_id = 4  # Placeholder, reemplazar con autenticación
+            usuario_id = session['id_usuario']  
             contenido = session.get('contenido')
             timestamp = datetime.fromisoformat(session.get('timestamp'))
             estado = session.get('estado')
             id_departamento = session.get('id_departamento')
             gestor_reclamo.crear_reclamo(usuario_id, contenido, timestamp, estado, id_departamento)
-            session.clear()  # Limpiar la sesión
+            #session.clear()  # Limpiar la sesión
             return render_template('confirmacion.html', mensaje="El reclamo ha sido creado exitosamente.")
     
     # Obtener datos de la sesión de Flask
@@ -117,11 +125,17 @@ def ver_reclamos_similares():
 
 # Ruta para mostrar reclamos del usuario
 @app.route('/mis_reclamos')
+@gestor_login.se_requiere_login
 def mis_reclamos():
-    reclamos = gestor_usuarios.obtener_reclamos_creados_por_usuario(1)  # Placeholder, reemplazar con autenticación
-    return render_template('mis_reclamos.html', reclamos=[r.to_dict() for r in reclamos])
+    print(session['id_usuario'])
+    #reclamos = gestor_usuarios.obtener_reclamos_creados_por_usuario(session['id_usuario'])
+    usuario = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
+    reclamos = usuario.obtener_reclamos_creados()
+    reclamos_adheridos = usuario.obtener_reclamos_adheridos()
+    return render_template('mis_reclamos.html', reclamos=[r.to_dict() for r in reclamos], reclamos_adheridos=[r.to_dict() for r in reclamos_adheridos])
 
 @app.route('/todos_los_reclamos')
+@gestor_login.se_requiere_login
 def todos_los_reclamos():
     reclamos = gestor_reclamo.obtener_todos_los_reclamos()
     return render_template('todos_los_reclamos.html', reclamos=[r.to_dict() for r in reclamos])

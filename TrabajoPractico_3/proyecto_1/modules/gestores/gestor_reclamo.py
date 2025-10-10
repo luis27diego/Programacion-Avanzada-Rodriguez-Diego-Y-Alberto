@@ -20,11 +20,12 @@ class GestorDeReclamo:
         }
         self.clasificador = clasificador
 
-    def crear_reclamo(self, usuario_id: int, contenido: str, timestamp: datetime, estado: Estado) -> ReclamoDominio:
+    def crear_reclamo(self, usuario_id: int, contenido: str, timestamp: datetime, estado: Estado, departamento_id: int = None) -> ReclamoDominio:
         if not all ([usuario_id, contenido, timestamp, estado]):
             raise ValueError("Todos los campos son obligatorios para crear un reclamo.")
         
-        departamento_id = self.clasificar_reclamo(contenido)
+        if departamento_id is None:
+            departamento_id = self.clasificar_reclamo(contenido)
         reclamo = ReclamoDominio(
             id=None,
             usuario_id=usuario_id,

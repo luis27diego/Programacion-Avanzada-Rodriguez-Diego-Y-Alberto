@@ -44,3 +44,10 @@ class GestorDeLogin:
         logout_user()
         print("Usuario ha cerrado sesión")
         print(f"Usuario actual {current_user}")
+
+    def se_requiere_login(self, func):
+        @wraps(func)
+        def wrapper(*args, **kwargs):
+            print("¿Está autenticado?", current_user.is_authenticated)
+            return login_required(func)(*args, **kwargs)
+        return wrapper
