@@ -18,7 +18,7 @@ with open('./data/claims_clf.pkl', 'rb') as archivo:
 
 gestor_usuarios = GestorDeUsuarios(usuario_repo, reclamo_repo, clf)
 gestor_reclamo = GestorDeReclamo(reclamo_repo, clf)
-gestor_login = GestorDeLogin(gestor_usuarios, login_manager, admin_list=['admin'])
+gestor_login = GestorDeLogin(gestor_usuarios, login_manager, admin_list=[2,3])  # IDs de usuarios administradores
 comparador_reclamos = ComparadorDeReclamos()
 
 # Página de inicio
@@ -65,6 +65,8 @@ def login():
         if usuario_dominio:
             gestor_login.login_usuario(usuario_dominio)
             session['id_usuario'] = usuario_dominio.id  # Guardar el ID del usuario en la sesión
+            if usuario_dominio.rol == Rol.JEFE_DEPARTAMENTO or usuario_dominio.rol == Rol.SECRETARIO_TECNICO:
+                return redirect(url_for('manejar_reclamos'))
             return redirect(url_for('crear_reclamo'))
     return render_template('login.html')
 
@@ -144,36 +146,66 @@ def logout():
     return redirect(url_for('login'))
 
 @app.route('/manejar_reclamos', methods=['GET', 'POST'])
-#@gestor_login.admin_only
+@gestor_login.admin_only
 def manejar_reclamos():
-   
-    #id_departamento = session['id_departamento']
-    id_departamento = 1  # Placeholder, reemplazar con autenticación y lógica adecuada
-    # Lógica para manejar la creación/modificación de reclamos
+    jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
+    id_departamento = jefe.departamento_id
+
     if request.method == 'POST':
-        # 1. Tomar los datos del reclamo modificado
         id_reclamo = request.form.get('id_reclamo')
-        nuevo_estado = request.form.get('estado')
-        
-        if nuevo_estado == "INVALIDO":
-            nuevo_estado = Estado.INVALIDO
-        elif nuevo_estado == "PENDIENTE":
-            nuevo_estado = Estado.PENDIENTE
-        elif nuevo_estado == "EN_PROCESO":
-            nuevo_estado = Estado.EN_PROCESO
-        elif nuevo_estado == "RESUELTO":
-            nuevo_estado = Estado.RESUELTO
-        else:
-            flash("Estado inválido.", "error")
+        estado = request.form.get('estado')
+        nuevo_departamento = request.form.get('nuevo_departamento')  # Solo si el rol es SECRETARIO_TECNICO
+        if not id_reclamo:
+            flash("ID del reclamo no proporcionado.", "error")
             return redirect(url_for('manejar_reclamos'))
-            
-        # 2. Actualizar el reclamo en la base de datos
-        gestor_reclamo.modificar_estado_reclamo(id_reclamo, nuevo_estado)
-        flash("Reclamo actualizado correctamente.", "success")
+        try:
+            id_reclamo = int(id_reclamo)
+        except ValueError:
+            flash("ID del reclamo inválido.", "error")
+            return redirect(url_for('manejar_reclamos'))
+
+        # Obtener el reclamo actual para comparar
+        reclamo_actual = gestor_reclamo.obtener_reclamo_por_id(id_reclamo)
+        if not reclamo_actual:
+            flash("Reclamo no encontrado.", "error")
+            return redirect(url_for('manejar_reclamos'))
+
+        # Verificar y actualizar estado solo si cambió
+        if estado and estado in ["INVALIDO", "PENDIENTE", "EN_PROCESO", "RESUELTO"]:
+            estado_map = {
+                "INVALIDO": Estado.INVALIDO,
+                "PENDIENTE": Estado.PENDIENTE,
+                "EN_PROCESO": Estado.EN_PROCESO,
+                "RESUELTO": Estado.RESUELTO
+            }
+            nuevo_estado = estado_map[estado]
+            if reclamo_actual.estado != nuevo_estado:  # Comparar con el estado actual
+                gestor_reclamo.modificar_estado_reclamo(id_reclamo, nuevo_estado)
+                flash("Reclamo actualizado correctamente.", "success")
+
+        # Verificar y actualizar departamento solo si cambió
+        if nuevo_departamento:
+            try:
+                nuevo_departamento_id = int(nuevo_departamento)
+                if reclamo_actual.departamento_id != nuevo_departamento_id:  # Comparar con el departamento actual
+                    gestor_reclamo.modificar_departamento_reclamo(id_reclamo, nuevo_departamento_id)
+                    flash("Departamento cambiado correctamente.", "success")
+
+            except ValueError:
+                flash("Departamento inválido.", "error")
+                return redirect(url_for('manejar_reclamos'))
+            except Exception as e:
+                flash(str(e), "error")
+                return redirect(url_for('manejar_reclamos'))
+
         return redirect(url_for('manejar_reclamos'))
-   
-    datos_reclamos = gestor_reclamo.obtener_reclamos_departamento(id_departamento)
-    return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos)
+
+    if jefe.rol == Rol.SECRETARIO_TECNICO:
+        datos_reclamos = gestor_reclamo.obtener_todos_los_reclamos()
+        datos_reclamos = [r.to_dict() for r in datos_reclamos]
+    else:
+        datos_reclamos = gestor_reclamo.obtener_reclamos_departamento(id_departamento)
+    return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos, rol=jefe.rol.name)
 
 @app.route('/ayuda')
 #@gestor_login.admin_only

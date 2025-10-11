@@ -14,8 +14,8 @@ class GestorDeReclamo:
         """
         self.reclamo_repositorio = reclamo_repositorio
         self.mapeo_etiquetas = {
-            "soporte informático": 1,
-            "maestranza": 2,
+            "soporte informático": 2,
+            "maestranza": 1,
             "secretaría técnica": 3
         }
         self.clasificador = clasificador
@@ -58,6 +58,14 @@ class GestorDeReclamo:
         """
         return self.reclamo_repositorio.obtener_todos_los_registros()
 
+    def obtener_reclamo_por_id(self, reclamo_id: int) -> Optional[ReclamoDominio]:
+        """
+        Obtiene un reclamo por su ID.
+        :param reclamo_id: ID del reclamo.
+        :return: Instancia de ReclamoDominio o None si no se encuentra.
+        """
+        return self.reclamo_repositorio.obtener_registro_por_filtro('id', reclamo_id)
+
     def obtener_reclamos_departamento(self, departamento_id: int) -> List[ReclamoDominio]:
         """
         Obtiene todos los reclamos asociados a un departamento específico.
@@ -86,6 +94,19 @@ class GestorDeReclamo:
         reclamo = self.reclamo_repositorio.obtener_registro_por_filtro('id', reclamo_id)
         if reclamo:
             reclamo.estado = nuevo_estado
+            return self.reclamo_repositorio.modificar_registro(reclamo)
+        return None
+    
+    def modificar_departamento_reclamo(self, id_reclamo, nuevo_departamento_id):
+        """
+        Modifica el departamento asignado a un reclamo existente.
+        :param id_reclamo: ID del reclamo a modificar.
+        :param nuevo_departamento_id: Nuevo ID de departamento a asignar.
+        :return: Instancia de ReclamoDominio modificada o None si no se encuentra.
+        """
+        reclamo = self.reclamo_repositorio.obtener_registro_por_filtro('id', id_reclamo)
+        if reclamo:
+            reclamo.departamento_id = nuevo_departamento_id
             return self.reclamo_repositorio.modificar_registro(reclamo)
         return None
 

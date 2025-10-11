@@ -54,8 +54,10 @@ class ReclamoDominio:
     def to_dict(self):
         return {
             "id": self.id,
+            "usuario_id": self.usuario_id,
             "contenido": self.contenido,
-            "timestamp": self.timestamp.isoformat() if self.timestamp else None,
+            "timestamp": self.timestamp if self.timestamp else None,
             "estado": self.estado.name if hasattr(self.estado, 'name') else self.estado,
             "departamento_id": self.departamento_id,
+            "adherentes_id": [a.id for a in self._adherentes],
         }

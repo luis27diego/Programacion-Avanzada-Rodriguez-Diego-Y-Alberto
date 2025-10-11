@@ -3,7 +3,7 @@
 {% block title %}Manejar Reclamos{% endblock %}
 
 {% block content %}
-<div class="max-w-7xl mx-auto">
+<div class="max-w-[90rem] mx-auto">
   <h2 class="text-3xl font-bold text-gray-800 mb-6">Panel de Reclamos del Departamento</h2>
   
   <!-- Mensajes Flash -->
@@ -29,6 +29,10 @@
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Fecha</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Estado</th>
           <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Departamento</th>
+          {% if rol == "SECRETARIO_TECNICO" %}
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Cambiar Departamento</th>
+          {% endif %}
+          <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Acción</th>
         </tr>
       </thead>
       <tbody class="bg-white divide-y divide-gray-200">
@@ -36,14 +40,15 @@
         <tr class="hover:bg-gray-50">
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ reclamo.id }}</td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ reclamo.usuario_id }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900"> {% for adherente in reclamo.obtener_adherentes() %}
-                                                                          {{ adherente.id }}{% if not loop.last %}, {% endif %}
-                                                                        {% endfor %}
+          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+            {% for adherente in reclamo.adherentes_id %}
+              {{ adherente }}{% if not loop.last %}, {% endif %}
+            {% endfor %}
           </td>
           <td class="px-6 py-4 text-sm text-gray-900">{{ reclamo.contenido }}</td>
-          <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ reclamo.timestamp }}</td>
+            <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ reclamo.timestamp.strftime('%Y-%m-%d') }}</td>
           <td class="px-6 py-4 whitespace-nowrap text-sm">
-            <form method="POST" action="{{ url_for('manejar_reclamos') }}" class="flex items-center space-x-2">
+            <form method="POST" action="{{ url_for('manejar_reclamos') }}">
               <input type="hidden" name="id_reclamo" value="{{ reclamo.id }}">
               <select name="estado" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 <option value="INVALIDO" {% if reclamo.estado == 'INVALIDO' %}selected{% endif %}>Inválido</option>
@@ -51,12 +56,23 @@
                 <option value="EN_PROCESO" {% if reclamo.estado == 'EN_PROCESO' %}selected{% endif %}>En Progreso</option>
                 <option value="RESUELTO" {% if reclamo.estado == 'RESUELTO' %}selected{% endif %}>Resuelto</option>
               </select>
-              <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out">
-                Guardar
-              </button>
-            </form>
           </td>
           <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">{{ reclamo.departamento_id }}</td>
+          {% if rol == "SECRETARIO_TECNICO" %}
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <select name="nuevo_departamento" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md">
+              <option value="1" {% if reclamo.departamento_id == 1 %}selected{% endif %}>Maestranza</option>
+              <option value="2" {% if reclamo.departamento_id == 2 %}selected{% endif %}>Soporte Informático</option>
+              <option value="3" {% if reclamo.departamento_id == 3 %}selected{% endif %}>Secretaría Técnica</option>
+            </select>
+          </td>
+          {% endif %}
+          <td class="px-6 py-4 whitespace-nowrap text-sm">
+            <button type="submit" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-4 rounded-md transition duration-150 ease-in-out">
+              Guardar
+            </button>
+            </form> <!-- Cierra el form aquí para incluir todos los campos -->
+          </td>
         </tr>
         {% endfor %}
       </tbody>
