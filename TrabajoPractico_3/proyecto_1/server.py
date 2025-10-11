@@ -5,6 +5,8 @@ from modules.dominio.usuario import Rol, Claustro
 from modules.gestores.gestor_usuario import GestorDeUsuarios
 from modules.gestores.gestor_reclamo import GestorDeReclamo
 from modules.gestores.gestor_login import GestorDeLogin
+from modules.gestores.dashboardService import DashboardService
+from modules.utilidades.graficos import crear_grafico_torta, crear_imagen_nube_palabras, crear_barra_mediana
 import pickle
 from modules.comparador_de_reclamos import ComparadorDeReclamos
 from modules.factoria import crear_repositorio
@@ -19,6 +21,7 @@ with open('./data/claims_clf.pkl', 'rb') as archivo:
 gestor_usuarios = GestorDeUsuarios(usuario_repo, reclamo_repo, clf)
 gestor_reclamo = GestorDeReclamo(reclamo_repo, clf)
 gestor_login = GestorDeLogin(gestor_usuarios, login_manager, admin_list=[2,3])  # IDs de usuarios administradores
+dashboard_service = DashboardService(usuario_repo,reclamo_repo) 
 comparador_reclamos = ComparadorDeReclamos()
 
 # Página de inicio
@@ -215,6 +218,21 @@ def manejar_reclamos():
         datos_reclamos = gestor_reclamo.obtener_reclamos_departamento(id_departamento)
         datos_reclamos = [r.to_dict() for r in datos_reclamos]
     return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos, rol=jefe.rol.name, active_page='manejar_reclamos')
+
+@app.route('/dashboard')
+@gestor_login.admin_only
+def dashboard():
+    jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
+    id_departamento = jefe.departamento_id
+    datos_graficos = dashboard_service.obtener_analiticas(id_departamento, session['id_usuario'])
+    grafico_torta = crear_grafico_torta(datos_graficos['datos_torta'])
+    grafico_barras_mediana = crear_barra_mediana(
+        datos_graficos['mediana_en_proceso'],
+        datos_graficos['mediana_resolucion'],
+        datos_graficos['mediana_pendiente']
+    )
+    html_nube = crear_imagen_nube_palabras(datos_graficos['datos_nube_palabras']) #genera y guarda la imagen en static
+    return render_template('dashboard.html', grafico_torta=grafico_torta, grafico_barras_mediana=grafico_barras_mediana, nube_palabras=html_nube,  active_page='dashboard')
 
 @app.route('/ayuda')
 @gestor_login.admin_only

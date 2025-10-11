@@ -1,0 +1,67 @@
+{% extends "base_admin.html" %}
+
+{% block title %}Dashboard - Analíticas{% endblock %}
+
+{% block content %}
+<div class="container dashboard-container">
+    <h1 class="dashboard-title">Panel de Analíticas</h1>
+    <div class="charts">
+        <div class="chart-card">
+            {{ grafico_torta|safe }}
+        </div>
+        <div class="chart-card">
+            {{ grafico_barras_mediana|safe }}
+        </div>
+        <div class="chart-card nube-palabras">
+            {{ nube_palabras|safe }}
+        </div>
+    </div>
+</div>
+
+<style>
+.dashboard-container {
+    padding: 2rem;
+    max-width: 1400px;
+    margin: 0 auto;
+}
+
+.dashboard-title {
+    font-size: 2rem;
+    margin-bottom: 2rem;
+    color: #333;
+}
+
+.charts {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
+    gap: 2rem;
+}
+
+.chart-card {
+    background: white;
+    border-radius: 12px;
+    padding: 1.5rem;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    overflow: hidden;
+}
+
+.chart-card > div {
+    width: 100%;
+}
+
+.chart-card img {
+    width: 100%;
+    height: auto;
+    display: block;
+}
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Pequeño delay para asegurar que todo esté cargado
+    setTimeout(function() {
+        window.dispatchEvent(new Event('resize'));
+    }, 50);
+});
+</script>
+{% endblock %}

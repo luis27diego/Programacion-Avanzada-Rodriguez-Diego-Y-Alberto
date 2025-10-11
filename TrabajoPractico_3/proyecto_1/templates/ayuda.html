@@ -10,44 +10,34 @@
     <p class="text-gray-600">Guía rápida para utilizar el Dashboard de Administración</p>
   </div>
 
-  <!-- Índice -->
-  <div class="bg-blue-50 border-l-4 border-blue-600 p-6 rounded-lg mb-6">
-    <h2 class="text-xl font-bold text-gray-800 mb-3">📑 Contenidos</h2>
-    <ul class="space-y-2">
-      <li><a href="#navegacion" class="text-blue-600 hover:underline">Navegación del Dashboard</a></li>
-      <li><a href="#gestion-reclamos" class="text-blue-600 hover:underline">Gestión de Reclamos</a></li>
-      <li><a href="#analitica" class="text-blue-600 hover:underline">Analítica</a></li>
-    </ul>
-  </div>
-
   <!-- Sección 1: Navegación -->
-  <div id="navegacion" class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">1. Navegación del Dashboard</h2>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Navegación del Dashboard</h2>
     
     <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mt-4">
       <div class="border border-gray-200 rounded-lg p-4">
         <div class="text-3xl mb-2">📊</div>
         <h3 class="font-bold mb-2">Analítica</h3>
-        <p class="text-gray-600 text-sm">Visualiza métricas y estadísticas del sistema de reclamos.</p>
+        <p class="text-gray-600 text-sm">Visualiza métricas y estadísticas de los reclamos en gráficos interactivos.</p>
       </div>
       
       <div class="border border-gray-200 rounded-lg p-4">
         <div class="text-3xl mb-2">📋</div>
         <h3 class="font-bold mb-2">Manejar Reclamos</h3>
-        <p class="text-gray-600 text-sm">Administra y actualiza el estado de todos los reclamos.</p>
+        <p class="text-gray-600 text-sm">Administra y actualiza el estado de todos los reclamos recibidos.</p>
       </div>
       
       <div class="border border-gray-200 rounded-lg p-4">
         <div class="text-3xl mb-2">❓</div>
         <h3 class="font-bold mb-2">Ayuda</h3>
-        <p class="text-gray-600 text-sm">Accede a tutoriales y guías del sistema.</p>
+        <p class="text-gray-600 text-sm">Accede a esta guía en cualquier momento desde el menú.</p>
       </div>
     </div>
   </div>
 
   <!-- Sección 2: Gestión de Reclamos -->
-  <div id="gestion-reclamos" class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">2. Gestión de Reclamos</h2>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Gestión de Reclamos</h2>
     
     <h3 class="font-bold text-lg mb-3">Cómo cambiar el estado de un reclamo:</h3>
     <div class="space-y-3 mb-6">
@@ -101,32 +91,21 @@
   </div>
 
   <!-- Sección 3: Analítica -->
-  <div id="analitica" class="bg-white rounded-lg shadow-md p-6 mb-6">
-    <h2 class="text-2xl font-bold text-gray-800 mb-4">3. Analítica</h2>
+  <div class="bg-white rounded-lg shadow-md p-6 mb-6">
+    <h2 class="text-2xl font-bold text-gray-800 mb-4">Panel de Analítica</h2>
     
-    <p class="text-gray-700 mb-4">La sección de analítica te permite visualizar el rendimiento del sistema.</p>
+    <p class="text-gray-700 mb-4">La sección de analítica muestra tres gráficos principales:</p>
     
-    <h3 class="font-bold text-lg mb-3">Métricas principales:</h3>
     <ul class="list-disc list-inside space-y-2 text-gray-700">
-      <li><strong>Total de reclamos:</strong> Cantidad total en el sistema</li>
-      <li><strong>Reclamos por estado:</strong> Distribución actual</li>
-      <li><strong>Tiempo de resolución:</strong> Promedio para resolver reclamos</li>
-      <li><strong>Por departamento:</strong> Distribución por área</li>
+      <li><strong>Distribución de Reclamos:</strong> Muestra el porcentaje de reclamos en cada estado.</li>
+      <li><strong>Tiempo de Resolución:</strong> Mediana de días que toma resolver reclamos según su estado.</li>
+      <li><strong>Nube de Palabras:</strong> Palabras más frecuentes en los reclamos recibidos.</li>
     </ul>
 
     <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500 mt-4">
       <h3 class="font-bold mb-2">💡 Consejo</h3>
-      <p class="text-gray-700 text-sm">Revisa las métricas diariamente para identificar tendencias y optimizar la gestión de reclamos.</p>
+      <p class="text-gray-700 text-sm">Revisa las métricas regularmente para identificar patrones y mejorar los tiempos de respuesta.</p>
     </div>
-  </div>
-
-  <!-- Contacto -->
-  <div class="bg-gray-50 rounded-lg p-6 text-center">
-    <h3 class="font-bold text-lg mb-2">¿Necesitas más ayuda?</h3>
-    <p class="text-gray-600 mb-4">Contacta al equipo de soporte técnico</p>
-    <a href="mailto:soporte@ejemplo.com" class="inline-block bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition">
-      Contactar Soporte
-    </a>
   </div>
 </div>
 {% endblock %}

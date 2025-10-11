@@ -1,5 +1,5 @@
-from modules.monticulos.monticulomin import MonticuloBinario
-from modules.monticulos.monticulomax import MonticuloMaximo
+from modules.utilidades.monticulos.monticulomin import MonticuloBinario
+from modules.utilidades.monticulos.monticulomax import MonticuloMaximo
 
 class MonticuloMedianaBinario():
     def __init__(self):
