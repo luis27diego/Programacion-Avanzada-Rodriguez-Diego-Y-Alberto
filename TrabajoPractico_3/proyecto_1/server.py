@@ -71,7 +71,7 @@ def login():
     return render_template('login.html')
 
 @app.route('/crear_reclamo', methods=['GET', 'POST'])
-@gestor_login.se_requiere_login
+@gestor_login.solo_usuarios_no_admin
 def crear_reclamo():
     if request.method == 'POST':
         usuario_id = session['id_usuario']  
@@ -124,7 +124,7 @@ def ver_reclamos_similares():
 
 # Ruta para mostrar reclamos del usuario
 @app.route('/mis_reclamos')
-@gestor_login.se_requiere_login
+@gestor_login.solo_usuarios_no_admin
 def mis_reclamos():
     print(session['id_usuario'])
     #reclamos = gestor_usuarios.obtener_reclamos_creados_por_usuario(session['id_usuario'])
@@ -134,7 +134,7 @@ def mis_reclamos():
     return render_template('mis_reclamos.html', reclamos=[r.to_dict() for r in reclamos], reclamos_adheridos=[r.to_dict() for r in reclamos_adheridos], active_page='mis_reclamos')
 
 @app.route('/todos_los_reclamos')
-@gestor_login.se_requiere_login
+@gestor_login.solo_usuarios_no_admin
 def todos_los_reclamos():
     reclamos = gestor_reclamo.obtener_todos_los_reclamos()
     return render_template('todos_los_reclamos.html', reclamos=[r.to_dict() for r in reclamos], active_page='todos_los_reclamos')
@@ -208,7 +208,7 @@ def manejar_reclamos():
     return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos, rol=jefe.rol.name)
 
 @app.route('/ayuda')
-#@gestor_login.admin_only
+@gestor_login.admin_only
 def ayuda():
     return render_template('ayuda.html')
 

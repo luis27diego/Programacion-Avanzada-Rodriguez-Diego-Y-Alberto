@@ -3,6 +3,7 @@ from flask_login import UserMixin
 from flask_login import login_user, logout_user, login_required, current_user
 from flask import abort
 from functools import wraps
+from flask import redirect, url_for, flash
 
 class FlaskLoginUser(UserMixin):
     def __init__(self,  usuario_dominio: UsuarioDominio):
@@ -51,13 +52,32 @@ class GestorDeLogin:
     def admin_only(self, f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-            if current_user.is_authenticated and current_user.id not in self.__admin_list:
+            if not current_user.is_authenticated:
+                flash("Por favor, inicia sesión como administrador para acceder a esta página.")
+                return redirect(url_for('login'))
+            if current_user.id not in self.__admin_list:
                 return abort(403)
             return f(*args, **kwargs)
         return decorated_function
+
     
     def es_admin(self):
         if current_user.is_authenticated and current_user.id in self.__admin_list:
             return True
         else:
             return False
+
+
+    def solo_usuarios_no_admin(self, f):
+        @wraps(f)
+        def decorated_function(*args, **kwargs):
+
+            if not current_user.is_authenticated:
+                flash("Por favor, inicia sesión para acceder a esta página.")
+                return redirect(url_for('login'))
+            
+            elif current_user.is_authenticated and current_user.id in self.__admin_list:
+                return abort(403)
+            
+            return f(*args, **kwargs)
+        return decorated_function
