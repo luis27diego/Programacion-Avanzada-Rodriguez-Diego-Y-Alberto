@@ -18,7 +18,7 @@ class ReclamoRepositorio(RepositorioAbstracto):
         self.__session.add(reclamo_modelo)
         self.__session.commit()
         self.__session.refresh(reclamo_modelo)  # Asegura que el modelo tenga el ID asignado
-        #return self.__modelo_to_dominio(reclamo_modelo)
+        return self.__modelo_to_dominio(reclamo_modelo)
 
     def obtener_todos_los_registros(self):
         reclamos_modelos = self.__session.query(ReclamoModel).all()
@@ -28,8 +28,8 @@ class ReclamoRepositorio(RepositorioAbstracto):
         register = self.__session.query(ReclamoModel).filter_by(id=registro_modificado.id).first()
         register.contenido = registro_modificado.contenido
         register.timestamp = registro_modificado.timestamp
+        register.timestamp_modificacion = registro_modificado.timestamp_modificacion
         register.estado = registro_modificado.estado.name if hasattr(registro_modificado.estado, 'name') else registro_modificado.estado
-        register.tiempo_resolucion = registro_modificado.tiempo_resolucion
         register.departamento_id = registro_modificado.departamento_id
         self.__session.commit()
 
@@ -78,7 +78,7 @@ class ReclamoRepositorio(RepositorioAbstracto):
             timestamp=modelo.timestamp,
             estado=modelo.estado,
             departamento_id=modelo.departamento_id,
-            tiempo_resolucion=modelo.tiempo_resolucion,
+            timestamp_modificacion=modelo.timestamp_modificacion,
         )
         # Cargar creador y adherentes si están en DB
         creador = self.__session.query(UsuarioModel).filter(UsuarioModel.id == modelo.usuario_id).first()
@@ -101,7 +101,7 @@ class ReclamoRepositorio(RepositorioAbstracto):
             timestamp=dominio.timestamp,
             estado=dominio.estado.name if hasattr(dominio.estado, 'name') else dominio.estado,
             departamento_id=dominio.departamento_id,
-            tiempo_resolucion=dominio.tiempo_resolucion,
+            timestamp_modificacion=dominio.timestamp_modificacion,
         )
     
     def __modelo_usuario_to_dominio(self, modelo: UsuarioModel) -> UsuarioDominio:
@@ -126,7 +126,7 @@ class ReclamoRepositorio(RepositorioAbstracto):
                 timestamp=reclamo_modelo.timestamp,
                 estado=reclamo_modelo.estado,
                 departamento_id=reclamo_modelo.departamento_id,
-                tiempo_resolucion=reclamo_modelo.tiempo_resolucion,
+                timestamp_modificacion=reclamo_modelo.timestamp_modificacion,
             )
             usuario.agregar_reclamo_creado(reclamo)
         reclamos_adheridos_modelos = self.__session.query(ReclamoModel).join(AdhesionModel).filter(AdhesionModel.usuario_id == modelo.id).all()
@@ -138,7 +138,7 @@ class ReclamoRepositorio(RepositorioAbstracto):
                 timestamp=reclamo_modelo.timestamp,
                 estado=reclamo_modelo.estado,
                 departamento_id=reclamo_modelo.departamento_id,
-                tiempo_resolucion=reclamo_modelo.tiempo_resolucion,
+                timestamp_modificacion=reclamo_modelo.timestamp_modificacion,
             )
             usuario.agregar_reclamo_adherido(reclamo)
         return usuario

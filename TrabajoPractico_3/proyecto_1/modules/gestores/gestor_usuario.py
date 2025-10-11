@@ -55,13 +55,12 @@ class GestorDeUsuarios:
         except IntegrityError as e:
             raise ValueError(f"Error al crear el usuario: {str(e)}")
 
-    def crear_reclamo_para_usuario(self, id_usuario: int, contenido: str, estado: Estado = Estado.PENDIENTE, tiempo_resolucion: Optional[int] = None) -> ReclamoDominio:
+    def crear_reclamo_para_usuario(self, id_usuario: int, contenido: str, estado: Estado = Estado.PENDIENTE) -> ReclamoDominio:
         """
         Permite que un usuario cree un reclamo.
         :param id_usuario: ID del usuario que crea el reclamo.
         :param contenido: Contenido del reclamo.
         :param estado: Estado inicial (default: "pendiente").
-        :param tiempo_resolucion: Tiempo estimado de resolución (opcional).
         :return: El reclamo creado.
         :raises ValueError: Si el usuario no existe, no tiene permiso, o datos inválidos.
         """
@@ -87,6 +86,7 @@ class GestorDeUsuarios:
             timestamp=datetime.now(),
             estado=estado,
             departamento_id=departamento_id,
+            timestamp_modificacion=None
         )
         try:
             # Guardar y obtener el reclamo creado con su ID

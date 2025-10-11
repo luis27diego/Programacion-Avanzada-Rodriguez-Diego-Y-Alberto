@@ -72,7 +72,7 @@ class UsuarioRepositorio(RepositorioAbstracto):
                 timestamp=reclamo_modelo.timestamp,
                 estado=reclamo_modelo.estado,
                 departamento_id=reclamo_modelo.departamento_id,
-                tiempo_resolucion=reclamo_modelo.tiempo_resolucion,
+                timestamp_modificacion=reclamo_modelo.timestamp_modificacion
             )
             usuario.agregar_reclamo_creado(reclamo)
         reclamos_adheridos_modelos = self.__session.query(ReclamoModel).join(AdhesionModel).filter(AdhesionModel.usuario_id == modelo.id).all()
@@ -84,7 +84,7 @@ class UsuarioRepositorio(RepositorioAbstracto):
                 timestamp=reclamo_modelo.timestamp,
                 estado=reclamo_modelo.estado,
                 departamento_id=reclamo_modelo.departamento_id,
-                tiempo_resolucion=reclamo_modelo.tiempo_resolucion,
+                timestamp_modificacion=reclamo_modelo.timestamp_modificacion
             )
             usuario.agregar_reclamo_adherido(reclamo)
         return usuario

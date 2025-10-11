@@ -58,7 +58,7 @@ class UsuarioDominio:
     def es_secretario(self) -> bool:
         return self.rol == Rol.SECRETARIO_TECNICO
     
-    def cambiar_estado(self, reclamo: ReclamoDominio, nuevo_estado: Estado, tiempo_resolucion: int | None = None):
+"""     def cambiar_estado(self, reclamo: ReclamoDominio, nuevo_estado: Estado, tiempo_resolucion: int | None = None):
         if not (self.es_jefe() or self.es_secretario()):
             raise PermissionError("Solo jefes o secretario pueden cambiar estados")
-        reclamo.cambiar_estado(nuevo_estado, tiempo_resolucion)
+        reclamo.cambiar_estado(nuevo_estado, tiempo_resolucion) """

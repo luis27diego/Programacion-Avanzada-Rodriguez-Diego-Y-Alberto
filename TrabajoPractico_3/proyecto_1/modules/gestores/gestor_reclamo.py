@@ -32,8 +32,7 @@ class GestorDeReclamo:
             contenido=contenido,
             timestamp=timestamp,
             estado=estado,
-            departamento_id=departamento_id,
-            tiempo_resolucion=None
+            departamento_id=departamento_id
         )
         try:
             return self.reclamo_repositorio.guardar_registro(reclamo)
@@ -94,6 +93,7 @@ class GestorDeReclamo:
         reclamo = self.reclamo_repositorio.obtener_registro_por_filtro('id', reclamo_id)
         if reclamo:
             reclamo.estado = nuevo_estado
+            reclamo.timestamp_modificacion = datetime.now()
             return self.reclamo_repositorio.modificar_registro(reclamo)
         return None
     
@@ -113,14 +113,18 @@ class GestorDeReclamo:
 if __name__ == "__main__":
     from modules.factoria import crear_repositorio
     usuario_repo, reclamo_repo, departamento_repo = crear_repositorio()
-    with open('../../data/claims_clf.pkl', 'rb') as archivo: # para debugear usar esta ruta './data/claims_clf.pkl'
+    with open('./data/claims_clf.pkl', 'rb') as archivo: # para debugear usar esta ruta './data/claims_clf.pkl'
         clf = pickle.load(archivo)
 
     # Ejemplo de uso
     gestor = GestorDeReclamo(reclamo_repo, clf)
-    gestor.crear_reclamo(
+    gestor.modificar_estado_reclamo(2, Estado.EN_PROCESO)
+"""     reclamo_creado =gestor.crear_reclamo(
         usuario_id=6,
         contenido="Es insoportable trabajar con este sistema, necesito ayuda urgente.",
         timestamp=datetime.now(),
         estado=Estado.PENDIENTE
-    )
+    ) """
+
+    
+

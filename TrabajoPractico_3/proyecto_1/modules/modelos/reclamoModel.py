@@ -13,7 +13,7 @@ class ReclamoModel(Base):
     timestamp = Column(DateTime, nullable=False, default=func.now(), index=True)
     estado = Column(Enum(Estado), nullable=False, default=Estado.PENDIENTE)
     departamento_id = Column(Integer, ForeignKey('departamentos.id'), nullable=True, index=True)
-    tiempo_resolucion = Column(Integer, nullable=True)
+    timestamp_modificacion = Column(DateTime, nullable=True, index=True)
 
     usuario = relationship('UsuarioModel', back_populates='reclamos')
     departamento = relationship('DepartamentoModel', back_populates='reclamos')
