@@ -49,7 +49,8 @@ def register():
             gestor_usuarios.crear_usuario(nombre,apellido, email,usuario, password, claustro, rol)
             return redirect(url_for('login'))
         except Exception as e:
-            return render_template('error.html', error=str(e))
+            flash(str(e))
+            return render_template('register.html')
     return render_template('register.html')
 
 @app.route("/login", methods= ["GET", "POST"])
@@ -98,6 +99,12 @@ def crear_reclamo():
 @app.route('/ver_reclamos_similares', methods=['GET', 'POST'])
 @gestor_login.se_requiere_login
 def ver_reclamos_similares():
+
+    # Verificar que hay un reclamo en proceso
+    if not session.get('contenido') or not session.get('timestamp') or not session.get('estado') or not session.get('id_departamento'):
+        flash("No hay un reclamo en proceso. Por favor, crea un reclamo primero.", "error")
+        return redirect(url_for('crear_reclamo'))
+
     if request.method == 'POST':
         id_reclamo = request.form.get('adherir')
         if id_reclamo:
@@ -107,7 +114,8 @@ def ver_reclamos_similares():
                 #session.clear()  # Limpiar la sesión
                 return render_template('confirmacion.html', mensaje="Te has adherido exitosamente al reclamo.")
             except Exception as e:
-                return render_template('error.html', error=str(e))
+                flash(str(e))
+                return render_template('crear_reclamo.html')
         else:
             usuario_id = session['id_usuario']  
             contenido = session.get('contenido')
@@ -205,12 +213,14 @@ def manejar_reclamos():
         datos_reclamos = [r.to_dict() for r in datos_reclamos]
     else:
         datos_reclamos = gestor_reclamo.obtener_reclamos_departamento(id_departamento)
-    return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos, rol=jefe.rol.name)
+        datos_reclamos = [r.to_dict() for r in datos_reclamos]
+    return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos, rol=jefe.rol.name, active_page='manejar_reclamos')
 
 @app.route('/ayuda')
 @gestor_login.admin_only
 def ayuda():
-    return render_template('ayuda.html')
+    return render_template('ayuda.html',active_page='ayuda')
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True)
+    

@@ -12,8 +12,8 @@
         <div class="container mx-auto flex items-center">
             <div class="text-white text-lg font-bold mr-8">Sistema de Reclamos - Admin</div>
             <div class="flex-1 flex justify-center space-x-4">
-                <a href="{{ url_for('manejar_reclamos') }}" class="text-white hover:underline">Manejar Reclamos</a>
-                <a href="{{ url_for('ayuda') }}" class="text-white hover:underline">Ayuda</a>
+                <a href="{{ url_for('manejar_reclamos') }}" class="px-3 py-1 rounded transition-colors duration-200 {% if active_page == 'manejar_reclamos' %}bg-white text-blue-600 font-bold{% else %}text-white hover:bg-white/20{% endif %}">Manejar Reclamos</a>
+                <a href="{{ url_for('ayuda') }}" class="px-3 py-1 rounded transition-colors duration-200 {% if active_page == 'ayuda' %}bg-white text-blue-600 font-bold{% else %}text-white hover:bg-white/20{% endif %}">Ayuda</a>
             </div>
             <div class="flex justify-end">
                 <a href="{{ url_for('logout') }}" class="text-white hover:underline ml-8">Cerrar sesión</a>

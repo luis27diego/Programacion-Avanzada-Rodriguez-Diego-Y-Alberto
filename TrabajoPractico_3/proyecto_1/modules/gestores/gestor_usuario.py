@@ -198,13 +198,17 @@ class GestorDeUsuarios:
         """
         Autentica un usuario por email y contraseña.
         :param email: Email del usuario.
-        :param password: Contraseña (sin hashear por simplicidad; usa bcrypt en producción).
-        :return: Objeto UsuarioDominio o None si las credenciales son inválidas.
+        :param password: Contraseña (sin hashear por simplicidad).
+        :return: Objeto UsuarioDominio o ValueError si las credenciales son inválidas.
         """
+        
         usuario_dominio = self.obtener_usuario_por_email(email)
-        if usuario_dominio and usuario_dominio.password == password:  # En producción, usa hashing
+        if usuario_dominio is None:
+            raise ValueError("El email no está registrado. Por favor, regístrese.")
+
+        if usuario_dominio and usuario_dominio.password == password: 
             return usuario_dominio
-        raise ValueError("Credenciales inválidas. Usuario y/o contraseña incorrectos.")
+        raise ValueError("Credenciales inválidas. Email y/o contraseña incorrectos.")
 
     def obtener_reclamos_creados_por_usuario(self, id_usuario: int) -> List[ReclamoDominio]:
         """

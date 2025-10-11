@@ -3,7 +3,7 @@ from flask_login import UserMixin
 from flask_login import login_user, logout_user, login_required, current_user
 from flask import abort
 from functools import wraps
-from flask import redirect, url_for, flash
+from flask import redirect, url_for, flash, render_template
 
 class FlaskLoginUser(UserMixin):
     def __init__(self,  usuario_dominio: UsuarioDominio):
@@ -56,7 +56,7 @@ class GestorDeLogin:
                 flash("Por favor, inicia sesión como administrador para acceder a esta página.")
                 return redirect(url_for('login'))
             if current_user.id not in self.__admin_list:
-                return abort(403)
+                return render_template('error.html', error="Acceso denegado: área restringida para administradores.", es_admin=False)
             return f(*args, **kwargs)
         return decorated_function
 
@@ -77,7 +77,8 @@ class GestorDeLogin:
                 return redirect(url_for('login'))
             
             elif current_user.is_authenticated and current_user.id in self.__admin_list:
-                return abort(403)
-            
+                return render_template('error.html', error="Acceso denegado: área restringida para administradores. Solo usuarios finales.", es_admin=True)
+                #abort(403)
+        
             return f(*args, **kwargs)
         return decorated_function

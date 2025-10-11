@@ -10,9 +10,15 @@
     <div class="bg-white p-8 rounded-lg shadow-md w-full max-w-md text-center">
         <h1 class="text-2xl font-bold mb-4 text-red-600">¡Ocurrió un error!</h1>
         <p class="mb-4">{{ error }}</p>
-        <a href="{{ url_for('index') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-            Volver al inicio
-        </a>
+        {% if es_admin %}
+            <a href="{{ url_for('manejar_reclamos') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Volver al inicio
+            </a>
+        {% else %}
+            <a href="{{ url_for('crear_reclamo') }}" class="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
+                Volver al inicio
+            </a>
+        {% endif %}
     </div>
 </body>
 </html>
