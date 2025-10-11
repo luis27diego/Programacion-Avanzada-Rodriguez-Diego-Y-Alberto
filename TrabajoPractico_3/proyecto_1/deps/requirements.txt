@@ -7,3 +7,6 @@ flask_wtf
 email_validator
 scikit-learn
 nltk
+plotly
+numpy
+pandas #plotly depende de pandas
