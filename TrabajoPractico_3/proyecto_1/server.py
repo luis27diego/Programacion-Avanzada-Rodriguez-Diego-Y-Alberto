@@ -144,10 +144,21 @@ def mis_reclamos():
     reclamos_adheridos = usuario.obtener_reclamos_adheridos()
     return render_template('mis_reclamos.html', reclamos=[r.to_dict() for r in reclamos], reclamos_adheridos=[r.to_dict() for r in reclamos_adheridos], active_page='mis_reclamos')
 
-@app.route('/todos_los_reclamos')
+@app.route('/todos_los_reclamos', methods=['GET', 'POST'])
 @gestor_login.solo_usuarios_no_admin
 def todos_los_reclamos():
-    reclamos = gestor_reclamo.obtener_todos_los_reclamos()
+    if request.method == 'POST':
+        departamento_seleccionado = request.form.get('departamento')
+
+        if departamento_seleccionado is None or departamento_seleccionado == '':
+            pass
+
+        else:
+            reclamos = gestor_reclamo.obtener_reclamos_por_estado(Estado.PENDIENTE)
+            reclamos = [r for r in reclamos if r.departamento_id == int(departamento_seleccionado)]
+            return render_template('todos_los_reclamos.html', reclamos=[r.to_dict() for r in reclamos], active_page='todos_los_reclamos', departamento_seleccionado=departamento_seleccionado)
+
+    reclamos = gestor_reclamo.obtener_reclamos_por_estado(Estado.PENDIENTE)
     return render_template('todos_los_reclamos.html', reclamos=[r.to_dict() for r in reclamos], active_page='todos_los_reclamos')
 
 

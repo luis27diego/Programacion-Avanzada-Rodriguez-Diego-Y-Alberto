@@ -56,6 +56,16 @@ class GestorDeReclamo:
         :return: Lista de instancias de ReclamoDominio.
         """
         return self.reclamo_repositorio.obtener_todos_los_registros()
+    
+    def obtener_reclamos_por_estado(self, estado: Estado) -> List[ReclamoDominio]:
+        """
+        Obtiene todos los reclamos que coinciden con un estado específico.
+        :param estado: Estado por el cual filtrar los reclamos.
+        :return: Lista de instancias de ReclamoDominio.
+        """
+        return self.reclamo_repositorio.obtener_registros_por_filtro('estado', estado)
+    
+
 
     def obtener_reclamo_por_id(self, reclamo_id: int) -> Optional[ReclamoDominio]:
         """

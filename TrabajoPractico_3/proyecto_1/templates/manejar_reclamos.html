@@ -52,7 +52,7 @@
               <input type="hidden" name="id_reclamo" value="{{ reclamo.id }}">
               <select name="estado" class="block w-full px-3 py-2 text-sm border border-gray-300 rounded-md focus:outline-none focus:ring-blue-500 focus:border-blue-500">
                 <option value="INVALIDO" {% if reclamo.estado == 'INVALIDO' %}selected{% endif %}>Inválido</option>
-                <option value="PENDIENTE" {% if reclamo.estado == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
+                <option class='bg-yellow-100' value="PENDIENTE" {% if reclamo.estado == 'PENDIENTE' %}selected{% endif %}>Pendiente</option>
                 <option value="EN_PROCESO" {% if reclamo.estado == 'EN_PROCESO' %}selected{% endif %}>En Progreso</option>
                 <option value="RESUELTO" {% if reclamo.estado == 'RESUELTO' %}selected{% endif %}>Resuelto</option>
               </select>
