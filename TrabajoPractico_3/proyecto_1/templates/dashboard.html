@@ -16,6 +16,26 @@
             {{ nube_palabras|safe }}
         </div>
     </div>
+    
+    <!-- Botones abajo a la izquierda -->
+    <div class="download-buttons-bottom">
+        <a href="{{ url_for('descargar_reporte', formato='pdf') }}" class="btn-download-discrete" title="Descargar PDF">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>PDF</span>
+        </a>
+        <a href="{{ url_for('descargar_reporte', formato='html') }}" class="btn-download-discrete" title="Descargar HTML">
+            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                <polyline points="7 10 12 15 17 10"></polyline>
+                <line x1="12" y1="15" x2="12" y2="3"></line>
+            </svg>
+            <span>HTML</span>
+        </a>
+    </div>
 </div>
 
 <style>
@@ -23,6 +43,8 @@
     padding: 2rem;
     max-width: 1400px;
     margin: 0 auto;
+    position: relative;
+    min-height: 100vh;
 }
 
 .dashboard-title {
@@ -35,6 +57,7 @@
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(450px, 1fr));
     gap: 2rem;
+    margin-bottom: 4rem;
 }
 
 .chart-card {
@@ -54,11 +77,65 @@
     height: auto;
     display: block;
 }
+
+/* Botones discretos en la esquina inferior izquierda */
+.download-buttons-bottom {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
+    display: flex;
+    gap: 8px;
+    z-index: 100;
+}
+
+.btn-download-discrete {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 8px 12px;
+    background-color: rgba(108, 117, 125, 0.9);
+    color: white;
+    text-decoration: none;
+    border-radius: 6px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+    opacity: 0.7;
+}
+
+.btn-download-discrete:hover {
+    opacity: 1;
+    background-color: rgba(52, 58, 64, 0.95);
+    transform: translateY(-1px);
+    box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+}
+
+.btn-download-discrete svg {
+    flex-shrink: 0;
+}
+
+.btn-download-discrete span {
+    font-size: 0.8rem;
+}
+
+@media (max-width: 768px) {
+    .download-buttons-bottom {
+        bottom: 10px;
+        left: 10px;
+        flex-direction: column;
+        gap: 6px;
+    }
+    
+    .btn-download-discrete {
+        padding: 6px 10px;
+        font-size: 0.8rem;
+    }
+}
 </style>
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Pequeño delay para asegurar que todo esté cargado
     setTimeout(function() {
         window.dispatchEvent(new Event('resize'));
     }, 50);
