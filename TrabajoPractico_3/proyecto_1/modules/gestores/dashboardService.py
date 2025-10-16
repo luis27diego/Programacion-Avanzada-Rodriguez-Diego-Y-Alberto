@@ -5,6 +5,8 @@ from collections import Counter
 from typing import List, Tuple
 from nltk.corpus import stopwords
 from nltk.tokenize import word_tokenize
+
+
 class DashboardService:
     def __init__(self, usuario_repo: RepositorioAbstracto, reclamo_repo: RepositorioAbstracto):
         self.usuario_repo = usuario_repo
@@ -16,7 +18,7 @@ class DashboardService:
         usuario = self.usuario_repo.obtener_registro_por_filtro('id',id_usuario)
         #if not self._has_access_to_dept(usuario, id_departamento):
         #    raise PermissionError("Acceso denegado")
-        if usuario.rol.value not in ['secretario']:
+        if usuario.rol.value in ['secretario_tecnico']:
             reclamos = self.reclamo_repo.obtener_todos_los_registros()
             total = len(reclamos)
         else:

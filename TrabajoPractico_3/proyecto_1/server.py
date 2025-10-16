@@ -1,17 +1,17 @@
 from datetime import datetime
-from flask import redirect, render_template, request, url_for, session,flash
+from flask import redirect, render_template, request, url_for, session,flash, send_file
 from modules.config import app, login_manager
 from modules.dominio.usuario import Rol, Claustro
 from modules.gestores.gestor_usuario import GestorDeUsuarios
 from modules.gestores.gestor_reclamo import GestorDeReclamo
 from modules.gestores.gestor_login import GestorDeLogin
 from modules.gestores.dashboardService import DashboardService
+from modules.gestores.gestor_dashboard import GestorDashboard
 from modules.utilidades.graficos import crear_grafico_torta, crear_imagen_nube_palabras, crear_barra_mediana
 import pickle
 from modules.comparador_de_reclamos import ComparadorDeReclamos
-from modules.factoria import crear_repositorio
+from modules.factoria import crear_repositorio, crear_reporte   
 from modules.dominio.reclamo import Estado
-from flask import flash
 
 usuario_repo, reclamo_repo, departamento_repo = crear_repositorio()
 
@@ -23,7 +23,6 @@ gestor_reclamo = GestorDeReclamo(reclamo_repo, clf)
 gestor_login = GestorDeLogin(gestor_usuarios, login_manager, admin_list=[2,3])  # IDs de usuarios administradores
 dashboard_service = DashboardService(usuario_repo,reclamo_repo) 
 comparador_reclamos = ComparadorDeReclamos()
-
 # Página de inicio
 @app.route('/')
 def index():
@@ -230,20 +229,56 @@ def manejar_reclamos():
         datos_reclamos = [r.to_dict() for r in datos_reclamos]
     return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos, rol=jefe.rol.name, active_page='manejar_reclamos')
 
+# @app.route('/dashboard')
+# @gestor_login.admin_only
+# def dashboard():
+#     jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
+#     id_departamento = jefe.departamento_id
+#     print(session['id_usuario'])
+#     datos_graficos = dashboard_service.obtener_analiticas(id_departamento, session['id_usuario'])
+#     grafico_torta = crear_grafico_torta(datos_graficos['datos_torta'])
+#     grafico_barras_mediana = crear_barra_mediana(
+#         datos_graficos['mediana_en_proceso'],
+#         datos_graficos['mediana_resolucion'],
+#         datos_graficos['mediana_pendiente']
+#     )
+#     html_nube = crear_imagen_nube_palabras(datos_graficos['datos_nube_palabras']) #genera y guarda la imagen en static
+#     return render_template('dashboard.html', grafico_torta=grafico_torta, grafico_barras_mediana=grafico_barras_mediana, nube_palabras=html_nube,  active_page='dashboard')
+
 @app.route('/dashboard')
 @gestor_login.admin_only
 def dashboard():
+    gestor_dashboard = GestorDashboard(dashboard_service)
     jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
     id_departamento = jefe.departamento_id
-    datos_graficos = dashboard_service.obtener_analiticas(id_departamento, session['id_usuario'])
-    grafico_torta = crear_grafico_torta(datos_graficos['datos_torta'])
-    grafico_barras_mediana = crear_barra_mediana(
-        datos_graficos['mediana_en_proceso'],
-        datos_graficos['mediana_resolucion'],
-        datos_graficos['mediana_pendiente']
-    )
-    html_nube = crear_imagen_nube_palabras(datos_graficos['datos_nube_palabras']) #genera y guarda la imagen en static
+    grafico_torta = gestor_dashboard.generar_grafico_torta(id_departamento, session['id_usuario'])
+    grafico_barras_mediana = gestor_dashboard.generar_barra_mediana(id_departamento, session['id_usuario'])
+    html_nube = gestor_dashboard.generar_imagen_nube_palabras(id_departamento, session['id_usuario'])
+
     return render_template('dashboard.html', grafico_torta=grafico_torta, grafico_barras_mediana=grafico_barras_mediana, nube_palabras=html_nube,  active_page='dashboard')
+
+
+@app.route('/dashboard/reporte')
+@gestor_login.admin_only
+def descargar_reporte():
+    gestor_dashboard = GestorDashboard(dashboard_service)
+    jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
+    id_departamento = jefe.departamento_id
+    formato = request.args.get("formato", "pdf")  # Por defecto PDF
+    reporte = crear_reporte(formato)
+    ruta_reporte = gestor_dashboard.generar_reporte(reporte, id_departamento, session['id_usuario'])
+
+    return ruta_reporte
+#     jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
+#     id_departamento = jefe.departamento_id
+#     formato = request.args.get("formato", "pdf")  # Por defecto PDF
+#     ruta_reporte = gestor_dashboard.generar_reporte(id_departamento, session['id_usuario'], formato=formato)
+
+#     return send_file(ruta_reporte, as_attachment=True)
+
+
+
+
 
 @app.route('/ayuda')
 @gestor_login.admin_only
