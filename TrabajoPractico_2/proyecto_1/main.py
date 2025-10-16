@@ -27,6 +27,14 @@ def cargar_personas(facultad, archivo):
         print("⚠ No se encontró el archivo, se continuará sin carga automática.")
     return estudiantes, profesores
 
+def cargar_departamentos(facultad):
+
+    try:
+        facultad.crear_departamento("Ciencias de la Computación", 0)
+
+    except Exception as e:
+        print(f"⚠ Error al crear departamento: {e}")
+
 def menu():
     print("\n##########################################")
     print("#  Sistema de Información Universitaria  #")
@@ -45,7 +53,7 @@ if __name__ == "__main__":
     # Inicialización
     facultad = Facultad("FIUNER")
     estudiantes, profesores = cargar_personas(facultad,"data/personas.txt")
-
+    cargar_departamentos(facultad)
     while True:
         menu()
         opcion = input("Opción: ")

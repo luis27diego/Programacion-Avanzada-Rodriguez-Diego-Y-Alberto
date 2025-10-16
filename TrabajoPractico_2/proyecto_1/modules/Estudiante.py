@@ -25,6 +25,5 @@ class Estudiante(Persona):
             "edad": self.edad,
             "dni": self.dni,
             "cursos": [curso.to_dict().get("nombre") for curso in self._cursos],
-            "facultad": self.facultad.nombre if self.facultad else None
         }
     

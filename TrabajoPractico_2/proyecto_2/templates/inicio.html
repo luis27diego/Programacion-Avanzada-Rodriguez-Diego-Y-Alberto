@@ -273,27 +273,27 @@
                 </div>
                 <div class="result-item">
                     <span class="result-label">aw Frutas:</span>
-                    <span class="result-value value-good" id="awFrutas">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_frutas | round(2) }}{% else %}0.00{% endif %}</span>
+                    <span class="result-value value-good" id="awFrutas">{% if estado and estado.estadisticas and estado.estadisticas.aw_frutas %}{{ estado.estadisticas.aw_frutas | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">aw Kiwi:</span>
-                    <span class="result-value value-good" id="awKiwi">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_kiwi | round(2) }}{% else %}0.00{% endif %}</span>
+                    <span class="result-value value-good" id="awKiwi">{% if estado and estado.estadisticas and estado.estadisticas.aw_kiwi %}{{ estado.estadisticas.aw_kiwi | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">aw Manzana:</span>
-                    <span class="result-value value-good" id="awManzana">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_manzana | round(2) }}{% else %}0.00{% endif %}</span>
+                    <span class="result-value value-good" id="awManzana">{% if estado and estado.estadisticas and estado.estadisticas.aw_manzana %}{{ estado.estadisticas.aw_manzana | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">aw Verduras:</span>
-                    <span class="result-value value-good" id="awVerduras">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_verduras | round(2) }}{% else %}0.00{% endif %}</span>
+                    <span class="result-value value-good" id="awVerduras">{% if estado and estado.estadisticas and  estado.estadisticas.aw_verduras %}{{ estado.estadisticas.aw_verduras | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">aw Papas:</span>
-                    <span class="result-value value-good" id="awPapas">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_papa | round(2) }}{% else %}0.00{% endif %}</span>
+                    <span class="result-value value-good" id="awPapas">{% if estado and estado.estadisticas and estado.estadisticas.aw_papa %}{{ estado.estadisticas.aw_papa | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">aw Zanahorias:</span>
-                    <span class="result-value value-good" id="awZanahorias">{% if estado and estado.estadisticas %}{{ estado.estadisticas.aw_zanahoria | round(2) }}{% else %}0.00{% endif %}</span>
+                    <span class="result-value value-good" id="awZanahorias">{% if estado and estado.estadisticas and estado.estadisticas.aw_zanahoria %}{{ estado.estadisticas.aw_zanahoria | round(2) }}{% else %}0.00{% endif %}</span>
                 </div>
                 <div class="result-item">
                     <span class="result-label">aw Total:</span>

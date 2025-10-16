@@ -56,6 +56,8 @@ class Departamento:
         curso = Curso(nombre, codigo, titular)
         if curso not in self._cursos:
             self._cursos.append(curso)
+            titular.agregar_departamento(self) # Asignar el departamento al profesor
+            self.agregar_profesor(titular) # Agregar el profesor a la lista de profesores del departamento
         else:
             raise ValueError("El curso ya existe en el departamento.")
 
