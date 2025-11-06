@@ -27,8 +27,6 @@ def crear_figura_nube_palabras(datos_palabras: List[Tuple[str, int]]):
     
     return fig
 
-# ============================================================================
-
 def crear_grafico_torta(datos_torta: Dict[str, float]) -> str:
     """Genera un gráfico de torta con un diseño inspirado en Plotly (colores, tipografía, fondo transparente)."""
     if not datos_torta:
@@ -125,7 +123,6 @@ def crear_barra_mediana(mediana_en_proceso: float, mediana_resueltos: float, med
     plt.close()
 
     return ruta
-
 
 def crear_imagen_nube_palabras(datos_palabras: List[Tuple[str, int]]) -> str:
     """Crea nube de palabras, la guarda como archivo y devuelve HTML con tag <img>."""

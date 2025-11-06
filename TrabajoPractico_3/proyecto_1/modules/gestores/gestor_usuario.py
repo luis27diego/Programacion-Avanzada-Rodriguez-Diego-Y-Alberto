@@ -4,13 +4,12 @@ from modules.dominio.usuario import UsuarioDominio, UsuarioFinal, ResponsableDep
 from sqlalchemy.exc import IntegrityError
 
 class GestorDeUsuarios:
-    def __init__(self, usuario_repositorio: RepositorioAbstracto, reclamo_repositorio: RepositorioAbstracto):
+    def __init__(self, usuario_repositorio: RepositorioAbstracto):
         """
         Inicializa el gestor con una instancia del repositorio.
         :param repositorio: Implementación concreta de RepositorioAbstracto (UsuarioRepositorio).
         """
-        self.usuario_repositorio = usuario_repositorio
-        self.reclamo_repositorio = reclamo_repositorio
+        self.__usuario_repositorio = usuario_repositorio
 
     def crear_usuario(self, nombre: str, apellido: str, email: str, usuario: str, password: str, claustro: str) -> UsuarioDominio:
         """
@@ -39,7 +38,7 @@ class GestorDeUsuarios:
                 password=password,
                 claustro=claustro,
             )
-            self.usuario_repositorio.guardar_registro(usuario)
+            self.__usuario_repositorio.guardar_registro(usuario)
             return self.obtener_usuario_por_email(email)  # Retorna el usuario con ID
         except IntegrityError as e:
             raise ValueError(f"Error al crear el usuario: {str(e)}")
@@ -49,7 +48,7 @@ class GestorDeUsuarios:
         Obtiene todos los usuarios del repositorio.
         :return: Lista de objetos UsuarioDominio.
         """
-        return self.usuario_repositorio.obtener_todos_los_registros()
+        return self.__usuario_repositorio.obtener_todos_los_registros()
 
     def modificar_usuario(self, id: int, nombre: str, apellido: str, email: str, usuario: str, password: str, claustro: str) -> UsuarioDominio:
         """
@@ -84,7 +83,7 @@ class GestorDeUsuarios:
                 password=password,
                 claustro=claustro,
             )
-            self.usuario_repositorio.modificar_registro(usuario_modificado)
+            self.__usuario_repositorio.modificar_registro(usuario_modificado)
             return self.obtener_usuario_por_id(usuario_modificado.id)
         except IntegrityError as e:
             raise ValueError(f"Error al modificar el usuario: {str(e)}")
@@ -92,20 +91,20 @@ class GestorDeUsuarios:
     def obtener_usuario_por_email(self, email: str) -> UsuarioDominio:
         if not email:
             raise ValueError("El email no puede estar vacío.")
-        
-        return self.usuario_repositorio.obtener_registro_por_filtro('email', email)
+
+        return self.__usuario_repositorio.obtener_registro_por_filtro('email', email)
 
     def obtener_usuario_por_id(self, id: int) -> UsuarioDominio:
         if id is None:
             raise ValueError("El ID no puede ser None.")
-        
-        return self.usuario_repositorio.obtener_registro_por_filtro('id', id)
-    
+
+        return self.__usuario_repositorio.obtener_registro_por_filtro('id', id)
+
     def obtener_usuario_por_usuario(self, usuario: str) -> UsuarioDominio:
         if not usuario:
             raise ValueError("El nombre de usuario no puede estar vacío.")
-        
-        return self.usuario_repositorio.obtener_registro_por_filtro('usuario', usuario)
+
+        return self.__usuario_repositorio.obtener_registro_por_filtro('usuario', usuario)
 
     def eliminar_usuario(self, id: int) -> bool:
         """
@@ -117,7 +116,7 @@ class GestorDeUsuarios:
         if not self.obtener_usuario_por_id(id):
             raise ValueError("El usuario no existe.")
         try:
-            self.usuario_repositorio.eliminar_registro(id)
+            self.__usuario_repositorio.eliminar_registro(id)
             return True
         except IntegrityError as e:
             raise ValueError(f"Error al eliminar el usuario: {str(e)}")
@@ -135,7 +134,7 @@ class GestorDeUsuarios:
             raise ValueError("El email no está registrado. Por favor, regístrese.")
 
         if usuario_dominio and usuario_dominio.password == password: 
-            return usuario_dominio
+            return usuario_dominio  
         raise ValueError("Credenciales inválidas. Email y/o contraseña incorrectos.")
 
     

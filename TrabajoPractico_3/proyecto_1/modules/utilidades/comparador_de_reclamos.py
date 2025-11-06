@@ -18,9 +18,9 @@ class ComparadorDeReclamosABC(ABC):
 
 class ComparadorDeReclamos(ComparadorDeReclamosABC):
     def __init__(self):
-        self.vectorizer = TfidfVectorizer()  # Para vectorizar textos
-        self.stop_words = set(stopwords.words('spanish'))  # Palabras comunes en español
-        self.stemmer = SnowballStemmer('spanish')  # Stemming para español
+        self.__vectorizer = TfidfVectorizer()  # Para vectorizar textos
+        self.__stop_words = set(stopwords.words('spanish'))  # Palabras comunes en español
+        self.__stemmer = SnowballStemmer('spanish')  # Stemming para español
 
     def preprocesar_texto(self, texto: str) -> str:
         """
@@ -29,7 +29,7 @@ class ComparadorDeReclamos(ComparadorDeReclamosABC):
         texto = texto.lower()
         texto = texto.translate(str.maketrans('', '', string.punctuation))  # Quita puntuación
         palabras = nltk.word_tokenize(texto)
-        palabras = [self.stemmer.stem(p) for p in palabras if p not in self.stop_words]
+        palabras = [self.__stemmer.stem(p) for p in palabras if p not in self.__stop_words]
         return ' '.join(palabras)
 
     def encontrar_reclamos_similares(self, nuevo_contenido: str, reclamos_existentes: List[ReclamoDominio], umbral: float = 0.7, top_n: int = 5) :
@@ -50,13 +50,14 @@ class ComparadorDeReclamos(ComparadorDeReclamosABC):
 
         # Vectorizar
         todos_contenidos = contenidos_existentes + [nuevo_preprocesado]
-        tfidf_matrix = self.vectorizer.fit_transform(todos_contenidos)
+        tfidf_matrix = self.__vectorizer.fit_transform(todos_contenidos)
 
         # Calcular similitud coseno entre el nuevo (último) y los existentes
         similitudes = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1]).flatten()
 
         # Filtrar por umbral y ordenar
-        similares = [reclamos_existentes[i]for i in range(len(similitudes)) if similitudes[i] >= umbral]
+        similares = [reclamos_existentes[i] for i in range(len(similitudes)) if similitudes[i] >= umbral]
+        print(similares)
         similares.sort(key=lambda x: x.id, reverse=True)  # Orden descendente por ID
         return similares[:top_n]
 

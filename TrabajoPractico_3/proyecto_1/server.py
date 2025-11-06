@@ -23,7 +23,7 @@ with open('./data/claims_clf.pkl', 'rb') as archivo:
     clf = pickle.load(archivo)
 
 comparador_reclamos = ComparadorDeReclamos()
-gestor_usuarios = GestorDeUsuarios(usuario_repo, reclamo_repo)
+gestor_usuarios = GestorDeUsuarios(usuario_repo)
 gestor_reclamo = GestorDeReclamo(reclamo_repo, usuario_repo, adhesion_repo)
 gestor_login = GestorDeLogin(gestor_usuarios, login_manager)  # IDs de usuarios administradores
 dashboard_service = DashboardService(usuario_repo,reclamo_repo) 
@@ -205,7 +205,9 @@ def manejar_reclamos():
                 "RESUELTO": Estado.RESUELTO
             }
             nuevo_estado = estado_map[estado]
+            
             if reclamo_actual.estado != nuevo_estado:  # Comparar con el estado actual
+                print(nuevo_estado,reclamo_actual.estado)
                 gestor_reclamo.modificar_estado_reclamo(id_reclamo, nuevo_estado)
                 flash("Reclamo actualizado correctamente.", "success")
 

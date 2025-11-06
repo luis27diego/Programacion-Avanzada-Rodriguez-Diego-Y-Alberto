@@ -1,46 +1,48 @@
-from modules.utilidades.monticulos.monticulomin import MonticuloBinario
+from modules.utilidades.monticulos.monticulomin import MonticuloMin
 from modules.utilidades.monticulos.monticulomax import MonticuloMaximo
 
 class MonticuloMedianaBinario():
     def __init__(self):
-      self.valor_mediana = 0
-      self.monticulo_min = MonticuloBinario()
-      self.monticulo_max = MonticuloMaximo()
-
+      self._valor_mediana = 0
+      self.__monticulo_min = MonticuloMin()
+      self.__monticulo_max = MonticuloMaximo()
+    @property
+    def valor_mediana(self):
+        return self._valor_mediana
     def insertar(self, valor):
         if valor > self.valor_mediana:
-            self.monticulo_min.insertar(valor)
+            self.__monticulo_min.insertar(valor)
         else:
-            self.monticulo_max.insertar(valor)
-    
+            self.__monticulo_max.insertar(valor)
+
         # Balancear los montículos
-        self.balancear()
-    
-    def balancear(self):
+        self.__balancear()
+
+    def __balancear(self):
         # maxHeap puede tener como máximo 1 elemento más que minHeap
-        if self.monticulo_max.tamanoActual > self.monticulo_min.tamanoActual + 1:
-            self.monticulo_min.insertar(self.monticulo_max.eliminarMax())
+        if self.__monticulo_max.tamanoActual > self.__monticulo_min.tamanoActual + 1:
+            self.__monticulo_min.insertar(self.__monticulo_max.eliminarMax())
 
-        elif self.monticulo_min.tamanoActual > self.monticulo_max.tamanoActual + 1:
-            self.monticulo_max.insertar(self.monticulo_min.eliminarMin())
+        elif self.__monticulo_min.tamanoActual > self.__monticulo_max.tamanoActual + 1:
+            self.__monticulo_max.insertar(self.__monticulo_min.eliminarMin())
 
-        self.actualizar_mediana()
+        self.__actualizar_mediana()
 
-    def actualizar_mediana(self):
-        #if self.monticulo_max.estaVacio() and self.monticulo_min.estaVacio():
+    def __actualizar_mediana(self):
+        #if self.__monticulo_max.estaVacio() and self.__monticulo_min.estaVacio():
             #return None
         
         # Si hay un número par de elementos, la mediana está en maxHeap
-        if self.monticulo_max.tamanoActual == self.monticulo_min.tamanoActual:
-            self.valor_mediana = (self.monticulo_min.listaMonticulo[1] + self.monticulo_max.listaMonticulo[1]) / 2
+        if self.__monticulo_max.tamanoActual == self.__monticulo_min.tamanoActual:
+            self._valor_mediana = (self.__monticulo_min.listaMonticulo[1] + self.__monticulo_max.listaMonticulo[1]) / 2
 
         else:
             # Si hay un número impar, obtener el montículo con mayor tamaño
-            if self.monticulo_max.tamanoActual > self.monticulo_min.tamanoActual:
-                mayor = self.monticulo_max
+            if self.__monticulo_max.tamanoActual > self.__monticulo_min.tamanoActual:
+                mayor = self.__monticulo_max
             else:
-                mayor = self.monticulo_min
-            self.valor_mediana = mayor.listaMonticulo[1]
+                mayor = self.__monticulo_min
+            self._valor_mediana = mayor.listaMonticulo[1]
 
     def construir_monticulo(self, lista):
         for numero in lista:

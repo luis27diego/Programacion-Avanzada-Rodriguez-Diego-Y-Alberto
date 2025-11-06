@@ -1,6 +1,5 @@
 from typing import List, Optional
 from modules.repositoriosABC.repositorioABC import RepositorioAbstracto
-#from modules.dominio.usuario import  UsuarioDominio
 from modules.dominio.reclamo import ReclamoDominio,AdhesionDominio,Estado
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
@@ -12,10 +11,10 @@ class GestorDeReclamo:
         Inicializa el gestor con una instancia del repositorio.
         :param repositorio: Implementación concreta de RepositorioAbstracto (UsuarioRepositorio).
         """
-        self.reclamo_repositorio = reclamo_repositorio
-        self.usuario_repositorio = usuario_repositorio
-        self.adhesion_repositorio = adhesion_repositorio
-        self.mapeo_etiquetas = {
+        self.__reclamo_repositorio = reclamo_repositorio
+        self.__usuario_repositorio = usuario_repositorio
+        self.__adhesion_repositorio = adhesion_repositorio
+        self.__mapeo_etiquetas = {
             "soporte informático": 2,
             "maestranza": 1,
             "secretaría técnica": 3
@@ -37,7 +36,7 @@ class GestorDeReclamo:
             departamento_id=departamento_id
         )
         try:
-            return self.reclamo_repositorio.guardar_registro(reclamo)
+            return self.__reclamo_repositorio.guardar_registro(reclamo)
         except IntegrityError:
             raise ValueError("Error al guardar el reclamo. Problema de integridad de datos.")
     
@@ -48,14 +47,14 @@ class GestorDeReclamo:
         :param id_reclamo: ID del reclamo.
         :raises ValueError: Si el usuario o reclamo no existen, o si ya está adherido.
         """
-        usuario = self.usuario_repositorio.obtener_registro_por_filtro('id', id_usuario)
+        usuario = self.__usuario_repositorio.obtener_registro_por_filtro('id', id_usuario)
         if not usuario:
             raise ValueError("El usuario no existe.")
         
         # Verificar si el reclamo existe (puedes extender el repositorio para incluir esta validación)
         # Aquí asumimos que el repositorio lanza una excepción si la adhesión falla
         try:
-            self.adhesion_repositorio.guardar_registro(AdhesionDominio(usuario_id=id_usuario, reclamo_id=id_reclamo))
+            self.__adhesion_repositorio.guardar_registro(AdhesionDominio(usuario_id=id_usuario, reclamo_id=id_reclamo))
         except IntegrityError as e:
             raise ValueError(f"Error al adherir al reclamo: {str(e)}")
 
@@ -65,9 +64,9 @@ class GestorDeReclamo:
         :param reclamo: contenido de ReclamoDominio a clasificar.
         :return: ID del departamento asignado.
         """
-        etiqueta = clasificador.clasificar([reclamo])
+        etiqueta = clasificador.classify([reclamo])
         etiqueta_departamento = etiqueta[0]
-        departamento_id = self.mapeo_etiquetas.get(etiqueta_departamento)
+        departamento_id = self.__mapeo_etiquetas.get(etiqueta_departamento)
         return departamento_id
 
     def encontrar_reclamos_similares(self, contenido, reclamos, comparador: ComparadorDeReclamosABC):
@@ -80,7 +79,7 @@ class GestorDeReclamo:
         Obtiene todos los reclamos almacenados en el repositorio.
         :return: Lista de instancias de ReclamoDominio.
         """
-        return self.reclamo_repositorio.obtener_todos_los_registros()
+        return self.__reclamo_repositorio.obtener_todos_los_registros()
     
     def obtener_reclamos_por_estado(self, estado: Estado) -> List[ReclamoDominio]:
         """
@@ -88,7 +87,7 @@ class GestorDeReclamo:
         :param estado: Estado por el cual filtrar los reclamos.
         :return: Lista de instancias de ReclamoDominio.
         """
-        return self.reclamo_repositorio.obtener_registros_por_filtro('estado', estado)
+        return self.__reclamo_repositorio.obtener_registros_por_filtro('estado', estado)
     
     def obtener_reclamo_por_id(self, reclamo_id: int) -> List[ReclamoDominio]:
         """
@@ -96,7 +95,7 @@ class GestorDeReclamo:
         :param reclamo_id: ID del reclamo.
         :return: Instancia de ReclamoDominio o None si no se encuentra.
         """
-        return self.reclamo_repositorio.obtener_registro_por_filtro('id', reclamo_id)
+        return self.__reclamo_repositorio.obtener_registro_por_filtro('id', reclamo_id)
 
     def obtener_reclamos_departamento(self, departamento_id: int) -> List[ReclamoDominio]:
         """
@@ -104,7 +103,7 @@ class GestorDeReclamo:
         :param departamento_id: ID del departamento.
         :return: Lista de instancias de ReclamoDominio.
         """
-        return self.reclamo_repositorio.obtener_registros_por_filtro('departamento_id', departamento_id)
+        return self.__reclamo_repositorio.obtener_registros_por_filtro('departamento_id', departamento_id)
     
     def obtener_reclamos_por_departamento_excluir_usuario(self, departamento_id: int, usuario_id: int) -> List[ReclamoDominio]:
         """
@@ -113,7 +112,7 @@ class GestorDeReclamo:
         :param usuario_id: ID del usuario a excluir.
         :return: Lista de instancias de ReclamoDominio.
         """
-        reclamos = self.reclamo_repositorio.obtener_registros_por_filtro('departamento_id', departamento_id)
+        reclamos = self.__reclamo_repositorio.obtener_registros_por_filtro('departamento_id', departamento_id)
         reclamos = [r for r in reclamos if r.usuario_id != usuario_id]
         return reclamos
     
@@ -124,11 +123,11 @@ class GestorDeReclamo:
         :param nuevo_estado: Nuevo estado a asignar.
         :return: Instancia de ReclamoDominio modificada o None si no se encuentra.
         """
-        reclamo = self.reclamo_repositorio.obtener_registro_por_filtro('id', reclamo_id)
+        reclamo = self.__reclamo_repositorio.obtener_registro_por_filtro('id', reclamo_id)
         if reclamo:
             reclamo.estado = nuevo_estado
             reclamo.timestamp_modificacion = datetime.now()
-            return self.reclamo_repositorio.modificar_registro(reclamo)
+            return self.__reclamo_repositorio.modificar_registro(reclamo)
         return None
     
     def modificar_departamento_reclamo(self, id_reclamo, nuevo_departamento_id):
@@ -138,10 +137,10 @@ class GestorDeReclamo:
         :param nuevo_departamento_id: Nuevo ID de departamento a asignar.
         :return: Instancia de ReclamoDominio modificada o None si no se encuentra.
         """
-        reclamo = self.reclamo_repositorio.obtener_registro_por_filtro('id', id_reclamo)
+        reclamo = self.__reclamo_repositorio.obtener_registro_por_filtro('id', id_reclamo)
         if reclamo:
             reclamo.departamento_id = nuevo_departamento_id
-            return self.reclamo_repositorio.modificar_registro(reclamo)
+            return self.__reclamo_repositorio.modificar_registro(reclamo)
         return None
 
     def obtener_reclamos_creados_por_usuario(self, id_usuario: int) -> List[ReclamoDominio]:
@@ -150,22 +149,22 @@ class GestorDeReclamo:
         :param id_usuario: ID del usuario.
         :return: Lista de ReclamoDominio.
         """
-        usuario = self.usuario_repositorio.obtener_registro_por_filtro('id', id_usuario)
+        usuario = self.__usuario_repositorio.obtener_registro_por_filtro('id', id_usuario)
         if not usuario:
             raise ValueError("El usuario no existe.")
-        return self.reclamo_repositorio.obtener_registros_por_filtro('usuario_id', id_usuario)
-    
+        return self.__reclamo_repositorio.obtener_registros_por_filtro('usuario_id', id_usuario)
+
     def obtener_reclamos_adheridos_por_usuario(self, id_usuario: int) -> List[ReclamoDominio]:
         """
         Obtiene los reclamos a los que un usuario se adhirió.
         :param id_usuario: ID del usuario.
         :return: Lista de ReclamoDominio.
         """
-        usuario = self.usuario_repositorio.obtener_registro_por_filtro('id', id_usuario)
+        usuario = self.__usuario_repositorio.obtener_registro_por_filtro('id', id_usuario)
         if not usuario:
             raise ValueError("El usuario no existe.")
-        return self.adhesion_repositorio.obtener_registros_por_filtro('usuario_id', id_usuario)
-    
+        return self.__adhesion_repositorio.obtener_registros_por_filtro('usuario_id', id_usuario)
+
 if __name__ == "__main__":
     import pickle
     from modules.factoria import crear_repositorio

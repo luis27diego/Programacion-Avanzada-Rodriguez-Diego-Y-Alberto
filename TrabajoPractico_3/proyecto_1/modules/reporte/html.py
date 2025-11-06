@@ -29,16 +29,16 @@ class ReporteHtml(ReporteABS):
 
         Args:
             graficos: Diccionario con rutas a imágenes:
-                - 'ruta_torta' | 'grafico_torta' | 'figura_torta': ruta a PNG/JPG
-                - 'ruta_barras' | 'grafico_barras' | 'figura_barra_mediana': ruta a PNG/JPG
-                - 'ruta_nube_palabras' | 'imagen_nube_palabras' | 'figura_nube_palabras': ruta a PNG/JPG
+                - 'figura_torta': ruta a PNG/JPG
+                - 'figura_barra_mediana': ruta a PNG/JPG
+                - 'figura_nube_palabras': ruta a PNG/JPG
         """
         temp_dir = tempfile.gettempdir()
 
         # Obtener rutas desde el diccionario (acepta claves nuevas y antiguas)
-        ruta_torta = graficos.get('ruta_torta') or graficos.get('grafico_torta') or graficos.get('figura_torta')
-        ruta_barras = graficos.get('ruta_barras') or graficos.get('grafico_barras') or graficos.get('figura_barra_mediana')
-        ruta_nube = graficos.get('ruta_nube_palabras') or graficos.get('imagen_nube_palabras') or graficos.get('figura_nube_palabras')
+        ruta_torta = graficos.get('figura_torta')
+        ruta_barras =  graficos.get('figura_barra_mediana')
+        ruta_nube = graficos.get('figura_nube_palabras')
 
         # Construir contenido HTML
         html_content = """

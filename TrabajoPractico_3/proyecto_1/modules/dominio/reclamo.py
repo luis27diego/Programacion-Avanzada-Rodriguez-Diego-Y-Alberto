@@ -11,39 +11,50 @@ class Estado(Enum):
 class ReclamoDominio:
     def __init__(self, usuario_id: int, contenido: str, timestamp: datetime, estado: Estado, id: int = None, departamento_id: int = None, timestamp_modificacion: datetime | None = None):
         self.id = id
-        self.usuario_id = usuario_id
-        self.contenido = contenido
-        self.timestamp = timestamp
-        self.estado = estado
-        self.departamento_id = departamento_id
-        self.timestamp_modificacion = timestamp_modificacion
-        self._adherentes = []
+        self.__usuario_id = usuario_id
+        self.__contenido = contenido
+        self.__timestamp = timestamp
+        self.__estado = estado
+        self.__departamento_id = departamento_id
+        self.__timestamp_modificacion = timestamp_modificacion
+        self.__adherentes = []
 
+    @property
+    def usuario_id(self):
+        return self.__usuario_id
+    @property
+    def contenido(self):
+        return self.__contenido
+    @property
+    def timestamp(self):
+        return self.__timestamp
+    @property
+    def timestamp_modificacion(self):
+        return self.__timestamp_modificacion
+    @property
+    def estado(self):
+        return self.__estado
+    @property
+    def departamento_id(self):
+        return self.__departamento_id
+    
 
     def agregar_adherente(self, adherente):
         if adherente== self.usuario_id:
             raise ValueError("El creador no puede ser adherente")
-        if any(a == adherente for a in self._adherentes):
+        if any(a == adherente for a in self.__adherentes):
             raise ValueError("Adherente ya agregado")
-        self._adherentes.append(adherente)
+        self.__adherentes.append(adherente)
 
     def obtener_creador(self):
         return self.usuario_id
 
     def obtener_adherentes(self):
-        return self._adherentes[:]
-
-    """     def cambiar_estado(self, nuevo_estado: Estado, timestamp_modificacion: datetime | None = None):
-        if nuevo_estado == Estado.EN_PROCESO and timestamp_modificacion is None:
-            raise ValueError("Tiempo de resolución requerido para 'en_proceso'")
-        if timestamp_modificacion is not None and not (1 <= timestamp_modificacion <= 15):
-            raise ValueError("El tiempo de resolución debe ser entre 1 y 15 días")
-        self.estado = nuevo_estado
-        self.timestamp_modificacion = timestamp_modificacion """
+        return self.__adherentes[:]
 
     def cantidad_adherentes(self) -> int:
-        return len(self._adherentes)
-    
+        return len(self.__adherentes)
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -53,7 +64,7 @@ class ReclamoDominio:
             "timestamp_modificacion": self.timestamp_modificacion if self.timestamp_modificacion else None,
             "estado": self.estado.name if hasattr(self.estado, 'name') else self.estado,
             "departamento_id": self.departamento_id,
-            "adherentes_id": [a for a in self._adherentes],
+            "adherentes_id": [a for a in self.__adherentes],
         }
 class AdhesionDominio:
     def __init__(self, usuario_id: int, reclamo_id: int, id: int = None):

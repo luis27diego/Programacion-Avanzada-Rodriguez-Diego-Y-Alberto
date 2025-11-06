@@ -9,21 +9,19 @@ from nltk.tokenize import word_tokenize
 
 class DashboardService:
     def __init__(self, usuario_repo: RepositorioAbstracto, reclamo_repo: RepositorioAbstracto):
-        self.usuario_repo = usuario_repo
-        self.reclamo_repo = reclamo_repo
-        self.stopwords = set(stopwords.words('spanish'))  # Palabras comunes en español
+        self.__usuario_repo = usuario_repo
+        self.__reclamo_repo = reclamo_repo
+        self.__stopwords = set(stopwords.words('spanish'))  # Palabras comunes en español
 
     def obtener_analiticas(self, id_departamento: int, id_usuario: int) -> dict:
         # Verifica el rol del usuario (por ejemplo, jefe o secretario) usando usuario_repo
-        usuario = self.usuario_repo.obtener_registro_por_filtro('id',id_usuario)
-        #if not self._has_access_to_dept(usuario, id_departamento):
-        #    raise PermissionError("Acceso denegado")
+        usuario = self.__usuario_repo.obtener_registro_por_filtro('id',id_usuario)
         if usuario.rol in ['SECRETARIO_TECNICO']:
-            reclamos = self.reclamo_repo.obtener_todos_los_registros()
+            reclamos = self.__reclamo_repo.obtener_todos_los_registros()
             total = len(reclamos)
         else:
             #usuarios jefes solo ven los de su departamento
-            reclamos = self.reclamo_repo.obtener_registros_por_filtro('departamento_id',id_departamento)
+            reclamos = self.__reclamo_repo.obtener_registros_por_filtro('departamento_id',id_departamento)
             total = len(reclamos)
 
         # Calcula estadísticas (lógica de negocio aquí)
@@ -52,7 +50,6 @@ class DashboardService:
             'mediana_resolucion': mediana_resolucion,
             'mediana_pendiente': mediana_pendiente,
             'datos_nube_palabras': datos_nube_palabras
-            # Otros datos...
         }
     
     def __contar_estados(self, reclamos) -> dict:
@@ -97,7 +94,7 @@ class DashboardService:
         
         # Tokenizar y filtrar palabras vacías
         palabras = [p for palabra in word_tokenize(texto_total, language="spanish")
-                    if (p := palabra.strip('.,!?')) and p not in self.stopwords]
+                    if (p := palabra.strip('.,!?')) and p not in self.__stopwords]
         # Contar frecuencias
         conteo_palabras = Counter(palabras)
         

@@ -5,10 +5,10 @@ from modules.utilidades.graficos import crear_grafico_torta, crear_imagen_nube_p
 
 class GestorDashboard:
     def __init__(self, dashboard_service):
-        self.dashboard_service = dashboard_service
+        self.__dashboard_service = dashboard_service
 
     def obtener_analiticas(self, id_departamento, id_usuario):
-        return self.dashboard_service.obtener_analiticas(id_departamento, id_usuario)
+        return self.__dashboard_service.obtener_analiticas(id_departamento, id_usuario)
 
     def generar_grafico_torta(self, id_departamento, id_usuario):
         datos = self.obtener_analiticas(id_departamento, id_usuario)
@@ -29,7 +29,10 @@ class GestorDashboard:
             'figura_nube_palabras': self.generar_imagen_nube_palabras(id_departamento, id_usuario),
             'figura_barra_mediana': self.generar_barra_mediana(id_departamento, id_usuario)
         }
-        return reporte.generar_reporte(graficos) 
+        if isinstance(reporte, ReporteABS):
+            return reporte.generar_reporte(graficos) 
+        else:
+            raise TypeError("El reporte debe ser una instancia de ReporteABS.")
 
 
 if __name__ == "__main__":

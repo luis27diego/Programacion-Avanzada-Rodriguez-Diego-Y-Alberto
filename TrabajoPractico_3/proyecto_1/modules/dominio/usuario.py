@@ -2,106 +2,74 @@ from enum import Enum
 from modules.dominio.reclamo import ReclamoDominio
 from abc import ABC
 
-""" class Rol(Enum):
-    USUARIO_FINAL = 'usuario_final'
-    JEFE_DEPARTAMENTO = 'jefe_departamento'
-    SECRETARIO_TECNICO = 'secretario_tecnico'
-
-class Claustro(Enum):
-    ESTUDIANTE = 'estudiante'
-    DOCENTE = 'docente'
-    PAYS = 'PAyS'
-
-class Estado(Enum):
-    INVALIDO = 'invalido'
-    PENDIENTE = 'pendiente'
-    EN_PROCESO = 'en_proceso'
-    RESUELTO = 'resuelto' """
 class UsuarioDominio(ABC):
     def __init__(self, nombre: str, apellido: str, email: str, usuario: str, 
                  password: str, id: int = None):
         self.id = id
-        self.nombre = nombre
-        self.apellido = apellido
-        self.email = email
-        self.usuario = usuario
-        self.password = password
-""" class UsuarioDominio:
-    def __init__(self, nombre: str, apellido: str, email: str, usuario: str, 
-                 claustro: Claustro | None, password: str, rol: Rol, id: int = None, departamento_id: int | None = None):
-        self.id = id
-        self.nombre = nombre
-        self.apellido = apellido
-        self.email = email
-        self.usuario = usuario
-        self.claustro = claustro
-        self.password = password
-        self.rol = rol
-        self.departamento_id = departamento_id
-        self._reclamos_creados = []
-        self._reclamos_adheridos = []
+        self.__nombre = nombre
+        self.__apellido = apellido
+        self.__email = email
+        self.__usuario = usuario
+        self.__password = password
 
-    def agregar_reclamo_creado(self, reclamo: 'ReclamoDominio'):
-        if reclamo.usuario_id != self.id:
-            raise ValueError("El reclamo no fue creado por este usuario")
-        if any(r.id == reclamo.id for r in self._reclamos_creados):
-            raise ValueError("Reclamo ya agregado")
-        self._reclamos_creados.append(reclamo)
+    @property
+    def password(self):
+        return self.__password
 
-    def agregar_reclamo_adherido(self, reclamo: 'ReclamoDominio'):
-        if reclamo.usuario_id == self.id:
-            raise ValueError("No se puede adherir a un reclamo propio")
-        if any(r.id == reclamo.id for r in self._reclamos_adheridos):
-            raise ValueError("Ya adherido a este reclamo")
-        self._reclamos_adheridos.append(reclamo)
+    @property
+    def nombre(self):
+        return self.__nombre
+    @property
+    def apellido(self):
+        return self.__apellido
+    @property
+    def email(self):
+        return self.__email
+    @property
+    def usuario(self):
+        return self.__usuario
 
-    def obtener_reclamos_creados(self) -> list['ReclamoDominio']:
-        return self._reclamos_creados[:]
 
-    def obtener_reclamos_adheridos(self) -> list['ReclamoDominio']:
-        return self._reclamos_adheridos[:]
-
-    def es_jefe(self) -> bool:
-        return self.rol == Rol.JEFE_DEPARTAMENTO
-
-    def es_secretario(self) -> bool:
-        return self.rol == Rol.SECRETARIO_TECNICO """
-    
-"""     def cambiar_estado(self, reclamo: ReclamoDominio, nuevo_estado: Estado, tiempo_resolucion: int | None = None):
-        if not (self.es_jefe() or self.es_secretario()):
-            raise PermissionError("Solo jefes o secretario pueden cambiar estados")
-        reclamo.cambiar_estado(nuevo_estado, tiempo_resolucion) """
 class UsuarioFinal(UsuarioDominio):
     def __init__(self, nombre: str, apellido: str, email: str, usuario: str, 
                  claustro: str, password: str, id: int = None):
         super().__init__(nombre, apellido, email, usuario, password, id)
-        self.claustro = claustro
-        self._reclamos_creados = []
-        self._reclamos_adheridos = []
-        
+        self.__claustro = claustro
+        self.__reclamos_creados = []
+        self.__reclamos_adheridos = []
+    @property
+    def claustro(self):
+        return self.__claustro
     def agregar_reclamo_creado(self, reclamo: int):
-        if any(r == reclamo for r in self._reclamos_creados):
+        if any(r == reclamo for r in self.__reclamos_creados):
             raise ValueError("Reclamo ya agregado")
-        self._reclamos_creados.append(reclamo)
+        self.__reclamos_creados.append(reclamo)
 
     def agregar_reclamo_adherido(self, reclamo: int):
-        if any(r == reclamo for r in self._reclamos_adheridos):
+        if any(r == reclamo for r in self.__reclamos_adheridos):
             raise ValueError("Ya adherido a este reclamo")
-        self._reclamos_adheridos.append(reclamo)
+        self.__reclamos_adheridos.append(reclamo)
 
-    def obtener_reclamos_creados(self) -> list['ReclamoDominio']:
-        return self._reclamos_creados[:]
+    def obtener_reclamos_creados(self):
+        return self.__reclamos_creados[:]
 
-    def obtener_reclamos_adheridos(self) -> list['ReclamoDominio']:
-        return self._reclamos_adheridos[:]
+    def obtener_reclamos_adheridos(self):
+        return self.__reclamos_adheridos[:]
 
 class ResponsableDepartamento(UsuarioDominio):
     def __init__(self, nombre: str, apellido: str, email: str, usuario: str, 
                  password: str, rol: str, id: int = None, departamento_id: int = None):
 
         super().__init__(nombre, apellido, email, usuario, password, id)
-        self.rol = rol
-        self.departamento_id = departamento_id
+        self.__rol = rol
+        self.__departamento_id = departamento_id
+
+    @property
+    def rol(self):
+        return self.__rol
+    @property
+    def departamento_id(self):
+        return self.__departamento_id
 
 if __name__ == "__main__":
     usuario = UsuarioFinal(

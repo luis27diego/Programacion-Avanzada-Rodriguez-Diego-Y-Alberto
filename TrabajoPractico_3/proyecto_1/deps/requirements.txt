@@ -5,9 +5,11 @@ flask_login
 flask_bootstrap
 flask_wtf
 email_validator
-scikit-learn
-nltk
 plotly
 numpy
 pandas #plotly depende de pandas
 fpdf
+spacy
+scikit-learn
+nltk
+wordcloud
