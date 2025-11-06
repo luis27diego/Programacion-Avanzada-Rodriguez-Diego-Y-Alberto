@@ -1,28 +1,32 @@
+# Suprimir warnings
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+warnings.filterwarnings("ignore", message=".*InconsistentVersionWarning.*")
+warnings.filterwarnings("ignore", module="sklearn")
+
 from datetime import datetime
-from flask import redirect, render_template, request, url_for, session,flash, send_file
+from flask import redirect, render_template, request, url_for, session,flash
 from modules.config import app, login_manager
-from modules.dominio.usuario import Rol, Claustro
 from modules.gestores.gestor_usuario import GestorDeUsuarios
 from modules.gestores.gestor_reclamo import GestorDeReclamo
 from modules.gestores.gestor_login import GestorDeLogin
 from modules.gestores.dashboardService import DashboardService
 from modules.gestores.gestor_dashboard import GestorDashboard
-from modules.utilidades.graficos import crear_grafico_torta, crear_imagen_nube_palabras, crear_barra_mediana
 import pickle
-from modules.comparador_de_reclamos import ComparadorDeReclamos
 from modules.factoria import crear_repositorio, crear_reporte   
 from modules.dominio.reclamo import Estado
+from modules.utilidades.comparador_de_reclamos import ComparadorDeReclamos 
 
-usuario_repo, reclamo_repo, departamento_repo = crear_repositorio()
+usuario_repo, reclamo_repo, departamento_repo, adhesion_repo = crear_repositorio()
 
 with open('./data/claims_clf.pkl', 'rb') as archivo:
     clf = pickle.load(archivo)
 
-gestor_usuarios = GestorDeUsuarios(usuario_repo, reclamo_repo, clf)
-gestor_reclamo = GestorDeReclamo(reclamo_repo, clf)
-gestor_login = GestorDeLogin(gestor_usuarios, login_manager, admin_list=[2,3])  # IDs de usuarios administradores
-dashboard_service = DashboardService(usuario_repo,reclamo_repo) 
 comparador_reclamos = ComparadorDeReclamos()
+gestor_usuarios = GestorDeUsuarios(usuario_repo, reclamo_repo)
+gestor_reclamo = GestorDeReclamo(reclamo_repo, usuario_repo, adhesion_repo)
+gestor_login = GestorDeLogin(gestor_usuarios, login_manager)  # IDs de usuarios administradores
+dashboard_service = DashboardService(usuario_repo,reclamo_repo) 
 # Página de inicio
 @app.route('/')
 def index():
@@ -39,16 +43,9 @@ def register():
         email = request.form["input_email"]
         password = request.form["input_password"]
         claustro = request.form["input_claustro"]
-        if claustro == "DOCENTE":
-            claustro = Claustro.DOCENTE
-        elif claustro == "PAYS":
-            claustro = Claustro.PAYS
-        else:
-            claustro = Claustro.ESTUDIANTE
-        rol = Rol.USUARIO_FINAL
-        
+
         try:
-            gestor_usuarios.crear_usuario(nombre,apellido, email,usuario, password, claustro, rol)
+            gestor_usuarios.crear_usuario(nombre,apellido, email,usuario, password, claustro)
             return redirect(url_for('login'))
         except Exception as e:
             flash(str(e))
@@ -68,25 +65,27 @@ def login():
         if usuario_dominio:
             gestor_login.login_usuario(usuario_dominio)
             session['id_usuario'] = usuario_dominio.id  # Guardar el ID del usuario en la sesión
-            if usuario_dominio.rol == Rol.JEFE_DEPARTAMENTO or usuario_dominio.rol == Rol.SECRETARIO_TECNICO:
-                return redirect(url_for('manejar_reclamos'))
+            if hasattr(usuario_dominio, 'rol'):
+                 return redirect(url_for('manejar_reclamos'))
             return redirect(url_for('crear_reclamo'))
     return render_template('login.html')
 
 @app.route('/crear_reclamo', methods=['GET', 'POST'])
 @gestor_login.solo_usuarios_no_admin
 def crear_reclamo():
+    for key in ('contenido', 'timestamp', 'estado', 'id_departamento'):
+        session.pop(key, None)
+
     if request.method == 'POST':
         usuario_id = session['id_usuario']  
 
         contenido = request.form["input_contenido"]
         timestamp = datetime.now()
         estado = 'PENDIENTE'
-        id_departamento = gestor_reclamo.clasificar_reclamo(contenido)
-
+        id_departamento = gestor_reclamo.clasificar_reclamo(contenido, clf)
         reclamos = gestor_reclamo.obtener_reclamos_por_departamento_excluir_usuario(id_departamento, usuario_id=usuario_id)
-        reclamos = comparador_reclamos.encontrar_reclamos_similares(contenido, reclamos)
-        
+        reclamos = gestor_reclamo.encontrar_reclamos_similares(contenido, reclamos, comparador_reclamos)
+
         # Guardar datos en la sesión de Flask
         session['reclamos'] = [reclamo.to_dict() for reclamo in reclamos]
         session['contenido'] = contenido
@@ -99,7 +98,7 @@ def crear_reclamo():
     return render_template('crear_reclamo.html',active_page='crear_reclamo')
 
 @app.route('/ver_reclamos_similares', methods=['GET', 'POST'])
-@gestor_login.se_requiere_login
+@gestor_login.solo_usuarios_no_admin
 def ver_reclamos_similares():
 
     # Verificar que hay un reclamo en proceso
@@ -112,8 +111,10 @@ def ver_reclamos_similares():
         if id_reclamo:
             try:
                 usuario_id = session['id_usuario']  
-                gestor_usuarios.adherir_usuario_a_reclamo(usuario_id, id_reclamo)
-                #session.clear()  # Limpiar la sesión
+                #gestor_usuarios.adherir_usuario_a_reclamo(usuario_id, id_reclamo)
+                gestor_reclamo.adherir_usuario_a_reclamo(usuario_id, int(id_reclamo))
+                for key in ('contenido', 'timestamp', 'estado', 'id_departamento'):
+                    session.pop(key, None)
                 return render_template('confirmacion.html', mensaje="Te has adherido exitosamente al reclamo.")
             except Exception as e:
                 flash(str(e))
@@ -125,7 +126,9 @@ def ver_reclamos_similares():
             estado = session.get('estado')
             id_departamento = session.get('id_departamento')
             gestor_reclamo.crear_reclamo(usuario_id, contenido, timestamp, estado, id_departamento)
-            #session.clear()  # Limpiar la sesión
+            # Limpiar sólo los campos del reclamo, manteniendo id_usuario en sesión
+            for key in ('contenido', 'timestamp', 'estado', 'id_departamento'):
+                session.pop(key, None)
             return render_template('confirmacion.html', mensaje="El reclamo ha sido creado exitosamente.")
     
     # Obtener datos de la sesión de Flask
@@ -139,8 +142,10 @@ def mis_reclamos():
     print(session['id_usuario'])
     #reclamos = gestor_usuarios.obtener_reclamos_creados_por_usuario(session['id_usuario'])
     usuario = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
-    reclamos = usuario.obtener_reclamos_creados()
-    reclamos_adheridos = usuario.obtener_reclamos_adheridos()
+    #reclamos = usuario.obtener_reclamos_creados() 
+    reclamos = gestor_reclamo.obtener_reclamos_creados_por_usuario(session['id_usuario'])
+    #reclamos_adheridos = usuario.obtener_reclamos_adheridos()
+    reclamos_adheridos = gestor_reclamo.obtener_reclamos_adheridos_por_usuario(session['id_usuario'])
     return render_template('mis_reclamos.html', reclamos=[r.to_dict() for r in reclamos], reclamos_adheridos=[r.to_dict() for r in reclamos_adheridos], active_page='mis_reclamos')
 
 @app.route('/todos_los_reclamos', methods=['GET', 'POST'])
@@ -221,30 +226,14 @@ def manejar_reclamos():
 
         return redirect(url_for('manejar_reclamos'))
 
-    if jefe.rol == Rol.SECRETARIO_TECNICO:
+    if jefe.rol == 'SECRETARIO_TECNICO':
         datos_reclamos = gestor_reclamo.obtener_todos_los_reclamos()
         datos_reclamos = [r.to_dict() for r in datos_reclamos]
     else:
         datos_reclamos = gestor_reclamo.obtener_reclamos_departamento(id_departamento)
         datos_reclamos = [r.to_dict() for r in datos_reclamos]
-    return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos, rol=jefe.rol.name, active_page='manejar_reclamos')
-
-# @app.route('/dashboard')
-# @gestor_login.admin_only
-# def dashboard():
-#     jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
-#     id_departamento = jefe.departamento_id
-#     print(session['id_usuario'])
-#     datos_graficos = dashboard_service.obtener_analiticas(id_departamento, session['id_usuario'])
-#     grafico_torta = crear_grafico_torta(datos_graficos['datos_torta'])
-#     grafico_barras_mediana = crear_barra_mediana(
-#         datos_graficos['mediana_en_proceso'],
-#         datos_graficos['mediana_resolucion'],
-#         datos_graficos['mediana_pendiente']
-#     )
-#     html_nube = crear_imagen_nube_palabras(datos_graficos['datos_nube_palabras']) #genera y guarda la imagen en static
-#     return render_template('dashboard.html', grafico_torta=grafico_torta, grafico_barras_mediana=grafico_barras_mediana, nube_palabras=html_nube,  active_page='dashboard')
-
+    return render_template('manejar_reclamos.html', datos_reclamos=datos_reclamos, rol=jefe.rol, active_page='manejar_reclamos')
+ 
 @app.route('/dashboard')
 @gestor_login.admin_only
 def dashboard():
@@ -266,19 +255,9 @@ def descargar_reporte():
     id_departamento = jefe.departamento_id
     formato = request.args.get("formato", "pdf")  # Por defecto PDF
     reporte = crear_reporte(formato)
-    ruta_reporte = gestor_dashboard.generar_reporte(reporte, id_departamento, session['id_usuario'])
+    reporte = gestor_dashboard.generar_reporte(reporte, id_departamento, session['id_usuario'])
 
-    return ruta_reporte
-#     jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
-#     id_departamento = jefe.departamento_id
-#     formato = request.args.get("formato", "pdf")  # Por defecto PDF
-#     ruta_reporte = gestor_dashboard.generar_reporte(id_departamento, session['id_usuario'], formato=formato)
-
-#     return send_file(ruta_reporte, as_attachment=True)
-
-
-
-
+    return reporte
 
 @app.route('/ayuda')
 @gestor_login.admin_only

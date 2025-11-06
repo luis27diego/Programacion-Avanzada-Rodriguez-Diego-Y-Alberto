@@ -1,12 +1,11 @@
 from modules.repositoriosABC.repositorioABC import RepositorioAbstracto
 from sqlalchemy.orm import Session
-from sqlalchemy import not_
-from modules.dominio.usuario import UsuarioDominio
+#from modules.dominio.usuario import UsuarioDominio, UsuarioFinal,ResponsableDepartamento
 from modules.dominio.reclamo import ReclamoDominio
 from modules.modelos.reclamoModel import ReclamoModel
-from modules.modelos.usuarioModel import UsuarioModel
+#from modules.modelos.usuarioModel import UsuarioModel
 from modules.modelos.adhesionModel import AdhesionModel
-from modules.modelos.departamentoModel import DepartamentoModel
+#from modules.modelos.departamentoModel import DepartamentoModel
 
 
 class ReclamoRepositorio(RepositorioAbstracto):
@@ -44,26 +43,6 @@ class ReclamoRepositorio(RepositorioAbstracto):
         reclamos_modelos = self.__session.query(ReclamoModel).filter_by(**{filtros: valor}).all()
         return [self.__modelo_to_dominio(u) for u in reclamos_modelos]
 
-    def obtener_reclamos_sin_usuario_en_departamento(self, usuario_id: int, departamento_id: int):
-        subquery = self.__session.query(AdhesionModel).filter(
-            AdhesionModel.usuario_id == usuario_id,  # cambiar a id_usuario si ya lo corregiste
-            AdhesionModel.reclamo_id == ReclamoModel.id
-        ).exists()
-
-        reclamos_filtrados = self.__session.query(ReclamoModel).filter(
-            ReclamoModel.usuario_id != usuario_id,
-            ReclamoModel.departamento_id == departamento_id,
-            not_(subquery)
-        )
-
-        return [self.__modelo_to_dominio(u) for u in reclamos_filtrados.all()]
-
-    def crear_relacion(self, id_usuario: int, id_reclamo: int, tipo_relacion: str) -> None:
-        if tipo_relacion == 'adhesion':
-            adhesion = AdhesionModel(usuario_id=id_usuario, reclamo_id=id_reclamo)
-            self.__session.add(adhesion)
-            self.__session.commit()
-
     def eliminar_registro(self, id):
         register = self.__session.query(ReclamoModel).get(id)
         self.__session.delete(register)
@@ -80,17 +59,10 @@ class ReclamoRepositorio(RepositorioAbstracto):
             departamento_id=modelo.departamento_id,
             timestamp_modificacion=modelo.timestamp_modificacion,
         )
-        # Cargar creador y adherentes si están en DB
-        creador = self.__session.query(UsuarioModel).filter(UsuarioModel.id == modelo.usuario_id).first()
-        if creador:
-            creador_domain = self.__modelo_usuario_to_dominio(creador)
-            reclamo.asignar_creador(creador_domain)
 
-
-        adherentes = self.__session.query(UsuarioModel).join(AdhesionModel).filter(AdhesionModel.reclamo_id == modelo.id).all()
+        adherentes = self.__session.query(AdhesionModel).filter(AdhesionModel.reclamo_id == modelo.id).all()
         for adherente in adherentes:
-            adherente_domain = self.__modelo_usuario_to_dominio(adherente)
-            reclamo.agregar_adherente(adherente_domain)
+            reclamo.agregar_adherente(adherente.usuario_id)
         return reclamo
 
     def __dominio_to_modelo(self, dominio: ReclamoDominio) -> ReclamoModel:
@@ -104,41 +76,3 @@ class ReclamoRepositorio(RepositorioAbstracto):
             timestamp_modificacion=dominio.timestamp_modificacion,
         )
     
-    def __modelo_usuario_to_dominio(self, modelo: UsuarioModel) -> UsuarioDominio:
-        usuario =UsuarioDominio(
-        id=modelo.id,
-        nombre=modelo.nombre,
-        apellido=modelo.apellido,
-        email=modelo.email,
-        usuario=modelo.usuario,
-        claustro=modelo.claustro,
-        password=modelo.password,
-        rol=modelo.rol,
-        departamento_id=modelo.departamento_id
-    )
-        # Cargar reclamos creados y adheridos incrementalmente
-        reclamos_modelos = self.__session.query(ReclamoModel).filter(ReclamoModel.usuario_id == modelo.id).all()
-        for reclamo_modelo in reclamos_modelos:
-            reclamo = ReclamoDominio(
-                id=reclamo_modelo.id,
-                usuario_id=reclamo_modelo.usuario_id,
-                contenido=reclamo_modelo.contenido,
-                timestamp=reclamo_modelo.timestamp,
-                estado=reclamo_modelo.estado,
-                departamento_id=reclamo_modelo.departamento_id,
-                timestamp_modificacion=reclamo_modelo.timestamp_modificacion,
-            )
-            usuario.agregar_reclamo_creado(reclamo)
-        reclamos_adheridos_modelos = self.__session.query(ReclamoModel).join(AdhesionModel).filter(AdhesionModel.usuario_id == modelo.id).all()
-        for reclamo_modelo in reclamos_adheridos_modelos:
-            reclamo = ReclamoDominio(
-                id=reclamo_modelo.id,
-                usuario_id=reclamo_modelo.usuario_id,
-                contenido=reclamo_modelo.contenido,
-                timestamp=reclamo_modelo.timestamp,
-                estado=reclamo_modelo.estado,
-                departamento_id=reclamo_modelo.departamento_id,
-                timestamp_modificacion=reclamo_modelo.timestamp_modificacion,
-            )
-            usuario.agregar_reclamo_adherido(reclamo)
-        return usuario

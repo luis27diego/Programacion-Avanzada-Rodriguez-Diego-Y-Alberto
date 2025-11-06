@@ -1,9 +1,8 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from datetime import datetime
-from modules.dominio.usuario import Rol, Claustro, Estado
-from modules.dominio.usuario import UsuarioDominio
-from modules.dominio.reclamo import ReclamoDominio
+from modules.dominio.usuario import UsuarioDominio, UsuarioFinal, ResponsableDepartamento
+from modules.dominio.reclamo import ReclamoDominio, Estado
 from modules.dominio.departamento import DepartamentoDominio
 from modules.repositorioConcreto.usuario_concreto import UsuarioRepositorio as SqlUsuarioRepositorio
 from modules.repositorioConcreto.reclamo_concreto import ReclamoRepositorio as SqlReclamoRepositorio
@@ -38,16 +37,17 @@ if departamento_repo.obtener_todos_los_registros() == []:
 
 # 2. Crear usuarios
 if usuario_repo.obtener_todos_los_registros() == []:
-    user_final = UsuarioDominio(
+    user_final = UsuarioFinal(
         id=1, nombre='Juan', apellido='Perez', email='juan@example.com', usuario='juanp',
-        claustro=Claustro.ESTUDIANTE, password='hash_pass1', rol=Rol.USUARIO_FINAL
+        claustro="ESTUDIANTE", password='hash_pass1' 
     )
-    jefe = UsuarioDominio(
-        id=2, nombre='Ana', apellido='Gomez', email='ana@example.com', usuario='anag', claustro=None,
-        password='hash_pass2', rol=Rol.JEFE_DEPARTAMENTO, departamento_id=1
+    jefe = ResponsableDepartamento(
+        id=2, nombre='Ana', apellido='Gomez', email='ana@example.com', usuario='anag',
+        password='hash_pass2', rol="JEFE_DEPARTAMENTO", departamento_id=1
     )
-    secretario = UsuarioDominio(
-        id=3, nombre='Carlos', apellido='Lopez', email='carlos@example.com', usuario='carlosl', claustro=None,        password='hash_pass3', rol=Rol.SECRETARIO_TECNICO, departamento_id=3
+    secretario = ResponsableDepartamento(
+        id=3, nombre='Carlos', apellido='Lopez', email='carlos@example.com', usuario='carlosl',
+        password='hash_pass3', rol="SECRETARIO_TECNICO", departamento_id=3
     )
     usuario_repo.guardar_registro(user_final)
     usuario_repo.guardar_registro(jefe)
@@ -89,7 +89,7 @@ if jefe and reclamo:
 #8  Crear usuario vacio
 usuario_vacio = UsuarioDominio(
     id=None, nombre='Luis', apellido='Diego', email='luis.diego@example.com', usuario='luisd',
-    claustro=Claustro.ESTUDIANTE, password='hash_pass4', rol=Rol.USUARIO_FINAL
+    claustro="ESTUDIANTE", password='hash_pass4', rol="USUARIO_FINAL"
 )
 usuario_repo.guardar_registro(usuario_vacio)
 

@@ -3,7 +3,6 @@ from fpdf import FPDF
 import tempfile
 import os
 import time
-import shutil
 from flask import send_file
 
 
@@ -13,79 +12,49 @@ class ReportePDF(ReporteABS):
 
     def generar_reporte(self, graficos: dict):
         """
-        Genera un PDF solo con gráficos y sus títulos y lo devuelve para web.
-        
+        Genera un PDF solo con imágenes (PNG/JPG) y sus títulos y lo devuelve para web.
+
         Args:
-            graficos: Diccionario con las FIGURAS:
-                - 'grafico_torta': Figura de Plotly
-                - 'grafico_barras': Figura de Plotly
-                - 'imagen_nube_palabras': Ruta al archivo PNG o figura matplotlib
+            graficos: Diccionario con rutas a imágenes:
+                - 'ruta_torta' | 'grafico_torta' | 'figura_torta': ruta a PNG/JPG
+                - 'ruta_barras' | 'grafico_barras' | 'figura_barra_mediana': ruta a PNG/JPG
+                - 'ruta_nube_palabras' | 'imagen_nube_palabras' | 'figura_nube_palabras': ruta a PNG/JPG
         """
         temp_dir = tempfile.gettempdir()
-        
-        # Rutas temporales para las imágenes
-        img_torta = os.path.join(temp_dir, 'grafico_torta.png')
-        img_nube = os.path.join(temp_dir, 'nube_palabras.png')
-        img_barras = os.path.join(temp_dir, 'grafico_barras.png')
-        
-        # Convertir figuras a PNG
-        fig_torta = graficos.get('figura_torta')
-        if fig_torta:
-            fig_torta.write_image(img_torta)
-            print("Gráfico de torta guardado en:", img_torta)
-            time.sleep(0.1)
-        
-        fig_nube = graficos.get('figura_nube_palabras')
-        if fig_nube:
-            if hasattr(fig_nube, 'savefig'):  # matplotlib
-                fig_nube.savefig(img_nube, bbox_inches='tight', dpi=100, facecolor='white')
-                import matplotlib.pyplot as plt
-                plt.close(fig_nube)
-                time.sleep(0.1)
-            elif isinstance(fig_nube, str) and os.path.exists(fig_nube):
-                shutil.copy(fig_nube, img_nube)
-        
-        fig_barras = graficos.get('figura_barra_mediana')
-        if fig_barras:
-            fig_barras.write_image(img_barras)
-            time.sleep(0.1)
-        
+
+        # Obtener rutas desde el diccionario (acepta claves nuevas y antiguas)
+        ruta_torta = graficos.get('ruta_torta') or graficos.get('grafico_torta') or graficos.get('figura_torta')
+        ruta_barras = graficos.get('ruta_barras') or graficos.get('grafico_barras') or graficos.get('figura_barra_mediana')
+        ruta_nube = graficos.get('ruta_nube_palabras') or graficos.get('imagen_nube_palabras') or graficos.get('figura_nube_palabras')
+
         # Crear PDF
         pdf = FPDF()
         pdf.add_page()
         pdf.set_font('Arial', 'B', 16)
         pdf.cell(0, 10, 'Reporte de Gráficos', ln=True, align='C')
         pdf.ln(5)
-        
-        # Agregar gráficos con título
-        if os.path.exists(img_torta):
+
+        # Agregar imágenes si las rutas existen
+        if ruta_torta and os.path.exists(ruta_torta):
             pdf.set_font('Arial', 'B', 12)
             pdf.cell(0, 10, 'Gráfico de Torta', ln=True)
-            pdf.image(img_torta, w=150)
+            pdf.image(ruta_torta, w=150)
             pdf.ln(5)
-        
-        if os.path.exists(img_nube):
+
+        if ruta_nube and os.path.exists(ruta_nube):
             pdf.set_font('Arial', 'B', 12)
             pdf.cell(0, 10, 'Nube de Palabras', ln=True)
-            pdf.image(img_nube, w=150)
+            pdf.image(ruta_nube, w=150)
             pdf.ln(5)
-        
-        if os.path.exists(img_barras):
+
+        if ruta_barras and os.path.exists(ruta_barras):
             pdf.set_font('Arial', 'B', 12)
             pdf.cell(0, 10, 'Gráfico de Barras', ln=True)
-            pdf.image(img_barras, w=150)
-        
-        # Guardar PDF en carpeta temporal
-        temp_pdf = os.path.join(temp_dir, 'reporte_graficos.pdf')
+            pdf.image(ruta_barras, w=150)
+
+        # Guardar PDF en carpeta temporal (nombre único para evitar colisiones)
+        temp_pdf = os.path.join(temp_dir, f'reporte_graficos_{int(time.time())}.pdf')
         pdf.output(temp_pdf)
 
-        # Eliminar imágenes temporales
-        if os.path.exists(img_torta):
-            os.remove(img_torta)
-        if os.path.exists(img_nube):
-            os.remove(img_nube)
-        if os.path.exists(img_barras):
-            os.remove(img_barras)
-        # NO BORRAR las imágenes todavía; Flask necesita leerlas
         # Enviar PDF directamente al cliente
         return send_file(temp_pdf, as_attachment=True, download_name='reporte_graficos.pdf')

@@ -10,4 +10,4 @@ nltk
 plotly
 numpy
 pandas #plotly depende de pandas
-kaleido
+fpdf

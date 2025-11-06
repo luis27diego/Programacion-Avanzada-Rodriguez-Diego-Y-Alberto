@@ -18,7 +18,7 @@ class DashboardService:
         usuario = self.usuario_repo.obtener_registro_por_filtro('id',id_usuario)
         #if not self._has_access_to_dept(usuario, id_departamento):
         #    raise PermissionError("Acceso denegado")
-        if usuario.rol.value in ['secretario_tecnico']:
+        if usuario.rol in ['SECRETARIO_TECNICO']:
             reclamos = self.reclamo_repo.obtener_todos_los_registros()
             total = len(reclamos)
         else:

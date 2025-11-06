@@ -30,7 +30,7 @@ class MonticuloMedianaBinario():
         #if self.monticulo_max.estaVacio() and self.monticulo_min.estaVacio():
             #return None
         
-        # Si hay un número impar de elementos, la mediana está en maxHeap
+        # Si hay un número par de elementos, la mediana está en maxHeap
         if self.monticulo_max.tamanoActual == self.monticulo_min.tamanoActual:
             self.valor_mediana = (self.monticulo_min.listaMonticulo[1] + self.monticulo_max.listaMonticulo[1]) / 2
 

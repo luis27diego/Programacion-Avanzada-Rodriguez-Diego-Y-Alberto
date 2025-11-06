@@ -1,6 +1,6 @@
 from modules.gestores.dashboardService import DashboardService
 from modules.reporte.reporteABS import ReporteABS
-from modules.utilidades.graficos import crear_grafico_torta, crear_imagen_nube_palabras, crear_barra_mediana,crear_figura_barra_mediana, crear_figura_nube_palabras, crear_figura_torta
+from modules.utilidades.graficos import crear_grafico_torta, crear_imagen_nube_palabras, crear_barra_mediana
 
 
 class GestorDashboard:
@@ -23,29 +23,13 @@ class GestorDashboard:
         return crear_barra_mediana(datos['mediana_en_proceso'], datos['mediana_resolucion'],
                                    datos['mediana_pendiente'])
 
-
-
-    def generar_figura_barra_mediana(self, id_departamento, id_usuario):
-        datos = self.obtener_analiticas(id_departamento, id_usuario)
-        return crear_figura_barra_mediana(datos['mediana_en_proceso'], datos['mediana_resolucion'],
-                                   datos['mediana_pendiente'])
-    
-    def generar_figura_torta(self, id_departamento, id_usuario):
-        datos = self.obtener_analiticas(id_departamento, id_usuario)
-        return crear_figura_torta(datos['datos_torta'])
-    
-    def generar_figura_nube_palabras(self, id_departamento, id_usuario):
-        datos = self.obtener_analiticas(id_departamento, id_usuario)
-        return crear_figura_nube_palabras(datos['datos_nube_palabras'])
-
-
     def generar_reporte(self, reporte: ReporteABS, id_departamento, id_usuario):
         graficos = {
-            'figura_torta': self.generar_figura_torta(id_departamento, id_usuario),
-            'figura_nube_palabras': self.generar_figura_nube_palabras(id_departamento, id_usuario),
-            'figura_barra_mediana': self.generar_figura_barra_mediana(id_departamento, id_usuario)
+            'figura_torta': self.generar_grafico_torta(id_departamento, id_usuario),
+            'figura_nube_palabras': self.generar_imagen_nube_palabras(id_departamento, id_usuario),
+            'figura_barra_mediana': self.generar_barra_mediana(id_departamento, id_usuario)
         }
-        return reporte.generar_reporte(graficos)
+        return reporte.generar_reporte(graficos) 
 
 
 if __name__ == "__main__":

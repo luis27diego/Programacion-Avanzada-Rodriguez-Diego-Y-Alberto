@@ -29,9 +29,10 @@ class DepartamentoRepositorio(RepositorioAbstracto):
             return None
         departamento = self.__modelo_to_dominio(departamento_modelo)
         return departamento
-
-    def crear_relacion(self, id_usuario: int, id_reclamo: int, tipo_relacion: str) -> None:
-        pass
+    
+    def obtener_registros_por_filtro(self, filtros, valor):
+        departamentos_modelos = self.__session.query(DepartamentoModel).filter_by(**{filtros: valor}).all()
+        return [self.__modelo_to_dominio(u) for u in departamentos_modelos]
             
     def eliminar_registro(self, id):
         register = self.__session.query(DepartamentoModel).get(id)

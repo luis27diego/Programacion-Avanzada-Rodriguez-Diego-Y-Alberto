@@ -18,9 +18,10 @@ class RepositorioAbstracto(ABC):
         raise NotImplementedError
     
     @abstractmethod
-    def eliminar_registro(self, id):
+    def obtener_registros_por_filtro(self, filtros, valor):
         raise NotImplementedError
     
     @abstractmethod
-    def crear_relacion(self, id_objeto_1: int, id_objeto_2: int, tipo_relacion: str) -> None:
-        pass
+    def eliminar_registro(self, id):
+        raise NotImplementedError
+

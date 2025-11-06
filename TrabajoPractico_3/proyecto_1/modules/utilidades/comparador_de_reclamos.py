@@ -6,12 +6,17 @@ from nltk.corpus import stopwords
 from nltk.stem import SnowballStemmer
 import string
 from modules.dominio.reclamo import ReclamoDominio
+from abc import ABC, abstractmethod
 
 # Descargar recursos de NLTK si no los tienes
-nltk.download('stopwords')
-nltk.download('punkt')
+nltk.download('stopwords',quiet=True)
+nltk.download('punkt',quiet=True)
+class ComparadorDeReclamosABC(ABC):
+    @abstractmethod
+    def encontrar_reclamos_similares(self, nuevo_contenido: str, reclamos_existentes: List[ReclamoDominio], umbral: float = 0.7, top_n: int = 5) :
+        pass
 
-class ComparadorDeReclamos:
+class ComparadorDeReclamos(ComparadorDeReclamosABC):
     def __init__(self):
         self.vectorizer = TfidfVectorizer()  # Para vectorizar textos
         self.stop_words = set(stopwords.words('spanish'))  # Palabras comunes en español
@@ -27,7 +32,7 @@ class ComparadorDeReclamos:
         palabras = [self.stemmer.stem(p) for p in palabras if p not in self.stop_words]
         return ' '.join(palabras)
 
-    def encontrar_reclamos_similares(self, nuevo_contenido: str, reclamos_existentes: List[ReclamoDominio], umbral: float = 0.7, top_n: int = 5) -> List[Tuple[ReclamoDominio, float]]:
+    def encontrar_reclamos_similares(self, nuevo_contenido: str, reclamos_existentes: List[ReclamoDominio], umbral: float = 0.7, top_n: int = 5) :
         """
         Compara un nuevo contenido con reclamos existentes y devuelve los más similares.
         :param nuevo_contenido: Contenido del nuevo reclamo.
