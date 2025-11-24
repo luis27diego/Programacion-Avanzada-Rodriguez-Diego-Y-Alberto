@@ -1,16 +1,13 @@
 from typing import List, Tuple
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
-import nltk
-from nltk.corpus import stopwords
-from nltk.stem import SnowballStemmer
+import spacy
 import string
 from modules.dominio.reclamo import ReclamoDominio
 from abc import ABC, abstractmethod
 
-# Descargar recursos de NLTK si no los tienes
-nltk.download('stopwords',quiet=True)
-nltk.download('punkt',quiet=True)
+nlp = spacy.load("es_core_news_sm")
+
 class ComparadorDeReclamosABC(ABC):
     @abstractmethod
     def encontrar_reclamos_similares(self, nuevo_contenido: str, reclamos_existentes: List[ReclamoDominio], umbral: float = 0.7, top_n: int = 5) :
@@ -19,27 +16,29 @@ class ComparadorDeReclamosABC(ABC):
 class ComparadorDeReclamos(ComparadorDeReclamosABC):
     def __init__(self):
         self.__vectorizer = TfidfVectorizer()  # Para vectorizar textos
-        self.__stop_words = set(stopwords.words('spanish'))  # Palabras comunes en español
-        self.__stemmer = SnowballStemmer('spanish')  # Stemming para español
+        self.__stop_words = nlp.Defaults.stop_words  # Stopwords de spaCy
+        # No necesitamos un stemmer con spaCy, ya que usaremos lematización
 
     def preprocesar_texto(self, texto: str) -> str:
         """
-        Limpia y normaliza el texto: minúsculas, quita puntuación, stemming.
+        Limpia y normaliza el texto: minúsculas, quita puntuación, lematización.
         """
-        texto = texto.lower()
-        texto = texto.translate(str.maketrans('', '', string.punctuation))  # Quita puntuación
-        palabras = nltk.word_tokenize(texto)
-        palabras = [self.__stemmer.stem(p) for p in palabras if p not in self.__stop_words]
+        texto = texto.lower()  # Convertir a minúsculas
+        doc = nlp(texto)  # Procesar el texto con spaCy
+
+        # Lematizar y filtrar las stopwords y signos de puntuación
+        palabras = [token.lemma_ for token in doc if token.text not in self.__stop_words and not token.is_punct]
+
         return ' '.join(palabras)
 
-    def encontrar_reclamos_similares(self, nuevo_contenido: str, reclamos_existentes: List[ReclamoDominio], umbral: float = 0.7, top_n: int = 5) :
+    def encontrar_reclamos_similares(self, nuevo_contenido: str, reclamos_existentes: List[ReclamoDominio], umbral: float = 0.7, top_n: int = 5):
         """
         Compara un nuevo contenido con reclamos existentes y devuelve los más similares.
         :param nuevo_contenido: Contenido del nuevo reclamo.
         :param reclamos_existentes: Lista de ReclamoDominio existentes.
         :param umbral: Similitud mínima para considerar "parecido".
         :param top_n: Máximo de reclamos similares a devolver.
-        :return: Lista de tuplas (reclamo, score_similitud) ordenados por score descendente.
+        :return: Lista de ReclamoDominio ordenados por similitud descendente.
         """
         if not reclamos_existentes:
             return []
@@ -57,9 +56,13 @@ class ComparadorDeReclamos(ComparadorDeReclamosABC):
 
         # Filtrar por umbral y ordenar
         similares = [reclamos_existentes[i] for i in range(len(similitudes)) if similitudes[i] >= umbral]
-        print(similares)
-        similares.sort(key=lambda x: x.id, reverse=True)  # Orden descendente por ID
+
+        # Ordenar los reclamos por la similitud en orden descendente
+        similares = [reclamos_existentes[i] for i in sorted(range(len(similitudes)), key=lambda i: similitudes[i], reverse=True) if similitudes[i] >= umbral]
+
+        # Limitar a los top_n reclamos más similares
         return similares[:top_n]
+
 
 if __name__ == "__main__":
     # Ejemplo de uso
