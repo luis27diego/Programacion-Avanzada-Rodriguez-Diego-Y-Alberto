@@ -14,8 +14,8 @@ sys.modules['spacy'] = MagicMock()
 from modules.gestores.gestor_usuario import GestorDeUsuarios
 from modules.gestores.gestor_reclamo import GestorDeReclamo
 from modules.gestores.gestor_dashboard import GestorDashboard
-from modules.dominio.usuario import UsuarioFinal, ResponsableDepartamento
-from modules.dominio.reclamo import ReclamoDominio, Estado, AdhesionDominio
+from modules.dominio.usuario import UsuarioFinal
+from modules.dominio.reclamo import ReclamoDominio, Estado
 from modules.gestores.dashboardService import DashboardService
 from modules.reporte.reporteABS import ReporteABS
 

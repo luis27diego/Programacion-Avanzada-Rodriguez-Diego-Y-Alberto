@@ -12,7 +12,7 @@ from modules.repositorioConcreto.adhesion_concreto import AdhesionRepositorio as
 from modules.modelos import Base
 
 # Configuración de la base de datos
-engine = create_engine('sqlite:///database.db', echo=True)  # Archivo persistente
+engine = create_engine('sqlite:///data/database.db', echo=True) # <-- MODIFICADO
 Session = sessionmaker(bind=engine)
 session = Session()
 

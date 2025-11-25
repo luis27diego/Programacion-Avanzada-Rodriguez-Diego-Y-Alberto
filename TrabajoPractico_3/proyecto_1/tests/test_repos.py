@@ -146,25 +146,12 @@ class TestReclamoRepositorio(unittest.TestCase):
             timestamp_modificacion=datetime.now()
         )
         
-        mock_reclamo_modelo = ReclamoModel(
-            id=1,
-            usuario_id=1,
-            contenido="Problema en el aula",
-            timestamp=datetime.now(),
-            estado=Estado.PENDIENTE,
-            departamento_id=1,  
-            timestamp_modificacion=datetime.now()
-        )
         
         self.mock_session.refresh = Mock()
         self.mock_session.add = Mock()
         self.mock_session.commit = Mock()
         
-        # Simular que después de commit, el modelo tiene ID
-        def side_effect(modelo):
-            modelo.id = 1
-        self.mock_session.commit.side_effect = side_effect
-        
+
         # Mock para la consulta de adherentes
         self.mock_session.query.return_value.filter.return_value.all.return_value = []
         
