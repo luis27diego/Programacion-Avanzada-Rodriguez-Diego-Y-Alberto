@@ -28,8 +28,8 @@ class UsuarioRepositorio(RepositorioAbstracto):
         register.usuario = registro_modificado.usuario
         register.claustro = registro_modificado.claustro
         register.password = registro_modificado.password
-        register.rol = registro_modificado.rol
-        register.departamento_id = registro_modificado.departamento_id
+        register.rol = registro_modificado.rol if hasattr(registro_modificado, 'rol') else None
+        register.departamento_id = registro_modificado.departamento_id if hasattr(registro_modificado, 'departamento_id') else None
         self.__session.commit()
 
     def obtener_registro_por_filtro(self, filtro, valor):

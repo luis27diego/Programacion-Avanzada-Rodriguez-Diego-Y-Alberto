@@ -38,6 +38,17 @@ class ReclamoDominio:
     def departamento_id(self):
         return self.__departamento_id
     
+    @estado.setter
+    def estado(self, nuevo_estado: Estado):
+        self.__estado = nuevo_estado
+
+    @timestamp_modificacion.setter
+    def timestamp_modificacion(self, nuevo_timestamp: datetime):
+        self.__timestamp_modificacion = nuevo_timestamp
+        
+    @departamento_id.setter
+    def departamento_id(self, nuevo_departamento_id: int):
+        self.__departamento_id = nuevo_departamento_id
 
     def agregar_adherente(self, adherente):
         if adherente== self.usuario_id:

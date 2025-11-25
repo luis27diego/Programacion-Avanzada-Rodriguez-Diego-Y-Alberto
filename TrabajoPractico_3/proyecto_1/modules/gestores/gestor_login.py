@@ -61,12 +61,6 @@ class GestorDeLogin:
             return f(*args, **kwargs)
         return decorated_function
 
-    def es_admin(self):
-        if current_user.is_authenticated and current_user.admin:
-            return True
-        else:
-            return False
-
     def solo_usuarios_no_admin(self, f):
         @wraps(f)
         def decorated_function(*args, **kwargs):

@@ -3,16 +3,16 @@ from modules.utilidades.monticulos.monticulobinario import MonticuloMedianaBinar
 from datetime import datetime
 from collections import Counter
 from typing import List, Tuple
-from nltk.corpus import stopwords
-from nltk.tokenize import word_tokenize
+import spacy
 
+nlp = spacy.load("es_core_news_sm")
 
 class DashboardService:
     def __init__(self, usuario_repo: RepositorioAbstracto, reclamo_repo: RepositorioAbstracto):
         self.__usuario_repo = usuario_repo
         self.__reclamo_repo = reclamo_repo
-        self.__stopwords = set(stopwords.words('spanish'))  # Palabras comunes en español
-
+        self.__stopwords = nlp.Defaults.stop_words  # Stopwords de spaCy
+        
     def obtener_analiticas(self, id_departamento: int, id_usuario: int) -> dict:
         # Verifica el rol del usuario (por ejemplo, jefe o secretario) usando usuario_repo
         usuario = self.__usuario_repo.obtener_registro_por_filtro('id',id_usuario)
@@ -91,14 +91,20 @@ class DashboardService:
     def __preparar_datos_nube_palabras(self, contenidos_reclamos: List[str], top_n: int = 15) -> List[Tuple[str, int]]:
         # Unir todos los contenidos y convertir a minúsculas
         texto_total = ' '.join(contenidos_reclamos).lower()
+
+        # Tokenizar con spaCy
+        doc = nlp(texto_total)
+
+        # Filtrar palabras vacías y signos de puntuación, y limpiar caracteres problemáticos
+        palabras = [token.text.strip() for token in doc if token.text not in self.__stopwords and not token.is_punct]
         
-        # Tokenizar y filtrar palabras vacías
-        palabras = [p for palabra in word_tokenize(texto_total, language="spanish")
-                    if (p := palabra.strip('.,!?')) and p not in self.__stopwords]
-        # Contar frecuencias
+        # Eliminar cualquier palabra que contenga saltos de línea u otros caracteres problemáticos
+        palabras = [palabra.replace('\n', '').replace('\r', '') for palabra in palabras]
+
+        # Contar frecuencias de palabras
         conteo_palabras = Counter(palabras)
-        
-        # Devolver las top_n palabras más frecuentes
+
+        # Devolver las top_n palabras más comunes
         return conteo_palabras.most_common(top_n)
     
 
