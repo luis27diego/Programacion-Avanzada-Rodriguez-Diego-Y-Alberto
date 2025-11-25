@@ -23,7 +23,7 @@ Base.metadata.create_all(engine)
 usuario_repo = SqlUsuarioRepositorio(session)
 reclamo_repo = SqlReclamoRepositorio(session)
 departamento_repo = SqlDepartamentoRepositorio(session)
-adhesion_repo = SqladhesionRepositorio(session)  
+adhesion_repo = SqladhesionRepositorio(session)
 
 # Simulación
 print("Iniciando simulación a las 14:02 del 05/10/2025...")
@@ -42,11 +42,11 @@ if departamento_repo.obtener_todos_los_registros() == []:
 if usuario_repo.obtener_todos_los_registros() == []:
     user_final = UsuarioFinal(
         id=1, nombre='Juan', apellido='Perez', email='juan@example.com', usuario='juanp',
-        claustro="ESTUDIANTE", password='hash_pass1' 
+        claustro="ESTUDIANTE", password='hash_pass1'
     )
     user_final2 = UsuarioFinal(
         id=2, nombre='Maria', apellido='Lopez', email='maria@example.com', usuario='marial',
-        claustro="ESTUDIANTE", password='hash_pass2' 
+        claustro="ESTUDIANTE", password='hash_pass2'
     )
 
     jefe = ResponsableDepartamento(
@@ -80,21 +80,21 @@ if reclamo_repo.obtener_todos_los_registros() == []:
 # 4. Cargar usuario y agregar reclamos creados
 user = usuario_repo.obtener_registro_por_filtro('id', 1)
 
-# 5. Agregar adhesión (usuario2 adhiere a reclamo1)
-adhesion = AdhesionDominio(id=None, usuario_id=2, reclamo_id=1)
-adhesion_repo.guardar_registro(adhesion)
-reclamo = reclamo_repo.obtener_registro_por_filtro('id', 1)
-if reclamo:
-    user2= usuario_repo.obtener_registro_por_filtro('id', 2)
-    if user2:
-        print(f"Reclamo1 tiene {reclamo.cantidad_adherentes()} adherente(s).")
+# # 5. Agregar adhesión (usuario2 adhiere a reclamo1)
+# adhesion = AdhesionDominio(id=None, usuario_id=2, reclamo_id=1)
+# adhesion_repo.guardar_registro(adhesion)
+# reclamo = reclamo_repo.obtener_registro_por_filtro('id', 1)
+# if reclamo:
+#     user2= usuario_repo.obtener_registro_por_filtro('id', 2)
+#     if user2:
+#         print(f"Reclamo1 tiene {reclamo.cantidad_adherentes()} adherente(s).")
 
-# 6. Cambiar estado (solo jefe o secretario)
-jefe = usuario_repo.obtener_registro_por_filtro('id', 3)
-if jefe and reclamo:
-    reclamo.estado = Estado.EN_PROCESO
-    reclamo.tiempo_resolucion = 5  # días
-    reclamo_repo.modificar_registro(reclamo)
+# # 6. Cambiar estado (solo jefe o secretario)
+# jefe = usuario_repo.obtener_registro_por_filtro('id', 3)
+# if jefe and reclamo:
+#     reclamo.estado = Estado.EN_PROCESO
+#     reclamo.tiempo_resolucion = 5  # días
+#     reclamo_repo.modificar_registro(reclamo)
 
 #8  Crear usuario vacio
 usuario_vacio = UsuarioFinal(

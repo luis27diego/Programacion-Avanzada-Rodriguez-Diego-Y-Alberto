@@ -12,7 +12,7 @@ app.config['secret_key'] ='1234'
 
 
 BASE_DIR = Path(__file__).resolve().parent.parent  # para poder acceder desde cualquier lugar a la ruta de la base de datos
-urlBD = f"sqlite:///{BASE_DIR / 'database.db'}"
+urlBD = f"sqlite:///{BASE_DIR / 'data' / 'database.db'}"
 
 def crear_engine():
     engine = create_engine(urlBD)
