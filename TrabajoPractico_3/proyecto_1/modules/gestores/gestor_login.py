@@ -36,6 +36,10 @@ class GestorDeLogin:
     def usuario_autenticado(self):
         return current_user.is_authenticated
     
+    @property
+    def es_admin(self):
+        return current_user.is_authenticated and current_user.admin
+    
     def login_usuario(self, usuario_dominio: UsuarioDominio):
         user = FlaskLoginUser(usuario_dominio)
         login_user(user)

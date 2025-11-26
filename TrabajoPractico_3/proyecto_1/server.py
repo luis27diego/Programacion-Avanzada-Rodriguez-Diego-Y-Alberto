@@ -24,7 +24,9 @@ dashboard_service = DashboardService(usuario_repo,reclamo_repo)
 # Página de inicio
 @app.route('/')
 def index():
-    if gestor_login.usuario_autenticado:
+    if gestor_login.es_admin:
+        return redirect(url_for('manejar_reclamos'))
+    elif gestor_login.usuario_autenticado:
         return redirect(url_for('crear_reclamo'))
     return redirect(url_for('login'))
 
@@ -48,6 +50,9 @@ def register():
 
 @app.route("/login", methods= ["GET", "POST"])
 def login():
+    if gestor_login.usuario_autenticado:
+        return redirect(url_for('index'))
+    
     if request.method == "POST":
         email = request.form["input_email"]
         password = request.form["input_password"]

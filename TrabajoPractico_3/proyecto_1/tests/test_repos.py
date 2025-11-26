@@ -113,7 +113,7 @@ class TestUsuarioRepositorio(unittest.TestCase):
         self.repositorio.modificar_registro(usuario_modificado)
         
         self.assertEqual(mock_usuario_modelo.nombre, "Juan Modificado")
-        self.assertEqual(mock_usuario_modelo.claustro, "DOCENTE")
+        self.assertEqual(mock_usuario_modelo.claustro, "docente")
         self.mock_session.commit.assert_called()
     
     def test_eliminar_registro(self):

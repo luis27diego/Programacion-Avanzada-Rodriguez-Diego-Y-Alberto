@@ -26,7 +26,7 @@ class TestUsuarioFinal(unittest.TestCase):
         self.assertEqual(self.usuario.apellido, "Perez")
         self.assertEqual(self.usuario.email, "juan@example.com")
         self.assertEqual(self.usuario.usuario, "juanp")
-        self.assertEqual(self.usuario.claustro, "ESTUDIANTE")
+        self.assertEqual(self.usuario.claustro, "estudiante")
         self.assertEqual(self.usuario.password, "pass123")
     
     def test_agregar_reclamo_creado(self):

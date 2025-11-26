@@ -155,6 +155,7 @@ cython_debug/
 # Ignorar la carpeta de caché de Flask
 TrabajoPractico_3/proyecto_1/flask_session_cache/
 *.db
+TrabajoPractico_3/proyecto_1/static/
 
 # PyCharm
 #  JetBrains specific template is maintained in a separate JetBrains.gitignore that can

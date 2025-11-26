@@ -13,3 +13,4 @@ spacy
 scikit-learn
 nltk
 wordcloud
+coverage
