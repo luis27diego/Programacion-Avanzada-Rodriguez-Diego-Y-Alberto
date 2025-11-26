@@ -21,6 +21,8 @@ gestor_usuarios = GestorDeUsuarios(usuario_repo)
 gestor_reclamo = GestorDeReclamo(reclamo_repo, usuario_repo, adhesion_repo)
 gestor_login = GestorDeLogin(gestor_usuarios, login_manager)  # IDs de usuarios administradores
 dashboard_service = DashboardService(usuario_repo,reclamo_repo) 
+gestor_dashboard = GestorDashboard(dashboard_service)
+
 # Página de inicio
 @app.route('/')
 def index():
@@ -59,14 +61,12 @@ def login():
         try :
             usuario_dominio = gestor_usuarios.autenticar_usuario(email, password)
         except Exception as e:
-            flash(str(e))  # Cambiar esta línea
-            return render_template('login.html')  # Y agregar esta línea
+            flash(str(e))  
+            return render_template('login.html') 
         if usuario_dominio:
             gestor_login.login_usuario(usuario_dominio)
             session['id_usuario'] = usuario_dominio.id  # Guardar el ID del usuario en la sesión
-            if hasattr(usuario_dominio, 'rol'):
-                 return redirect(url_for('manejar_reclamos'))
-            return redirect(url_for('crear_reclamo'))
+            return redirect(url_for('index'))
     return render_template('login.html')
 
 @app.route('/crear_reclamo', methods=['GET', 'POST'])
@@ -110,7 +110,6 @@ def ver_reclamos_similares():
         if id_reclamo:
             try:
                 usuario_id = session['id_usuario']  
-                #gestor_usuarios.adherir_usuario_a_reclamo(usuario_id, id_reclamo)
                 gestor_reclamo.adherir_usuario_a_reclamo(usuario_id, int(id_reclamo))
                 for key in ('contenido', 'timestamp', 'estado', 'id_departamento'):
                     session.pop(key, None)
@@ -138,12 +137,8 @@ def ver_reclamos_similares():
 @app.route('/mis_reclamos')
 @gestor_login.solo_usuarios_no_admin
 def mis_reclamos():
-    print(session['id_usuario'])
-    #reclamos = gestor_usuarios.obtener_reclamos_creados_por_usuario(session['id_usuario'])
-    usuario = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
-    #reclamos = usuario.obtener_reclamos_creados() 
+
     reclamos = gestor_reclamo.obtener_reclamos_creados_por_usuario(session['id_usuario'])
-    #reclamos_adheridos = usuario.obtener_reclamos_adheridos()
     reclamos_adheridos = gestor_reclamo.obtener_reclamos_adheridos_por_usuario(session['id_usuario'])
     return render_template('mis_reclamos.html', reclamos=[r.to_dict() for r in reclamos], reclamos_adheridos=[r.to_dict() for r in reclamos_adheridos], active_page='mis_reclamos')
 
@@ -153,10 +148,7 @@ def todos_los_reclamos():
     if request.method == 'POST':
         departamento_seleccionado = request.form.get('departamento')
 
-        if departamento_seleccionado is None or departamento_seleccionado == '':
-            pass
-
-        else:
+        if departamento_seleccionado is not None:
             reclamos = gestor_reclamo.obtener_reclamos_por_estado(Estado.PENDIENTE)
             reclamos = [r for r in reclamos if r.departamento_id == int(departamento_seleccionado)]
             return render_template('todos_los_reclamos.html', reclamos=[r.to_dict() for r in reclamos], active_page='todos_los_reclamos', departamento_seleccionado=departamento_seleccionado)
@@ -180,6 +172,7 @@ def manejar_reclamos():
         id_reclamo = request.form.get('id_reclamo')
         estado = request.form.get('estado')
         nuevo_departamento = request.form.get('nuevo_departamento')  # Solo si el rol es SECRETARIO_TECNICO
+
         if not id_reclamo:
             flash("ID del reclamo no proporcionado.", "error")
             return redirect(url_for('manejar_reclamos'))
@@ -204,26 +197,18 @@ def manejar_reclamos():
                 "RESUELTO": Estado.RESUELTO
             }
             nuevo_estado = estado_map[estado]
-            
-            if reclamo_actual.estado != nuevo_estado:  # Comparar con el estado actual
-                print(nuevo_estado,reclamo_actual.estado)
-                gestor_reclamo.modificar_estado_reclamo(id_reclamo, nuevo_estado)
-                flash("Reclamo actualizado correctamente.", "success")
-
-        # Verificar y actualizar departamento solo si cambió
+        
         if nuevo_departamento:
             try:
                 nuevo_departamento_id = int(nuevo_departamento)
-                if reclamo_actual.departamento_id != nuevo_departamento_id:  # Comparar con el departamento actual
-                    gestor_reclamo.modificar_departamento_reclamo(id_reclamo, nuevo_departamento_id)
-                    flash("Departamento cambiado correctamente.", "success")
-
-            except ValueError:
-                flash("Departamento inválido.", "error")
-                return redirect(url_for('manejar_reclamos'))
             except Exception as e:
                 flash(str(e), "error")
                 return redirect(url_for('manejar_reclamos'))
+            
+        if reclamo_actual.estado != nuevo_estado or reclamo_actual.departamento_id != nuevo_departamento_id:  # Comparar con el estado actual
+            gestor_reclamo.modificar_reclamo(id_reclamo, nuevo_departamento_id, nuevo_estado)
+            flash("Reclamo actualizado correctamente.", "success")
+
 
         return redirect(url_for('manejar_reclamos'))
 
@@ -238,7 +223,6 @@ def manejar_reclamos():
 @app.route('/dashboard')
 @gestor_login.admin_only
 def dashboard():
-    gestor_dashboard = GestorDashboard(dashboard_service)
     jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
     id_departamento = jefe.departamento_id
     grafico_torta = gestor_dashboard.generar_grafico_torta(id_departamento, session['id_usuario'])
@@ -251,7 +235,6 @@ def dashboard():
 @app.route('/dashboard/reporte')
 @gestor_login.admin_only
 def descargar_reporte():
-    gestor_dashboard = GestorDashboard(dashboard_service)
     jefe = gestor_usuarios.obtener_usuario_por_id(session['id_usuario'])
     id_departamento = jefe.departamento_id
     formato = request.args.get("formato", "pdf")  # Por defecto PDF

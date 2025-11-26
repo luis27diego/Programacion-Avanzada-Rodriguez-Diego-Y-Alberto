@@ -142,6 +142,15 @@ class GestorDeReclamo:
             reclamo.departamento_id = nuevo_departamento_id
             return self.__reclamo_repositorio.modificar_registro(reclamo)
         return None
+    
+    def modificar_reclamo(self,id_reclamo,nuevo_departamento_id,nuevo_estado):
+        
+        reclamo = self.__reclamo_repositorio.obtener_registro_por_filtro('id', id_reclamo)
+        if reclamo:
+            reclamo.departamento_id = nuevo_departamento_id
+            reclamo.estado = nuevo_estado
+            return self.__reclamo_repositorio.modificar_registro(reclamo)
+        return None
 
     def obtener_reclamos_creados_por_usuario(self, id_usuario: int) -> List[ReclamoDominio]:
         """
