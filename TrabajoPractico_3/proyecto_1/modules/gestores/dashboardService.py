@@ -114,5 +114,6 @@ if __name__ == "__main__":
     dashboard_service = DashboardService(usuario_repo, reclamo_repo)
     analiticas = dashboard_service.obtener_analiticas(id_departamento=1, id_usuario=1)
     print(analiticas)
+    
 
 

@@ -1,12 +1,22 @@
-from typing import List, Tuple
+import subprocess
+from typing import List
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity
 import spacy
-import string
 from modules.dominio.reclamo import ReclamoDominio
 from abc import ABC, abstractmethod
 
-nlp = spacy.load("es_core_news_sm")
+def cargar_modelo_spacy(model_name: str):
+    try:
+        # Intentar cargar el modelo spaCy
+        return spacy.load(model_name)
+    except OSError:
+        # Si falla, descargar el modelo
+        print(f"Modelo '{model_name}' no encontrado. Descargando...")
+        subprocess.run([f"python", "-m", "spacy", "download", model_name], check=True)
+        return spacy.load(model_name)
+
+nlp = cargar_modelo_spacy("es_core_news_sm")
 
 class ComparadorDeReclamosABC(ABC):
     @abstractmethod
@@ -17,9 +27,8 @@ class ComparadorDeReclamos(ComparadorDeReclamosABC):
     def __init__(self):
         self.__vectorizer = TfidfVectorizer()  # Para vectorizar textos
         self.__stop_words = nlp.Defaults.stop_words  # Stopwords de spaCy
-        # No necesitamos un stemmer con spaCy, ya que usaremos lematización
 
-    def preprocesar_texto(self, texto: str) -> str:
+    def __preprocesar_texto(self, texto: str) -> str:
         """
         Limpia y normaliza el texto: minúsculas, quita puntuación, lematización.
         """
@@ -44,8 +53,8 @@ class ComparadorDeReclamos(ComparadorDeReclamosABC):
             return []
 
         # Preprocesar todos los textos
-        contenidos_existentes = [self.preprocesar_texto(r.contenido) for r in reclamos_existentes]
-        nuevo_preprocesado = self.preprocesar_texto(nuevo_contenido)
+        contenidos_existentes = [self.__preprocesar_texto(r.contenido) for r in reclamos_existentes]
+        nuevo_preprocesado = self.__preprocesar_texto(nuevo_contenido)
 
         # Vectorizar
         todos_contenidos = contenidos_existentes + [nuevo_preprocesado]
@@ -53,9 +62,6 @@ class ComparadorDeReclamos(ComparadorDeReclamosABC):
 
         # Calcular similitud coseno entre el nuevo (último) y los existentes
         similitudes = cosine_similarity(tfidf_matrix[-1], tfidf_matrix[:-1]).flatten()
-
-        # Filtrar por umbral y ordenar
-        similares = [reclamos_existentes[i] for i in range(len(similitudes)) if similitudes[i] >= umbral]
 
         # Ordenar los reclamos por la similitud en orden descendente
         similares = [reclamos_existentes[i] for i in sorted(range(len(similitudes)), key=lambda i: similitudes[i], reverse=True) if similitudes[i] >= umbral]

@@ -7,7 +7,7 @@ from . import Base
 class AdhesionModel(Base):
     __tablename__ = 'adhesiones'
 
-    id = Column(Integer, primary_key=True, autoincrement=True)  # Opcional, por convención
+    id = Column(Integer, primary_key=True, autoincrement=True)  
     usuario_id = Column(Integer, ForeignKey('usuarios.id'), nullable=False, index=True)
     reclamo_id = Column(Integer, ForeignKey('reclamos.id'), nullable=False, index=True)
 

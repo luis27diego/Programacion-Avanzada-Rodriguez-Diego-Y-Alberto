@@ -6,40 +6,76 @@ class UsuarioDominio(ABC):
     def __init__(self, nombre: str, apellido: str, email: str, usuario: str, 
                  password: str, id: int = None):
         self.id = id
-        self.__nombre = nombre
-        self.__apellido = apellido
-        self.__email = email
-        self.__usuario = usuario
-        self.__password = password
+        self.nombre = nombre
+        self.apellido = apellido
+        self.email = email
+        self.usuario = usuario
+        self.password = password
 
     @property
     def password(self):
         return self.__password
+    @password.setter
+    def password(self, valor: str):
+        if not valor or len(valor) < 4:
+            raise ValueError("La contraseña debe tener al menos 4 caracteres")
+        self.__password = valor  
 
     @property
     def nombre(self):
         return self.__nombre
+    @nombre.setter
+    def nombre(self, valor: str):
+        if not valor or not valor.strip():
+            raise ValueError("El nombre no puede estar vacío")
+        self.__nombre = valor.strip().title()
+
     @property
     def apellido(self):
         return self.__apellido
+    @apellido.setter
+    def apellido(self, valor: str):
+        if not valor or not valor.strip():
+            raise ValueError("El apellido no puede estar vacío")
+        self.__apellido = valor.strip().title()
+
     @property
     def email(self):
         return self.__email
+    @email.setter
+    def email(self, valor: str):
+        if not valor or "@" not in valor or "." not in valor:
+            raise ValueError("Email inválido")
+        self.__email = valor.strip().lower()
+
     @property
     def usuario(self):
         return self.__usuario
+    @usuario.setter
+    def usuario(self, valor: str):
+        if not valor or len(valor.strip()) < 3:
+            raise ValueError("El usuario debe tener al menos 3 caracteres")
+        self.__usuario = valor.strip().lower()
 
 
 class UsuarioFinal(UsuarioDominio):
     def __init__(self, nombre: str, apellido: str, email: str, usuario: str, 
                  claustro: str, password: str, id: int = None):
         super().__init__(nombre, apellido, email, usuario, password, id)
-        self.__claustro = claustro
+        self.claustro = claustro
         self.__reclamos_creados = []
         self.__reclamos_adheridos = []
     @property
     def claustro(self):
         return self.__claustro
+    @claustro.setter
+    def claustro(self, valor: str):
+        if not valor or not valor.strip():
+            raise ValueError("El claustro no puede estar vacío")
+        if valor.strip().lower() not in ['estudiante', 'docente', 'pays']:
+            raise ValueError("El claustro debe ser 'estudiante', 'docente' o 'no docente'")
+        self.__claustro = valor.strip().lower()
+
     def agregar_reclamo_creado(self, reclamo: int):
         if any(r == reclamo for r in self.__reclamos_creados):
             raise ValueError("Reclamo ya agregado")

@@ -44,6 +44,8 @@ class ReclamoDominio:
 
     @timestamp_modificacion.setter
     def timestamp_modificacion(self, nuevo_timestamp: datetime):
+        if not isinstance(nuevo_timestamp, datetime):
+            raise ValueError("timestamp_modificacion debe ser un objeto datetime")
         self.__timestamp_modificacion = nuevo_timestamp
         
     @departamento_id.setter

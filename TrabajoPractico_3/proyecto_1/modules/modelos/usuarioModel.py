@@ -11,7 +11,7 @@ class UsuarioModel(Base):
     email = Column(String(100), nullable=False, unique=True, index=True)
     usuario = Column(String(50), nullable=False, unique=True, index=True)
     claustro = Column(String(25), nullable=True)
-    password = Column(String(255), nullable=False)  # Hasheada
+    password = Column(String(255), nullable=False)  
     rol = Column(String(20), nullable=True)
     departamento_id = Column(Integer, ForeignKey('departamentos.id'), nullable=True)
 

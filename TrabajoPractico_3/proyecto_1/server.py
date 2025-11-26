@@ -1,9 +1,3 @@
-# Suprimir warnings
-import warnings
-warnings.filterwarnings("ignore", category=UserWarning)
-warnings.filterwarnings("ignore", message=".*InconsistentVersionWarning.*")
-warnings.filterwarnings("ignore", module="sklearn")
-
 from datetime import datetime
 from flask import redirect, render_template, request, url_for, session,flash
 from modules.config import app, login_manager

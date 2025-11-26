@@ -6,7 +6,12 @@ import matplotlib
 matplotlib.use('Agg')  # <-- Agrega esta línea antes de importar pyplot
 from matplotlib import pyplot as plt
     
+colores = [
+    "#3B82F6",  # Azul
+    "#0EA5E9",  # Azul claro
+    "#F59E0B",  # Amarillo
 
+]
 def crear_figura_nube_palabras(datos_palabras: List[Tuple[str, int]]):
     """Crea y devuelve una figura de matplotlib con nube de palabras."""
     diccionario_palabras = dict(datos_palabras)
@@ -15,7 +20,7 @@ def crear_figura_nube_palabras(datos_palabras: List[Tuple[str, int]]):
         width=800,
         height=400,
         background_color='white',
-        colormap='viridis',
+        colormap='Blues',
         relative_scaling=0.5,
         min_font_size=10
     ).generate_from_frequencies(diccionario_palabras)
@@ -34,20 +39,6 @@ def crear_grafico_torta(datos_torta: Dict[str, float]) -> str:
 
     etiquetas = list(datos_torta.keys())
     valores = list(datos_torta.values())
-
-    # --- Estilo de colores similar al de Plotly ---
-    colores = [
-        "#636EFA",  # Azul
-        "#EF553B",  # Rojo coral
-        "#00CC96",  # Verde esmeralda
-        "#AB63FA",  # Violeta
-        "#FFA15A",  # Naranja
-        "#19D3F3",  # Celeste
-        "#FF6692",  # Rosa
-        "#B6E880",  # Verde claro
-        "#FF97FF",  # Fucsia
-        "#FECB52",  # Amarillo
-    ]
 
     # --- Limpieza de gráfico anterior ---
     plt.clf()
@@ -83,15 +74,13 @@ def crear_grafico_torta(datos_torta: Dict[str, float]) -> str:
 
 def crear_barra_mediana(mediana_en_proceso: float, mediana_resueltos: float, mediana_pendiente: float) -> str:
     """Genera un gráfico de barras con estilo tipo Plotly."""
-    categorias = ['Mediana Pendiente', 'Mediana En Proceso', 'Mediana Resueltos']
-    valores = [mediana_pendiente, mediana_en_proceso, mediana_resueltos]
+    categorias = ['Mediana En Proceso', 'Mediana Resueltos', 'Mediana Pendientes']
+    valores = [mediana_en_proceso, mediana_resueltos, mediana_pendiente]
 
-    # --- Colores estilo Plotly ---
-    colores = ["#636EFA",  "#EF553B",  "#00CC96"]  
     plt.clf()
 
     # --- Crear gráfico de barras ---
-    barras = plt.bar(categorias, valores, color=colores, edgecolor='white', linewidth=1)
+    plt.bar(categorias, valores, color=colores, edgecolor='white', linewidth=1)
 
     # --- Estética general ---
     plt.title("Mediana de Tiempos de Resolución (días)", fontsize=18, pad=20)
@@ -103,19 +92,6 @@ def crear_barra_mediana(mediana_en_proceso: float, mediana_resueltos: float, med
     plt.gca().set_facecolor('none')  # Fondo del gráfico transparente
     plt.gcf().patch.set_alpha(0)     # Fondo del lienzo transparente
     plt.tight_layout(pad=2.0)
-
-    # --- Añadir valores encima de las barras ---
-    for barra in barras:
-        y = barra.get_height()
-        plt.text(
-            barra.get_x() + barra.get_width() / 2,
-            y + (max(valores) * 0.02),
-            f"{y:.1f}",
-            ha='center',
-            va='bottom',
-            fontsize=12,
-            weight='bold'
-        )
 
     # --- Guardar imagen ---
     ruta = "static/grafico_barra_mediana.png"
