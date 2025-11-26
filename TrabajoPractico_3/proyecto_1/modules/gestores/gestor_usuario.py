@@ -50,7 +50,7 @@ class GestorDeUsuarios:
         """
         return self.__usuario_repositorio.obtener_todos_los_registros()
 
-    def modificar_usuario(self, id: int, nombre: str, apellido: str, email: str, usuario: str, password: str, claustro: str) -> UsuarioDominio:
+    def modificar_usuario(self, id: int, nombre: str, apellido: str, email: str, usuario: str, password: str, claustro: str = None, rol: str = None, departamento_id: int = None) -> UsuarioDominio:
         """
         Modifica un usuario existente.
         :param usuario_modificado: Objeto UsuarioDominio con los cambios.
@@ -72,21 +72,38 @@ class GestorDeUsuarios:
         if usuario != usuario_actual.usuario:
             if self.obtener_usuario_por_usuario(usuario):
                 raise ValueError("El nombre de usuario ya está registrado.")
-        
-        try:
-            usuario_modificado = UsuarioFinal(
-                id=id,
-                nombre=nombre,
-                apellido=apellido,
-                email=email,
-                usuario=usuario,
-                password=password,
-                claustro=claustro,
-            )
-            self.__usuario_repositorio.modificar_registro(usuario_modificado)
-            return self.obtener_usuario_por_id(usuario_modificado.id)
-        except IntegrityError as e:
-            raise ValueError(f"Error al modificar el usuario: {str(e)}")
+            
+        if claustro is None:
+            try:
+                usuario_modificado = UsuarioFinal(
+                    id=id,
+                    nombre=nombre,
+                    apellido=apellido,
+                    email=email,
+                    usuario=usuario,
+                    password=password,
+                    claustro=claustro,
+                )
+                self.__usuario_repositorio.modificar_registro(usuario_modificado)
+                return self.obtener_usuario_por_id(usuario_modificado.id)
+            except IntegrityError as e:
+                raise ValueError(f"Error al modificar el usuario: {str(e)}")
+        else:
+            try:
+                usuario_modificado = ResponsableDepartamento(
+                    id=id,
+                    nombre=nombre,
+                    apellido=apellido,
+                    email=email,
+                    usuario=usuario,
+                    password=password,
+                    rol=rol,
+                    departamento_id=departamento_id
+                )
+                self.__usuario_repositorio.modificar_registro(usuario_modificado)
+                return self.obtener_usuario_por_id(usuario_modificado.id)
+            except IntegrityError as e:
+                raise ValueError(f"Error al modificar el usuario: {str(e)}")
 
     def obtener_usuario_por_email(self, email: str) -> UsuarioDominio:
         if not email:
