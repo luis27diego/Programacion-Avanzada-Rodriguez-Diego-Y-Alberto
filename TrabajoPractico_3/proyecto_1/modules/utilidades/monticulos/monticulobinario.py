@@ -29,9 +29,7 @@ class MonticuloMedianaBinario():
         self.__actualizar_mediana()
 
     def __actualizar_mediana(self):
-        #if self.__monticulo_max.estaVacio() and self.__monticulo_min.estaVacio():
-            #return None
-        
+                
         # Si hay un número par de elementos, la mediana está en maxHeap
         if self.__monticulo_max.tamanoActual == self.__monticulo_min.tamanoActual:
             self._valor_mediana = (self.__monticulo_min.listaMonticulo[1] + self.__monticulo_max.listaMonticulo[1]) / 2

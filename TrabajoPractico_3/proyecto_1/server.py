@@ -13,8 +13,8 @@ from modules.utilidades.comparador_de_reclamos import ComparadorDeReclamos
 
 usuario_repo, reclamo_repo, departamento_repo, adhesion_repo = crear_repositorio()
 
-with open('./data/claims_clf.pkl', 'rb') as archivo:
-    clf = pickle.load(archivo)
+#with open('./data/claims_clf.pkl', 'rb') as archivo:
+#    clf = pickle.load(archivo)
 
 comparador_reclamos = ComparadorDeReclamos()
 gestor_usuarios = GestorDeUsuarios(usuario_repo)
@@ -81,7 +81,7 @@ def crear_reclamo():
         contenido = request.form["input_contenido"]
         timestamp = datetime.now()
         estado = 'PENDIENTE'
-        id_departamento = gestor_reclamo.clasificar_reclamo(contenido, clf)
+        id_departamento = gestor_reclamo.clasificar_reclamo(contenido)
         reclamos = gestor_reclamo.obtener_reclamos_por_departamento_excluir_usuario(id_departamento, usuario_id=usuario_id)
         reclamos = gestor_reclamo.encontrar_reclamos_similares(contenido, reclamos, comparador_reclamos)
 

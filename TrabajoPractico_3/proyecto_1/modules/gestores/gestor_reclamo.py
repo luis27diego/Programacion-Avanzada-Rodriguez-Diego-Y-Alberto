@@ -4,6 +4,8 @@ from modules.dominio.reclamo import ReclamoDominio,AdhesionDominio,Estado
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
 from modules.utilidades.comparador_de_reclamos import ComparadorDeReclamosABC  
+#from modules.classifier import clasificador
+import pickle
 
 class GestorDeReclamo:
     def __init__(self, reclamo_repositorio: RepositorioAbstracto, usuario_repositorio: RepositorioAbstracto, adhesion_repositorio: RepositorioAbstracto):
@@ -58,12 +60,14 @@ class GestorDeReclamo:
         except IntegrityError as e:
             raise ValueError(f"Error al adherir al reclamo: {str(e)}")
 
-    def clasificar_reclamo(self, reclamo: str, clasificador) -> int:
+    def clasificar_reclamo(self, reclamo: str) -> int:
         """
         Clasifica el reclamo utilizando el clasificador de texto.
         :param reclamo: contenido de ReclamoDominio a clasificar.
         :return: ID del departamento asignado.
         """
+        with open('./data/claims_clf.pkl', 'rb') as archivo:
+            clasificador = pickle.load(archivo)
         etiqueta = clasificador.classify([reclamo])
         etiqueta_departamento = etiqueta[0]
         departamento_id = self.__mapeo_etiquetas.get(etiqueta_departamento)

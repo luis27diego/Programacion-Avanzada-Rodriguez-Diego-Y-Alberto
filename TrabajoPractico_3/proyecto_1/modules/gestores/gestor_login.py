@@ -16,7 +16,6 @@ class GestorDeLogin:
     def __init__(self, gestor_usuarios, login_manager):
         self.__gestor_usuarios = gestor_usuarios
         login_manager.user_loader(self.__cargar_usuario_actual)
-        #self.__admin_list = admin_list
 
     def __cargar_usuario_actual(self, user_id):
         usuario = self.__gestor_usuarios.obtener_usuario_por_id(user_id)
@@ -50,8 +49,6 @@ class GestorDeLogin:
         print("Usuario ha cerrado sesión")
         print(f"Usuario actual {current_user}")
 
-    # def se_requiere_login(self, func):
-    #     return login_required(func)
     
     def admin_only(self, f):
         @wraps(f)
@@ -59,7 +56,6 @@ class GestorDeLogin:
             if not current_user.is_authenticated:
                 flash("Por favor, inicia sesión como administrador para acceder a esta página.")
                 return redirect(url_for('login'))
-            #if current_user.id not in self.__admin_list:
             elif not current_user.admin:
                 return render_template('error.html', error="Acceso denegado: área restringida para administradores.", es_admin=False)
             return f(*args, **kwargs)
@@ -68,11 +64,9 @@ class GestorDeLogin:
     def solo_usuarios_no_admin(self, f):
         @wraps(f)
         def decorated_function(*args, **kwargs):
-
             if not current_user.is_authenticated:
                 flash("Por favor, inicia sesión para acceder a esta página.")
                 return redirect(url_for('login'))
-            
             elif current_user.admin:
                 return render_template('error.html', error="Acceso denegado: área restringida para administradores. Solo usuarios finales.", es_admin=True)
                 #abort(403)

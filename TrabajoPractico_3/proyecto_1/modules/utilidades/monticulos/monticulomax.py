@@ -8,9 +8,9 @@ class MonticuloMaximo:
     # 1. El nuevo elemento "sube" hasta que encuentra un padre MAYOR.
     def infiltArriba(self, i):
         while i // 2 > 0:
-            # ¡CAMBIO! Comparamos si el hijo es MAYOR que el padre.
+            # Comparamos si el hijo es MAYOR que el padre.
             if self.listaMonticulo[i] > self.listaMonticulo[i // 2]:
-                # Intercambio (swap)
+                # Intercambio
                 tmp = self.listaMonticulo[i // 2]
                 self.listaMonticulo[i // 2] = self.listaMonticulo[i]
                 self.listaMonticulo[i] = tmp
@@ -21,30 +21,26 @@ class MonticuloMaximo:
         self.tamanoActual = self.tamanoActual + 1
         self.infiltArriba(self.tamanoActual)
 
-    # 2. Encuentra el hijo MÁS GRANDE para comparar con el padre.
+    # Encuentra el hijo MÁS GRANDE para comparar con el padre.
     def hijoMax(self, i):
         # Si no hay hijo derecho, el hijo izquierdo es el único.
         if i * 2 + 1 > self.tamanoActual:
             return i * 2
         else:
-            # ¡CAMBIO! Retornamos el índice del hijo MAYOR.
+            # Retornamos el índice del hijo MAYOR.
             if self.listaMonticulo[i * 2] > self.listaMonticulo[i * 2 + 1]:
                 return i * 2
             else:
                 return i * 2 + 1
-    
-    # Hemos renombrado 'hijoMin' a 'hijoMax' para claridad, pero la función es la misma.
-    # El método original 'hijoMin' en el Montículo de Mínimos buscaba el mínimo;
-    # este busca el máximo.
 
-    # 3. El nuevo elemento de la raíz "baja" hasta que encuentra hijos MENORES.
+    # El nuevo elemento de la raíz "baja" hasta que encuentra hijos MENORES.
     def infiltAbajo(self, i):
         # Usamos hijoMax para obtener el índice del hijo mayor.
         while (i * 2) <= self.tamanoActual:
             hm = self.hijoMax(i)
-            # ¡CAMBIO! Comparamos si el padre es MENOR que el hijo mayor.
+            # Comparamos si el padre es MENOR que el hijo mayor.
             if self.listaMonticulo[i] < self.listaMonticulo[hm]:
-                # Intercambio (swap)
+                # Intercambio
                 tmp = self.listaMonticulo[i]
                 self.listaMonticulo[i] = self.listaMonticulo[hm]
                 self.listaMonticulo[hm] = tmp
