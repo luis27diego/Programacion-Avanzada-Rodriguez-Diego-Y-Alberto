@@ -153,6 +153,7 @@ class GestorDeReclamo:
         if reclamo:
             reclamo.departamento_id = nuevo_departamento_id
             reclamo.estado = nuevo_estado
+            reclamo.timestamp_modificacion = datetime.now()
             return self.__reclamo_repositorio.modificar_registro(reclamo)
         return None
 
